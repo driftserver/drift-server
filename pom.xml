@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.drift</groupId>
+	<artifactId>drift-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Drift :: Parent</name>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<drift.version>${project.version}</drift.version>
+	</properties>
+
+	<modules>
+		<module>drift-core</module>
+		<module>drift-server</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.drift</groupId>
+				<artifactId>drift-core</artifactId>
+				<version>${drift.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.drift</groupId>
+				<artifactId>drift-server</artifactId>
+				<version>${drift.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>
