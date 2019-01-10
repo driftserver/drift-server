@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  build:
+    
+    working_directory: ~/drift-server
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    steps:
+
+      - checkout
+      
+      - run: mvn package
+      
+      - store_artifacts:
+          path: drift-core/target/drift-core-0.0.1-SNAPSHOT.jar
+          	
+      - store_artifacts:
+          path: drift-server/target/drift-server-0.0.1-SNAPSHOT.jar
+         
