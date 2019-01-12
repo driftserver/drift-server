@@ -1,0 +1,8 @@
+micronaut:
+    application:
+        name: hello-world
+    router:
+        static-resources:
+            default:
+                mapping: /**
+                paths: classpath:static
