@@ -8,19 +8,47 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>drift-server</artifactId>
   <name>Drift :: Server</name>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
-          <executions>
-            <execution>
-              <id>test-compile</id>
-              <goals>
-                <goal>testCompile</goal>
-              </goals>
+  <profiles>
+    <profile>
+      <id>integration-build</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.7.0</version>
+              <executions>
+                <execution>
+                  <id>test-compile</id>
+                  <goals>
+                    <goal>testCompile</goal>
+                  </goals>
+                  <configuration>
+                    <compilerArgs>
+                      <arg>-parameters</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                      <path>
+                        <groupId>io.micronaut</groupId>
+                        <artifactId>micronaut-inject-java</artifactId>
+                        <version>1.0.3</version>
+                      </path>
+                      <path>
+                        <groupId>io.micronaut</groupId>
+                        <artifactId>micronaut-validation</artifactId>
+                        <version>1.0.3</version>
+                      </path>
+                    </annotationProcessorPaths>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                  </configuration>
+                </execution>
+              </executions>
               <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+                <encoding>UTF-8</encoding>
                 <compilerArgs>
                   <arg>-parameters</arg>
                 </compilerArgs>
@@ -28,137 +56,145 @@
                   <path>
                     <groupId>io.micronaut</groupId>
                     <artifactId>micronaut-inject-java</artifactId>
-                    <version>${micronaut.version}</version>
+                    <version>1.0.3</version>
                   </path>
                   <path>
                     <groupId>io.micronaut</groupId>
                     <artifactId>micronaut-validation</artifactId>
-                    <version>${micronaut.version}</version>
+                    <version>1.0.3</version>
                   </path>
                 </annotationProcessorPaths>
               </configuration>
-            </execution>
-          </executions>
-          <configuration>
-            <source>${jdk.version}</source>
-            <target>${jdk.version}</target>
-            <encoding>UTF-8</encoding>
-            <compilerArgs>
-              <arg>-parameters</arg>
-            </compilerArgs>
-            <annotationProcessorPaths>
-              <path>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-inject-java</artifactId>
-                <version>${micronaut.version}</version>
-              </path>
-              <path>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-validation</artifactId>
-                <version>${micronaut.version}</version>
-              </path>
-            </annotationProcessorPaths>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <configuration>
+                  <transformers>
+                    <transformer>
+                      <mainClass>hello.world.Application</mainClass>
+                    </transformer>
+                    <transformer />
+                  </transformers>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.6.0</version>
             <configuration>
-              <transformers>
-                <transformer>
-                  <mainClass>${exec.mainClass}</mainClass>
-                </transformer>
-                <transformer />
-              </transformers>
+              <executable>java</executable>
+              <arguments>
+                <argument>-noverify</argument>
+                <argument>-XX:TieredStopAtLevel=1</argument>
+                <argument>-classpath</argument>
+                <classpath />
+                <argument>hello.world.Application</argument>
+              </arguments>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <configuration>
-          <executable>java</executable>
-          <arguments>
-            <argument>-noverify</argument>
-            <argument>-XX:TieredStopAtLevel=1</argument>
-            <argument>-classpath</argument>
-            <classpath />
-            <argument>${exec.mainClass}</argument>
-          </arguments>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>${frontend-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>Install Node and Yarn</id>
-            <goals>
-              <goal>install-node-and-yarn</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>yarn install</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
+          </plugin>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>Install Node and Yarn</id>
+                <goals>
+                  <goal>install-node-and-yarn</goal>
+                </goals>
+                <configuration>
+                  <nodeVersion>v10.14.2</nodeVersion>
+                  <yarnVersion>v1.13.0</yarnVersion>
+                  <installDirectory>.mvn</installDirectory>
+                  <workingDirectory>src/main/app</workingDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>yarn install</id>
+                <goals>
+                  <goal>yarn</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                  <nodeVersion>v10.14.2</nodeVersion>
+                  <yarnVersion>v1.13.0</yarnVersion>
+                  <installDirectory>.mvn</installDirectory>
+                  <workingDirectory>src/main/app</workingDirectory>
+                </configuration>
+              </execution>
+              <execution>
+                <id>Frontend production build</id>
+                <goals>
+                  <goal>yarn</goal>
+                </goals>
+                <configuration>
+                  <arguments>run build</arguments>
+                  <nodeVersion>v10.14.2</nodeVersion>
+                  <yarnVersion>v1.13.0</yarnVersion>
+                  <installDirectory>.mvn</installDirectory>
+                  <workingDirectory>src/main/app</workingDirectory>
+                </configuration>
+              </execution>
+            </executions>
             <configuration>
-              <arguments>install</arguments>
+              <nodeVersion>v10.14.2</nodeVersion>
+              <yarnVersion>v1.13.0</yarnVersion>
+              <installDirectory>.mvn</installDirectory>
+              <workingDirectory>src/main/app</workingDirectory>
             </configuration>
-          </execution>
-          <execution>
-            <id>Frontend production build</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>run build</arguments>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <nodeVersion>v10.14.2</nodeVersion>
-          <yarnVersion>v1.13.0</yarnVersion>
-          <installDirectory>.mvn</installDirectory>
-          <workingDirectory>src/main/app</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
-        <executions>
-          <execution>
-            <id>Copy frontend production build to resources</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/classes/static</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/main/app/build/</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+          </plugin>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.0.2</version>
+            <executions>
+              <execution>
+                <id>default-testResources</id>
+                <phase>process-test-resources</phase>
+                <goals>
+                  <goal>testResources</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-resources</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>resources</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>Copy frontend production build to resources</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>C:\_\project\b2it\drift\git-repo\drift-server\drift-server/target/classes/static</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/app/build/</directory>
+                      <filtering>true</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>io.micronaut</groupId>
