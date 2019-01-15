@@ -4,6 +4,9 @@ jobs:
     
     working_directory: ~/drift-server
 
+    environment: 
+      CI: false
+
     docker:
       - image: circleci/openjdk:8-jdk-browsers
 
