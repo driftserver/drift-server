@@ -4,3 +4,6 @@
 /.settings
 .iml
 /.idea
+node_modules/
+.mvn/
+build/

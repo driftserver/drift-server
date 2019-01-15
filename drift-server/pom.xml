@@ -24,6 +24,9 @@
 		<jdk.version>1.8</jdk.version>
 		<exec.mainClass>hello.world.Application</exec.mainClass>
 
+		<!--  react frontend  -->
+		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
+		
 	</properties>
 
 	<dependencyManagement>
@@ -139,7 +142,68 @@
 					</arguments>
 				</configuration>
 			</plugin>
-		</plugins>
+			<!-- react frontend -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>Install Node and Yarn</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>yarn install</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>Frontend production build</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <nodeVersion>v10.14.2</nodeVersion>
+                    <yarnVersion>v1.13.0</yarnVersion>
+                    <installDirectory>.mvn</installDirectory>
+                    <workingDirectory>src/main/app</workingDirectory>
+                </configuration>
+            </plugin>
+             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>Copy frontend production build to resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/app/build/</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+ 		</plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
