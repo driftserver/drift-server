@@ -1,4 +1,7 @@
 micronaut:
+    server:
+        cors:
+            enabled: true
     application:
         name: hello-world
     router:
