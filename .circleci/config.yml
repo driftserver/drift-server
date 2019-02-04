@@ -16,21 +16,21 @@ jobs:
       
       - restore_cache:
           keys:
-          - v0.0.1-{{ checksum "pom.xml" }}-{{ checksum "drift-core/pom.xml" }}-{{ checksum "drift-server/pom.xml" }}
-          - v0.0.1-
+          - v0.0.2-{{ checksum "pom.xml" }}-{{ checksum "drift-core/pom.xml" }}-{{ checksum "drift-server/pom.xml" }}
+          - v0.0.2-
 
       - run: mvn --fail-never dependency:go-offline || true
 
       - save_cache:
           paths:
             - ~/.m2
-          key: v0.0.1-{{ checksum "pom.xml" }}-{{ checksum "drift-core/pom.xml" }}-{{ checksum "drift-server/pom.xml" }}
+          key: v0.0.2-{{ checksum "pom.xml" }}-{{ checksum "drift-core/pom.xml" }}-{{ checksum "drift-server/pom.xml" }}
 
-      - run: mvn install -Pintegration-build
+      - run: mvn clean install
       
       - store_artifacts:
-          path: drift-core/target/drift-core-0.0.1-SNAPSHOT.jar
+          path: drift-core/target/drift-core-0.0.2-SNAPSHOT.jar
             
       - store_artifacts:
-          path: drift-server/target/drift-server-0.0.1-SNAPSHOT.jar
+          path: drift-server/target/drift-server-0.0.2-SNAPSHOT.jar
          
