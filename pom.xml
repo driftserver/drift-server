@@ -17,6 +17,7 @@
 
 	<modules>
 		<module>drift-core</module>
+		<module>drift-core-ui</module>
 		<module>drift-server</module>
 	</modules>
 
@@ -25,6 +26,11 @@
 			<dependency>
 				<groupId>io.drift</groupId>
 				<artifactId>drift-core</artifactId>
+				<version>${drift.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.drift</groupId>
+				<artifactId>drift-core-ui</artifactId>
 				<version>${drift.version}</version>
 			</dependency>
 			<dependency>

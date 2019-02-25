@@ -1,11 +1,14 @@
 package io.drift.core.config;
 
-import java.util.List;
+import io.drift.core.api.Flow;
 
-import io.drift.core.flow.Flow;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DriftEngine {
 
+	private List<Flow> flows = new ArrayList<Flow>();
+	
 	public DriftEngine() {
 		init();
 	}
@@ -14,7 +17,15 @@ public class DriftEngine {
 	}
 
 	public List<Flow> getFlows() {
-		return null;
+		return flows;
 	}
 
-}
+	public void addFlow(Flow flow){	
+		flows.add(flow);	
+	}
+	
+	public void registerPlugin(EnginePlugin plugin) {
+		plugin.register(this);
+	}
+
+}	
