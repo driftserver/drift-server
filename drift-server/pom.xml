@@ -19,23 +19,15 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.giffing.wicket.spring.boot.starter</groupId>
-				<artifactId>wicket-spring-boot-starter</artifactId>
-				<version>1.0.10</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 		<!-- Drift -->
 		<dependency>
 			<groupId>io.drift</groupId>
 			<artifactId>drift-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.drift</groupId>
+			<artifactId>drift-core-ui</artifactId>
 		</dependency>
 
 		<!-- Spring -->
