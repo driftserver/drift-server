@@ -30,6 +30,9 @@ jobs:
       
       - store_test_results:
           path: drift-server/drift-core/target/surefire-reports
+
+      - store_artifacts:
+          path: drift-server/drift-core/target/surefire-reports
       
       - store_artifacts:
           path: drift-core/target/drift-core-0.0.2-SNAPSHOT.jar
