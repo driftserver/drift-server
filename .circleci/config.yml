@@ -26,16 +26,13 @@ jobs:
             - ~/.m2
           key: v0.0.2-{{ checksum "pom.xml" }}-{{ checksum "drift-core/pom.xml" }}-{{ checksum "drift-server/pom.xml" }}
 
-      - run: mvn clean install
-      
-      - store_test_results:
-          path: drift-server/drift-core/target/surefire-reports
-
-      - store_artifacts:
-          path: drift-server/drift-core/target/surefire-reports
+      - run: mvn clean install surefire-report:report
       
       - store_artifacts:
-          path: drift-core/target/drift-core-0.0.2-SNAPSHOT.jar
+          path: drift-server/drift-core/target/site
+      
+      - store_artifacts:
+          path: drift-server/drift-core/target/drift-core-0.0.2-SNAPSHOT.jar
             
       - store_artifacts:
           path: drift-server/target/drift-server-0.0.2-SNAPSHOT.jar
