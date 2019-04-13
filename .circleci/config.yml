@@ -26,7 +26,7 @@ jobs:
             - ~/.m2
           key: v0.0.2-{{ checksum "pom.xml" }}-{{ checksum "drift-core/pom.xml" }}-{{ checksum "drift-server/pom.xml" }}
 
-      - run: mvn clean install surefire-report:report
+      - run: mvn clean install surefire-report:report site
       
       - store_artifacts:
           path: drift-core/target/site
