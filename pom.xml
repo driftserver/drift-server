@@ -103,7 +103,9 @@
 				<version>2.7</version>
 				<reportSets>
 					<reportSet>
-                        <report>index</report>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
 					</reportSet>
 				</reportSets>
 			</plugin>
