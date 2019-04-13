@@ -28,7 +28,7 @@ jobs:
 
       - run: mvn clean install surefire-report:report
 
-      - run: mvn -o site
+      - run: mvn site
       
       - store_artifacts:
           path: drift-core/target/site
