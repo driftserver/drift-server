@@ -37,7 +37,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			
+
 			<!-- modules -->
 			<dependency>
 				<groupId>io.drift</groupId>
@@ -75,13 +75,13 @@
 				<version>${drift.version}</version>
 			</dependency>
 
-			<!-- samples -->					
+			<!-- samples -->
 			<dependency>
 				<groupId>io.drift</groupId>
 				<artifactId>drift-sample-jdbc</artifactId>
 				<version>${drift.version}</version>
 			</dependency>
-			
+
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -92,6 +92,11 @@
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.7.1</version>
 			</plugin>
 		</plugins>
 	</build>
