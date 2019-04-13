@@ -29,10 +29,10 @@ jobs:
       - run: mvn clean install surefire-report:report
       
       - store_artifacts:
-          path: drift-server/drift-core/target/site
+          path: drift-core/target/site
       
       - store_artifacts:
-          path: drift-server/drift-core/target/drift-core-0.0.2-SNAPSHOT.jar
+          path: drift-core/target/drift-core-0.0.2-SNAPSHOT.jar
             
       - store_artifacts:
           path: drift-server/target/drift-server-0.0.2-SNAPSHOT.jar
