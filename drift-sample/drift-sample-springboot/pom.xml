@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>drift-sample</artifactId>
+        <groupId>io.drift</groupId>
+        <version>0.0.2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>drift-sample-springboot</artifactId>
+    <name>Drift :: Sample :: Spring Boot</name>
+
+    <dependencies>
+        <!-- Drift -->
+        <dependency>
+            <groupId>io.drift</groupId>
+            <artifactId>drift-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.drift</groupId>
+            <artifactId>drift-jdbc-springboot</artifactId>
+        </dependency>
+        <!-- database connection -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+        </dependency>
+        <!-- Spring DEV tools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

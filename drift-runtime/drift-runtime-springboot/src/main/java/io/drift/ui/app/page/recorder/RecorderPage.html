@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:extend>
+
+    <wicket:fragment wicket:id="recorderControlsFragment">
+        <div class="btn-group" role="group">
+            <a class="btn btn-secondary" wicket:id="startRecording">Connect</a>
+            <a class="btn btn-secondary" wicket:id="takeSnapshot">Take Snapshot</a>
+            <a class="btn btn-secondary" wicket:id="stopRecording">Disconnect</a>
+        </div>
+    </wicket:fragment>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div wicket:id="recorderControls"></div>
+                <div wicket:id="recordedScenario"></div>
+            </div>
+        </div>
+    </div>
+
+
+</wicket:extend>
+</body>
+</html>
