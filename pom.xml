@@ -60,11 +60,6 @@
                 <artifactId>drift-runtime-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.drift</groupId>
-                <artifactId>drift-runtime-springcli</artifactId>
-                <version>${drift.version}</version>
-            </dependency>
 
             <!-- jdbc modules -->
             <dependency>
@@ -82,17 +77,12 @@
                 <artifactId>drift-jdbc-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.drift</groupId>
-                <artifactId>drift-jdbc-cli</artifactId>
-                <version>${drift.version}</version>
-            </dependency>
 
 
             <!-- samples -->
             <dependency>
                 <groupId>io.drift</groupId>
-                <artifactId>drift-sample-jdbc</artifactId>
+                <artifactId>drift-sample-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>
 

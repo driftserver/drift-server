@@ -16,7 +16,6 @@
 	<name>Drift :: Sample</name>
 
 	<modules>
-		<module>drift-sample-springcli</module>
 		<module>drift-sample-springboot</module>
 	</modules>
 

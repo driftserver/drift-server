@@ -16,7 +16,6 @@
     <modules>
         <module>drift-jdbc-domain</module>
         <module>drift-jdbc-springboot</module>
-        <module>drift-jdbc-cli</module>
     </modules>
 
 </project>
