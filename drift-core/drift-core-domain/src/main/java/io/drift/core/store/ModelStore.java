@@ -1,6 +1,5 @@
 package io.drift.core.store;
 
-import io.drift.core.api.FocalArea;
 import io.drift.core.store.metadata.MetaModelCreator;
 import io.drift.core.store.metadata.MetaModelManager;
 import io.drift.core.store.serialization.SerializationManager;
@@ -10,8 +9,6 @@ import io.drift.core.store.storage.Storable;
 import io.drift.core.store.storage.StoragePath;
 
 public class ModelStore {
-
-	private FocalArea focalArea;
 
 	private MetaModelManager metaModelCreation = new MetaModelManager();
 
@@ -63,7 +60,4 @@ public class ModelStore {
 		}
 	}
 
-	public void setFocalArea(FocalArea focalArea) {
-		this.focalArea = focalArea;
-	}
 }

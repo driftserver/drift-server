@@ -4,16 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.drift.core.store.ModelStoreException;
-import io.drift.jdbc.domain.session.SessionId;
+import io.drift.core.recording.RecordingId;
 
 public class TakeSnapshotAction {
 
 	private DBSnapshotFlow flow;
 
 	Logger logger = LoggerFactory.getLogger(TakeSnapshotAction.class);
-	private SessionId sessionId;
+	private RecordingId sessionId;
 
-	public TakeSnapshotAction(DBSnapshotFlow flow, SessionId sessionId) {
+	public TakeSnapshotAction(DBSnapshotFlow flow, RecordingId sessionId) {
 		this.flow = flow;
 		this.sessionId = sessionId;
 	}

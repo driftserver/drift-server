@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:extend>
+
+    <wicket:fragment wicket:id="scenarioFragment">
+        <div class="card">
+            <div class="card-body">
+                <div>
+
+                    <h3>Recording</h3>
+
+                    <h5>Initial state</h5>
+                    <div class="list-group"></div>
+
+                    <h5>Steps</h5>
+                    <div class="list-group">
+                        <wicket:container wicket:id="steps">
+                            <a wicket:id="select" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <span wicket:id="title"/>
+                            </a>
+                        </wicket:container>
+
+                    </div>
+
+                    <h5>Final state</h5>
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action flex-column align-items-start">
+                            <span/>
+                        </a>
+
+                    </div>
+
+                    <div class="btn-group">
+                        <a wicket:id="previous" class="btn">Previous</a>
+                        <a wicket:id="next" class="btn">Next</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </wicket:fragment>
+
+    <wicket:fragment wicket:id="scenarioStepDetailsFragment">
+        <div class="card">
+            <div class="card-body">
+                Details <span wicket:id="title"/>
+                <form _wicket:id="form" method="post">
+                    <div class="form-group">
+                        <label for="title">Step details</label>
+                        <input type="text" class="form-control" _wicket:id="title"
+                               aria-describedby="title" placeholder="Enter step description"></input>
+                        <small id="stepTitleHelp" class="form-text text-muted">Describe the user's action for
+                            this scenario step.
+                        </small>
+                    </div>
+                    <div class="btn-group">
+                        <input _wicket:id="submit" type="submit" class="btn btn-primary" value="update"></input>
+                        <input _wicket:id="delete" type="submit" class="btn btn-primary" value="delete"></input>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </wicket:fragment>
+
+    <wicket:fragment wicket:id="systemInteractionsFragment">
+        <div class="card">
+            <div class="card-body">
+                <div>
+                    <div class="btn-group" role="group">
+                        <a wicket:id="previousButton" class="btn" href="#">previous</a>
+                        <a wicket:id="nextButton"  class="btn" href="#">next</a>
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="list-group" wicket:id="interactions">
+                                <a wicket:id="select" class="list-group-item list-group-item-action flex-column align-items-start">
+                                    <span wicket:id="interactionThumbnail" />
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-9">
+                            <div wicket:id="interactionDetail"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </wicket:fragment>
+
+
+    <wicket:fragment wicket:id="scenarioRecorderFragment"
+                     class="container-fluid">
+        <div class="row">
+            <div class="col-3">
+                <div wicket:id="scenario"/>
+            </div>
+            <div class="col-9">
+                <div wicket:id="stepDetails"></div>
+                <div wicket:id="systemInteractions"></div>
+            </div>
+        </div>
+    </wicket:fragment>
+
+
+    <wicket:fragment wicket:id="recorderControlsFragment">
+        <div class="btn-group" role="group">
+            <a class="btn btn-secondary" wicket:id="startRecording"><i class="fa fa-plug"></i> Connect</a>
+            <a class="btn btn-secondary" wicket:id="takeSnapshot"><i class="fa fa-camera-retro"></i> Take Snapshot</a>
+            <a class="btn btn-secondary" wicket:id="stopRecording"><i class="fa fa-plug"></i> Disconnect</a>
+            <a class="btn btn-secondary" wicket:id="saveRecording"><i class="fa fa-save"></i> Save</a>
+        </div>
+    </wicket:fragment>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div wicket:id="recorderControls"></div>
+                <div wicket:id="recordedScenario"></div>
+            </div>
+        </div>
+    </div>
+
+
+</wicket:extend>
+</body>
+</html>

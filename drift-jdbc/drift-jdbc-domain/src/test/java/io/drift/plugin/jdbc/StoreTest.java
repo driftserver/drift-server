@@ -30,9 +30,9 @@ public class StoreTest extends TestCase {
 		DBSnapShot dbSnapShot = dbDeltaBuilder.createDBSnapshot(dbMetaData);
 		DBDelta dbDelta = dbDeltaBuilder.createDbDelta(dbMetaData);
 
-		StoragePath id1 = new StoragePath(new StorageId("sessions"), new StorageId("1"), new StorageId("1"));
-		StoragePath id2 = new StoragePath(new StorageId("sessions"), new StorageId("1"), new StorageId("2"));
-		StoragePath id3 = new StoragePath(new StorageId("sessions"), new StorageId("1"), new StorageId("3"));
+		StoragePath id1 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("1"));
+		StoragePath id2 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("2"));
+		StoragePath id3 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("3"));
 
 		store.save(dbSnapShot, id1);
 		store.save(dbDelta, id2);

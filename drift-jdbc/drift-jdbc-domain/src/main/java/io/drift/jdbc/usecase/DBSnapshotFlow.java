@@ -6,7 +6,6 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.drift.core.api.Flow;
 import io.drift.core.store.ModelStoreException;
 import io.drift.jdbc.domain.data.DBDelta;
 import io.drift.jdbc.domain.data.DBDeltaBuilder;
@@ -15,10 +14,10 @@ import io.drift.jdbc.domain.data.DBSnapShotBuilder;
 import io.drift.jdbc.domain.data.SnapshotConfig;
 import io.drift.jdbc.domain.metadata.DBMetaData;
 import io.drift.jdbc.domain.metadata.DBMetaDataBuilder;
-import io.drift.jdbc.domain.session.DataCaptureSession;
-import io.drift.jdbc.domain.session.SessionId;
+import io.drift.core.recording.Recording;
+import io.drift.core.recording.RecordingId;
 
-public class DBSnapshotFlow implements Flow {
+public class DBSnapshotFlow  {
 
 	private DataSource dataSource;
 
@@ -59,20 +58,15 @@ public class DBSnapshotFlow implements Flow {
 		logger.info("shutting down");
 	}
 
-	@Override
-	public String getName() {
-		return "DB Snapshot	";
-	}
-
 	public void init() {
 		logger.info("init");
 	}
 
-	public DataCaptureSession startSession() {
+	public Recording startSession() {
 		return workspace.createSession();
 	}
 
-	public void takeSnaphot(SessionId sessionId) throws ModelStoreException {
+	public void takeSnaphot(RecordingId sessionId) throws ModelStoreException {
 		DBSnapShot dbSnapShot = dbSnapShotBuilder.takeDBSnapShot(dataSource, dbMetaData, snapshotConfig);
 
 		DBDeltaBuilder dbDeltaBuilder = new DBDeltaBuilder(dbMetaData);

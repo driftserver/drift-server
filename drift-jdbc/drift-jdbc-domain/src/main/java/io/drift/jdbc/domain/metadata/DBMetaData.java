@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.drift.core.recording.SubSystemDescription;
 import io.drift.core.store.storage.Storable;
 import io.drift.core.store.storage.StorageId;
 
-public class DBMetaData implements Storable, Serializable {
+public class DBMetaData implements SubSystemDescription, Storable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 

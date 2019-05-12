@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:extend>
+
+    <wicket:fragment wicket:id="recordingFormFragment">
+        <a class="btn btn-secondary" wicket:id="save">Create</a>
+    </wicket:fragment>
+
+    <wicket:fragment wicket:id="recordingsControlsFragment">
+        <div class="btn-group" role="group">
+            <a class="btn btn-secondary" wicket:id="newRecording">New Recording</a>
+        </div>
+    </wicket:fragment>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div wicket:id="recordingsControls"></div>
+            </div>
+        </div>
+    </div>
+
+    <div wicket:id="createRecordingPopup"/>
+
+</wicket:extend>
+</body>
+</html>

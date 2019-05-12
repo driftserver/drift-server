@@ -1,9 +1,12 @@
 package io.drift.ui.app.page.layout;
 
+import io.drift.ui.infra.WicketUtil;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.PackageResourceReference;
+
+import static io.drift.ui.infra.WicketUtil.addCssResource;
 
 public abstract class MainLayout extends WebPage {
 
@@ -13,11 +16,8 @@ public abstract class MainLayout extends WebPage {
 
 	@Override
 	public void renderHead(IHeaderResponse response) {
-		PackageResourceReference cssFile = new PackageResourceReference(MainLayout.class, "bootstrap.min.css");
-		CssHeaderItem cssItem = CssHeaderItem.forReference(cssFile);
-
-		response.render(cssItem);
+		addCssResource("bootstrap.min.css", MainLayout.class, response);
+		// addCssResource("css/font-awesome-5.8.2.css", MainLayout.class, response);
 	}
-
 
 }

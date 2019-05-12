@@ -8,8 +8,8 @@ import io.drift.core.store.storage.StoragePath;
 import io.drift.jdbc.domain.data.DBDelta;
 import io.drift.jdbc.domain.data.DBDeltaId;
 import io.drift.jdbc.domain.metadata.DBMetaData;
-import io.drift.jdbc.domain.session.DataCaptureSession;
-import io.drift.jdbc.domain.session.SessionId;
+import io.drift.core.recording.Recording;
+import io.drift.core.recording.RecordingId;
 
 public class SnapshotWorkspace {
 
@@ -26,11 +26,11 @@ public class SnapshotWorkspace {
 		this.idGenerator = idGenerator;
 	}
 
-	public DataCaptureSession createSession() {
-		return new DataCaptureSession(new SessionId(idGenerator.createId()));
+	public Recording createSession() {
+		return new Recording(new RecordingId(idGenerator.createId()));
 	}
 
-	public DBDelta loadDBDelta(SessionId sessionId, DBDeltaId dbDeltaId) throws ModelStoreException {
+	public DBDelta loadDBDelta(RecordingId sessionId, DBDeltaId dbDeltaId) throws ModelStoreException {
 		return modelStore.load(resolveDbDeltaStoragePath(sessionId, dbDeltaId), DBDelta.class);
 	}
 
@@ -38,7 +38,7 @@ public class SnapshotWorkspace {
 		return modelStore.load(resolveDBMetaDataStoragPath(), DBMetaData.class);
 	}
 
-	private StoragePath resolveDbDeltaStoragePath(SessionId sessionId, DBDeltaId dbDeltaId) {
+	private StoragePath resolveDbDeltaStoragePath(RecordingId sessionId, DBDeltaId dbDeltaId) {
 		return resolveSessionPath(sessionId).resolve(dbDeltaId);
 	}
 
@@ -46,7 +46,7 @@ public class SnapshotWorkspace {
 		return resolveWorkspacesPath().resolve(STORAGE_ID_METADATA);
 	}
 
-	private StoragePath resolveSessionPath(SessionId sessionId) {
+	private StoragePath resolveSessionPath(RecordingId sessionId) {
 		return resolveWorkspacesPath().resolve(sessionId);
 	}
 
@@ -54,7 +54,7 @@ public class SnapshotWorkspace {
 		return StoragePath.of(STORAGE_ID_WORKSPACE);
 	}
 
-	public void storeDBDelta(SessionId sessionId, DBDelta dbDelta) throws ModelStoreException {
+	public void storeDBDelta(RecordingId sessionId, DBDelta dbDelta) throws ModelStoreException {
 		modelStore.save(dbDelta, resolveDbDeltaStoragePath(sessionId, dbDelta.getId()));
 	}
 
@@ -62,7 +62,7 @@ public class SnapshotWorkspace {
 		modelStore.save(dbMetaData, resolveDBMetaDataStoragPath());
 	}
 
-	public void storeSession(DataCaptureSession session) throws ModelStoreException {
+	public void storeSession(Recording session) throws ModelStoreException {
 		modelStore.save(session, resolveSessionPath(session.getId()));
 	}
 

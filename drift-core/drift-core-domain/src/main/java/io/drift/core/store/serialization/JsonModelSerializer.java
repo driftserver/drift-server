@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 import io.drift.core.store.storage.Storable;
 
 public class JsonModelSerializer extends Serializer {
@@ -34,6 +35,11 @@ public class JsonModelSerializer extends Serializer {
 		objectMapper = new ObjectMapper();
 		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 		objectMapper.setSerializationInclusion(Include.NON_NULL);
+		objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+	}
+
+	public void addType(Class _class, String name) {
+		objectMapper.registerSubtypes(new NamedType(_class, name));
 	}
 
 	@Override

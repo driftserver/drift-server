@@ -1,0 +1,48 @@
+<html>
+<body>
+
+<wicket:fragment wicket:id="tableDeltaFragment">
+    <span wicket:id="tableName"/>
+    <table _style="table-layout: fixed;width: 170px;" class="table table-bordered table-sm table-hover ">
+        <thead>
+        <tr class="">
+            <th style="width:20pt"></th>
+            <th wicket:id="columnsInOrder" style="width:150pt">
+                <span wicket:id="columnName"/>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr wicket:id="inserts">
+            <th class="text-success" scope="row">I</th>
+            <td wicket:id="columns" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
+                <span wicket:id="value"></span>
+            </td>
+        </tr>
+        <tr wicket:id="updates">
+            <th class="text-warning" width="10pt" scope="row">U</th>
+            <td wicket:id="columns" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
+                <span wicket:id="value"></span>
+            </td>
+        </tr>
+        <tr wicket:id="deletes">
+            <th class="text-danger" scope="row">D</th>
+            <td wicket:id="columns" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
+                <span wicket:id="value"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</wicket:fragment>
+
+<wicket:panel>
+    <div>
+        <wicket:container wicket:id="tableDeltas">
+            <div wicket:id="tableDelta"/>
+        </wicket:container>
+    </div>
+</wicket:panel>
+
+</body>
+</html>
+

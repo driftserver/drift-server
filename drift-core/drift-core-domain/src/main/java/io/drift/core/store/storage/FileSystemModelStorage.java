@@ -3,6 +3,7 @@ package io.drift.core.store.storage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 public class FileSystemModelStorage extends ModelStorage {
 
@@ -23,7 +24,7 @@ public class FileSystemModelStorage extends ModelStorage {
 	@Override
 	public String readContent(StoragePath storagePath) throws ModelStorageException {
 		try {
-			return String.valueOf(Files.readAllBytes(getPath(storagePath)));
+			return Files.lines(getPath(storagePath)).collect(Collectors.joining());
 		} catch (IOException e) {
 			throw new ModelStorageException(e);
 		}

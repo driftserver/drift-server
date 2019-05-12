@@ -1,18 +1,20 @@
 <!doctype html>
 <html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
 <body>
-	<wicket:extend>
-		FLOWS
-		<div _wicket:id="flows">
-			<!--
-						<span wicket:id="name" ></span>
+<wicket:extend>
+    <wicket:fragment wicket:id="workflowFragment">
+        <div class="card text-center" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title"><span wicket:id="title"></span></h5>
+                <p class="card-text"><span wicket:id="description"></span></p>
+                <a wicket:id="select" class="btn btn-primary"><span class="fa fa-angle-double-right"></span></a>
+            </div>
+        </div>
+    </wicket:fragment>
 
-			<a href="#" wicket:id="select">
-				<div wicket:id="tile" />
-			</a>
-			<div wicket:id="active" />
-			-->
-		</div>
-	</wicket:extend>
-</body>	
+    <wicket:container wicket:id="workflows">
+        <div wicket:id="workflow"/>
+    </wicket:container>
+</wicket:extend>
+</body>
 </html>

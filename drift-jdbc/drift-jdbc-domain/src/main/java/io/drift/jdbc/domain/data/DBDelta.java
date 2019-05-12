@@ -6,9 +6,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.drift.core.recording.SystemInteraction;
 import io.drift.core.store.storage.Storable;
 
-public class DBDelta implements Serializable, Storable {
+public class DBDelta extends SystemInteraction implements Serializable, Storable {
 
 	private static final long serialVersionUID = 1L;
 
