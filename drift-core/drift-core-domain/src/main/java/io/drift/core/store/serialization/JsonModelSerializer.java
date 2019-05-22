@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -25,7 +26,7 @@ public class JsonModelSerializer extends Serializer {
 	@Override
 	public String from(Storable storable) throws StorableSerializationException {
 		try {
-			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(storable);
+			return  objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(storable);
 		} catch (JsonProcessingException e) {
 			throw new StorableSerializationException(e);
 		}
@@ -35,11 +36,6 @@ public class JsonModelSerializer extends Serializer {
 		objectMapper = new ObjectMapper();
 		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 		objectMapper.setSerializationInclusion(Include.NON_NULL);
-		objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-	}
-
-	public void addType(Class _class, String name) {
-		objectMapper.registerSubtypes(new NamedType(_class, name));
 	}
 
 	@Override
@@ -52,4 +48,7 @@ public class JsonModelSerializer extends Serializer {
 		}
 	}
 
+    public void registerModule(Module module) {
+		objectMapper.registerModule(module);
+    }
 }

@@ -1,0 +1,22 @@
+{
+  "connectionDetailMap" : {
+    "db::LOCAL" : {
+      "@type" : "JDBCConnectionDetails",
+      "userName" : "user1",
+      "password" : "examplepassword",
+      "jdbcUrl" : "jdbc://url"
+    }
+  },
+  "environments" : [ {
+    "key" : "LOCAL",
+    "name" : "Local"
+  }, {
+    "key" : "DEV",
+    "name" : "Develop"
+  } ],
+  "subSystems" : [ {
+    "key" : "db",
+    "type" : "jdbc",
+    "name" : "database"
+  } ]
+}

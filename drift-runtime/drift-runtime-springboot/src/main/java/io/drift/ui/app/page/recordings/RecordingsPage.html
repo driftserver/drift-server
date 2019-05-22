@@ -3,13 +3,37 @@
 <body>
 <wicket:extend>
 
-    <wicket:fragment wicket:id="recordingFormFragment">
-        <a class="btn btn-secondary" wicket:id="save">Create</a>
+    <wicket:fragment wicket:id="createRecordingModalFragment">
+        <div id="createRecordingModalId" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="myModalLabel" class="modal-title">New Recording</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <form wicket:id="form">
+                        <div class="modal-body">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label for="sel1">Environment:</label>
+                                    <select class="form-control" wicket:id="environment" id="sel1"></select>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn" data-dismiss="modal">Close</a>
+                            <input class="btn btn-primary" type="submit" >Create</input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </wicket:fragment>
 
     <wicket:fragment wicket:id="recordingsControlsFragment">
         <div class="btn-group" role="group">
-            <a class="btn btn-secondary" wicket:id="newRecording">New Recording</a>
+            <a data-toggle="modal" href="#createRecordingModalId" class="btn btn-primary btn-lg">New recording</a>
         </div>
     </wicket:fragment>
 
@@ -20,8 +44,7 @@
             </div>
         </div>
     </div>
-
-    <div wicket:id="createRecordingPopup"/>
+    <div wicket:id="createRecordingModal"/>
 
 </wicket:extend>
 </body>

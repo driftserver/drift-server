@@ -37,21 +37,6 @@
 		</dependency>
 
 
-		<!-- Wicket -->
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-extensions</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.wicketstuff</groupId>
-			<artifactId>wicketstuff-annotation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.wicketstuff</groupId>
-			<artifactId>wicketstuff-jquery</artifactId>
-			<version>7.9.0</version>
-		</dependency>
-
 		<!-- Spring DEV tools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -59,16 +44,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- groovy -->
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-			<version>2.5.6</version>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<!-- wicket -->
+<!--
 		<resources>
 			<resource>
 				<filtering>false</filtering>
@@ -101,8 +81,10 @@
 				</excludes>
 			</testResource>
 		</testResources>
+		-->
 		<plugins>
 			<!-- less to css compiler -->
+			<!--
 			<plugin>
 				<groupId>org.lesscss</groupId>
 				<artifactId>lesscss-maven-plugin</artifactId>
@@ -120,6 +102,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 

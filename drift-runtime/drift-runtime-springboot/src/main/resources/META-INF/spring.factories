@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.drift.ui.config.DriftServerAutoConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.drift.ui.DriftServerAutoConfig

@@ -6,29 +6,33 @@ import io.drift.core.store.serialization.JsonModelSerializer;
 import io.drift.core.store.storage.InMemoryModelStorage;
 import io.drift.core.store.storage.StorageId;
 import io.drift.core.store.storage.StoragePath;
+import io.drift.core.system.SystemDescription;
 import io.drift.jdbc.domain.data.DBDelta;
 import io.drift.jdbc.domain.data.DBSnapShot;
 import io.drift.jdbc.domain.metadata.DBMetaData;
+import io.drift.jdbc.infra.DriftJDBCJacksonModule;
 import junit.framework.TestCase;
 
 public class StoreTest extends TestCase {
 
 	private ModelStore createStore() {
 		ModelStore store = new ModelStore();
-		store.getSerializationManager().registerSerializer(new JsonModelSerializer());
+		JsonModelSerializer modelSerializer = new JsonModelSerializer();
+		modelSerializer.registerModule(new DriftJDBCJacksonModule());
+		store.getSerializationManager().registerSerializer(modelSerializer);
 		store.getModelStorageManager().registerStorage(new InMemoryModelStorage());
 		return store;
 	}
 
-	public void test() throws ModelStoreException {
+	public void test_system_interaction() throws ModelStoreException {
 		ModelStore store = createStore();
 
-		MockDBMetaDataBuilder dbMetaDataBuilder = new MockDBMetaDataBuilder();
-		MockDBDeltaBuilder dbDeltaBuilder = new MockDBDeltaBuilder();
+		MockDBMetaDataBuilder mockDBMetaDataBuilder = new MockDBMetaDataBuilder();
+		MockDBDeltaBuilder mockDBDeltaBuilder = new MockDBDeltaBuilder();
 
-		DBMetaData dbMetaData = dbMetaDataBuilder.createDbMetaData();
-		DBSnapShot dbSnapShot = dbDeltaBuilder.createDBSnapshot(dbMetaData);
-		DBDelta dbDelta = dbDeltaBuilder.createDbDelta(dbMetaData);
+		DBMetaData dbMetaData = mockDBMetaDataBuilder.createDbMetaData();
+		DBSnapShot dbSnapShot = mockDBDeltaBuilder.createDBSnapshot(dbMetaData);
+		DBDelta dbDelta = mockDBDeltaBuilder.createDbDelta(dbMetaData);
 
 		StoragePath id1 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("1"));
 		StoragePath id2 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("2"));
@@ -39,6 +43,20 @@ public class StoreTest extends TestCase {
 
 		DBSnapShot dbSnapShot2 = store.load(id1, DBSnapShot.class);
 		DBDelta dbDelta2 = store.load(id2, DBDelta.class);
+
+	}
+
+	public void test_system_description() throws ModelStoreException {
+		ModelStore store = createStore();
+
+		MockDBSystemDescriptionBuilder mockDBSystemDescriptionBuilder = new MockDBSystemDescriptionBuilder();
+		SystemDescription dbSystemDescription = mockDBSystemDescriptionBuilder.createDummy();
+
+		StoragePath id1 = new StoragePath(new StorageId("systemdescription"), new StorageId("v1"));
+
+		store.save(dbSystemDescription, id1);
+		SystemDescription dbSystemDescription2 = store.load(id1, SystemDescription.class);
+
 
 	}
 

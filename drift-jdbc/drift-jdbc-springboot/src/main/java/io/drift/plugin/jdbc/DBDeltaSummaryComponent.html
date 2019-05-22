@@ -1,7 +1,18 @@
 <html>
 <body>
 <wicket:panel>
-    <h5><span class="fa fa-database"></span> DB Delta</h5>
+    <h5>
+        <div>
+            <span class="fa fa-database"></span> <span wicket:id="name"></span>
+        </div>
+        <div>
+            <span class="text-success">I</span> <span wicket:id="inserts"></span>
+            /
+            <span class="text-warning">U</span> <span wicket:id="updates"></span>
+            /
+            <span class="text-danger">D</span> <span wicket:id="deletes"></span>
+        </div>
+    </h5>
 </wicket:panel>
 </body>
 </html>

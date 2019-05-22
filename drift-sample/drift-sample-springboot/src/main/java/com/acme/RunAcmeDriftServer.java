@@ -1,5 +1,6 @@
-package io.drift.ui;
+package com.acme;
 
+import com.acme.AcmeDriftConfig;
 import org.springframework.boot.SpringApplication;
 
 public class RunAcmeDriftServer {

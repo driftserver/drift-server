@@ -1,9 +1,8 @@
 package io.drift.core.recording;
 
-import io.drift.core.store.ModelStore;
-import io.drift.core.store.ModelStoreException;
-import io.drift.core.store.storage.StorageId;
-import io.drift.core.store.storage.StoragePath;
+import io.drift.core.system.EnvironmentKey;
+import io.drift.core.system.SystemDescription;
+import io.drift.core.systemdescription.SystemDescriptionStorage;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -13,33 +12,29 @@ import java.util.Map;
 @Component
 public class RecordingDomainServiceImpl implements RecordingDomainService {
 
-    private Map<RecordingId, RecordingContext> recordingContextsByKey = new HashMap<>();
+    private Map<RecordingId, RecordingContext> contexts = new HashMap<>();
 
-    public static final StorageId STORAGE_ID_RECORDINGS = new StorageId("recordings");
-
-    private final ModelStore modelStore;
+    private final RecordingStorage recordingStorage;
+    private final SystemDescriptionStorage systemDescriptionStorage;
     private final List<RecordingSessionContribution> contributions;
 
-    public RecordingDomainServiceImpl(ModelStore modelStore, List<RecordingSessionContribution> recordingSessionContribution) {
-        this.modelStore = modelStore;
+    public RecordingDomainServiceImpl(RecordingStorage recordingStorage, SystemDescriptionStorage systemDescriptionStorage, List<RecordingSessionContribution> recordingSessionContribution) {
+        this.recordingStorage = recordingStorage;
+        this.systemDescriptionStorage = systemDescriptionStorage;
         this.contributions = recordingSessionContribution;
     }
-
-    private StoragePath resolveRecordingPath(RecordingId recordingId) {
-        return resolveRecordingsPath().resolve(recordingId);
-    }
-
-    private StoragePath resolveRecordingsPath() {
-        return StoragePath.of(STORAGE_ID_RECORDINGS);
-    }
-
 
     @Override
     public Recording create(RecordingDescriptor recordingDescriptor) {
         RecordingId recordingId = recordingDescriptor.getRecordingId();
+        EnvironmentKey environmentKey =recordingDescriptor.getEnvironmentKey();
+
         Recording recording = new Recording(recordingId);
-        RecordingContext recordingContext = new RecordingContext(recording);
-        recordingContextsByKey.put(recordingId, recordingContext);
+        recording.setEnvironmentKey(environmentKey);
+
+        SystemDescription systemDescription = systemDescriptionStorage.load();
+        RecordingContext recordingContext = new RecordingContext(recording, systemDescription);
+        contexts.put(recordingId, recordingContext);
         return recording;
     }
 
@@ -50,18 +45,14 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     }
 
     private RecordingContext restoreContext(RecordingId recordingId) {
-        try {
-            RecordingContext recordingContext = recordingContextsByKey.get(recordingId);
-            if (recordingContext == null) {
-                Recording recording = modelStore.load(resolveRecordingPath(recordingId), Recording.class);
-                recordingContext = new RecordingContext(recording);
-                recordingContextsByKey.put(recordingId, recordingContext);
-            }
-            return recordingContext;
-        } catch (ModelStoreException e) {
-            e.printStackTrace(); ;
-            throw new IllegalArgumentException(e);
+        RecordingContext context = contexts.get(recordingId);
+        if (context == null) {
+            Recording recording = recordingStorage.load(recordingId);
+            SystemDescription systemDescription = systemDescriptionStorage.load();
+            context = new RecordingContext(recording, systemDescription);
+            contexts.put(recordingId, context);
         }
+        return context;
     }
 
     @Override
@@ -87,10 +78,6 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     @Override
     public void save(RecordingId recordingId) {
-        try {
-            modelStore.save(getById(recordingId), resolveRecordingPath(recordingId));
-        } catch (ModelStoreException e) {
-            e.printStackTrace();
-        }
+        recordingStorage.store(getById(recordingId));
     }
 }

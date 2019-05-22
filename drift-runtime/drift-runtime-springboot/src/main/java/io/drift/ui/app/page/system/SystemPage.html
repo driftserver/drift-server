@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:extend>
+
+    <!--
+    <wicket:fragment wicket:id="settingsFragment" >
+        [settings]
+    </wicket:fragment>
+    -->
+
+    <wicket:fragment wicket:id="environmentSettingsFragment" >
+        [env settings]
+        <wicket:container wicket:id="subsystems">
+            <div wicket:id="subsystemSettings" />
+        </wicket:container>
+    </wicket:fragment>
+
+    [environments]
+    <wicket:container wicket:id="environments">
+        <div wicket:id="environment" />
+    </wicket:container>
+    [subsystems]
+    <wicket:container wicket:id="subSystems">
+        <div wicket:id="subSystem" />
+    </wicket:container>
+
+    <div wicket:id="environmentSettings" />
+
+</wicket:extend>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package io.drift.core.recording;
 
 import io.drift.core.store.storage.Storable;
+import io.drift.core.system.EnvironmentKey;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ public class Recording implements Storable {
 	private List<RecordingStep> steps = new ArrayList<>();
 
 	private RecordingId id;
+
+	private EnvironmentKey environmentKey;
 
 	protected Recording() {
 	}
@@ -42,4 +45,12 @@ public class Recording implements Storable {
     public SubSystemDescription getSubSystemDescription(String subSystemName) {
 		return subSystemDescriptions.get(subSystemName);
 	}
+
+    public void setEnvironmentKey(EnvironmentKey environmentKey) {
+        this.environmentKey = environmentKey;
+    }
+
+    public EnvironmentKey getEnvironmentKey() {
+        return environmentKey;
+    }
 }

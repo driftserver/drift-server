@@ -10,25 +10,25 @@ public class InMemoryModelStorage extends ModelStorage {
 	private Map<StoragePath, String> metaContentById = new HashMap<StoragePath, String>();
 
 	@Override
-	public void writeContent(StoragePath storageId, String content) throws ModelStorageException {
+	public void writeContent(StoragePath storagePath, String content) throws ModelStorageException {
 		System.out.println(">>>> " + content);
-		contentById.put(storageId, content);
+		contentById.put(storagePath, content);
 	}
 
 	@Override
-	public String readContent(StoragePath storageId) throws ModelStorageException {
-		return contentById.get(storageId);
+	public String readContent(StoragePath storagePath) throws ModelStorageException {
+		return contentById.get(storagePath);
 	}
 
 	@Override
-	public void writeMetaContent(StoragePath storageId, String metaContent) throws ModelStorageException {
+	public void writeMetaContent(StoragePath storagePath, String metaContent) throws ModelStorageException {
 		System.out.println(">>>> " + metaContent);
-		metaContentById.put(storageId, metaContent);
+		metaContentById.put(storagePath, metaContent);
 	}
 
 	@Override
-	public String readMetaContent(StoragePath storageId) throws ModelStorageException {
-		return metaContentById.get(storageId);
+	public String readMetaContent(StoragePath storagePath) throws ModelStorageException {
+		return metaContentById.get(storagePath);
 	}
 
 }

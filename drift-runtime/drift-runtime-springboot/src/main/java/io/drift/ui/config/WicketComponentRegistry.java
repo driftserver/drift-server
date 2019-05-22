@@ -2,12 +2,12 @@ package io.drift.ui.config;
 
 import org.apache.wicket.Component;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@org.springframework.stereotype.Component
 public class WicketComponentRegistry {
 
     private class RegistryKey {

@@ -2,6 +2,8 @@ package io.drift.ui.infra;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,6 +25,9 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 public class WicketUtil {
 
 	public interface SerializableConsumer<T> extends Consumer<T>, Serializable {
+	}
+
+	public interface SerializableBiConsumer<T, U> extends BiConsumer<T, U>, Serializable {
 	}
 
 	public static void addClass(Component component, String className) {
@@ -48,8 +53,20 @@ public class WicketUtil {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void onClick(AjaxRequestTarget target) {
-				lambda.accept(target);
+			public void onClick(Optional<AjaxRequestTarget> target) {
+				lambda.accept(target.get());
+			}
+		};
+		return link;
+	}
+
+	public static <PARAM> AjaxFallbackLink<Void> ajaxLink(String wicketId, SerializableBiConsumer<AjaxRequestTarget, PARAM> lambda, PARAM param) {
+		AjaxFallbackLink<Void> link = new AjaxFallbackLink<Void>(wicketId) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(Optional<AjaxRequestTarget> target) {
+				lambda.accept(target.get(), param);
 			}
 		};
 		return link;

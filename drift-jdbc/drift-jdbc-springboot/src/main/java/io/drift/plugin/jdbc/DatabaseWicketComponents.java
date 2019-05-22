@@ -17,7 +17,7 @@ public class DatabaseWicketComponents {
             viewType = SystemInteractionSummaryView.class
     )
     public DBDeltaSummaryComponent dbDeltaSummaryView(String id, DBDelta dbDelta) {
-        return new DBDeltaSummaryComponent(id);
+        return new DBDeltaSummaryComponent(id, dbDelta.getSubSystem(), dbDelta.getSummary().inserts, dbDelta.getSummary().updates, dbDelta.getSummary().deletes);
     }
 
     @WicketComponentFactoryMethod(

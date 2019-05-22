@@ -6,6 +6,8 @@ import io.drift.core.recording.RecordingDescriptor;
 import io.drift.core.recording.RecordingDomainService;
 import io.drift.core.recording.RecordingId;
 import io.drift.core.store.IDGenerator;
+import io.drift.core.system.EnvironmentKey;
+import io.drift.core.system.SystemDescriptionDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +20,14 @@ public class RecordingActions {
     @Autowired
     private IDGenerator idGenerator;
 
-    public Recording create() {
+    public Recording create(EnvironmentDTO environmentDTO) {
+        EnvironmentKey environmentKey = new EnvironmentKey(environmentDTO.getKey());
         RecordingDescriptor recordingDescriptor = RecordingDescriptor.builder()
                 .withRecordingId(new RecordingId(idGenerator.createId()))
+                .withEnvironmentKey(environmentKey)
                 .build();
         return recordingDomainService.create(recordingDescriptor);
     }
-
 
     public void start(RecordingId recordingId) {
         recordingDomainService.start(recordingId);

@@ -156,7 +156,6 @@ public class RecordingPage extends MainLayout {
                 item.add(select);
             }));
             if (state.isSystemInteractionSelected()) {
-                //add(label("interactionDetail", "[DETAIL]"));
                 add(createSystemInteractionDetail("interactionDetail", getSelectedSystemInteraction(), getSelectedSubSystem()));
             } else {
                 add(label("interactionDetail"));
@@ -226,28 +225,29 @@ public class RecordingPage extends MainLayout {
 
     public class ScenarioRecorderFragment extends Fragment {
 
-        private Component scenario, stepDetails, systemInteractions;
+        private Component scenario, systemInteractions; // , stepDetails
 
         public ScenarioRecorderFragment(String id) {
             super(id, "scenarioRecorderFragment", RecordingPage.this);
             add(scenario = label("scenario", "[Scenario]"));
-            add(stepDetails = label("stepDetails", "[Step Details]"));
+            // add(stepDetails = label("stepDetails", "[Step Details]"));
             add(systemInteractions = label("systemInteractions", "[System Interactions]"));
             scenario.setOutputMarkupId(true);
-            stepDetails.setOutputMarkupId(true);
+            //stepDetails.setOutputMarkupId(true);
         }
 
         @Override
         protected void onConfigure() {
-            stepDetails.setVisible(state.isScenarioItemselected());
+            // stepDetails.setVisible(state.isScenarioItemselected());
             systemInteractions.setVisible(state.isScenarioItemselected());
+            super.onConfigure();
         }
 
         @Override
         protected void onBeforeRender() {
             replace(scenario = new ScenarioFragment("scenario"));
             if (state.isScenarioItemselected()) {
-                replace(stepDetails = new ScenarioStepDetailsFragment("stepDetails"));
+                // replace(stepDetails = new ScenarioStepDetailsFragment("stepDetails"));
                 replace(systemInteractions = new SystemInteractionsFragment("systemInteractions"));
             }
             super.onBeforeRender();
