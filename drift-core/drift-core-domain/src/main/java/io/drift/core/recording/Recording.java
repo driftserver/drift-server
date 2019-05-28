@@ -12,11 +12,15 @@ public class Recording implements Storable {
 
 	private Map<String, SubSystemDescription> subSystemDescriptions = new HashMap<>();
 
+	private SystemState initialState, finalstate;
+
 	private List<RecordingStep> steps = new ArrayList<>();
 
 	private RecordingId id;
 
 	private EnvironmentKey environmentKey;
+
+	private String name;
 
 	protected Recording() {
 	}
@@ -52,5 +56,29 @@ public class Recording implements Storable {
 
     public EnvironmentKey getEnvironmentKey() {
         return environmentKey;
+    }
+
+	public SystemState getInitialState() {
+		return initialState;
+	}
+
+	public void setInitialState(SystemState initialState) {
+		this.initialState = initialState;
+	}
+
+	public SystemState getFinalstate() {
+		return finalstate;
+	}
+
+	public void setFinalstate(SystemState finalstate) {
+		this.finalstate = finalstate;
+	}
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

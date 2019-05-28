@@ -13,9 +13,13 @@ public class RecordingContext {
 
     private Recording recording;
 
+    private RecordingState state;
+
     private SystemDescription systemDescription;
 
     private RecordingStep currentStep;
+
+    private RecordingSessionSettings settings = new RecordingSessionSettings();
 
     public RecordingContext(Recording recording, SystemDescription systemDescription) {
         this.recording = recording;
@@ -38,7 +42,7 @@ public class RecordingContext {
         return systemDescription;
     }
 
-    public Map<SubSystemKey, SubSystemConnectionDetails> getSubSystemDetails(String subsystemType) {
+    public Map<SubSystemKey, SubSystemConnectionDetails> getSubSystems(String subsystemType) {
         EnvironmentKey environmentKey = recording.getEnvironmentKey();
         return systemDescription.getConnectionDetails(environmentKey, subsystemType);
     }
@@ -53,4 +57,17 @@ public class RecordingContext {
     public RecordingId getRecordingId() {
         return recording.getId();
     }
+
+    public RecordingState getState() {
+        return state;
+    }
+
+    public void setState(RecordingState state) {
+        this.state = state;
+    }
+
+    public RecordingSessionSettings getSettings() {
+        return settings;
+    }
+
 }

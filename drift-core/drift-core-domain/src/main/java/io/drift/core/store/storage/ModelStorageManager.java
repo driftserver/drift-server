@@ -11,7 +11,7 @@ public class ModelStorageManager {
 		defaultStorage = modelStorage;
 	}
 	
-	public ModelStorage forId(StoragePath storageId) {
+	public ModelStorage forPath(StoragePath storageId) {
 		return defaultStorage;
 	}
 

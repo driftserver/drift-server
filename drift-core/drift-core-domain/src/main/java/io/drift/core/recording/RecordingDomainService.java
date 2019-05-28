@@ -1,5 +1,7 @@
 package io.drift.core.recording;
 
+import java.util.List;
+
 public interface RecordingDomainService {
 
     Recording create(RecordingDescriptor recordingDescriptor);
@@ -13,4 +15,9 @@ public interface RecordingDomainService {
     Recording getById(RecordingId recordingId);
 
     void save(RecordingId recordingId);
+
+    List<RecordingSummary> getRecordings();
+
+    RecordingSessionSettings getRecordingSessionSettings(RecordingId recordingId);
+
 }

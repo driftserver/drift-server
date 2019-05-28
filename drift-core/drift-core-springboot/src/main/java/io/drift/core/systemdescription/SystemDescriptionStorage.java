@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class SystemDescriptionStorage {
 
-    private static final StorageId STORAGE_ID_SYSTEM_DESCRIPTION = new StorageId("systemdescription.json");
+    private static final StorageId SYSTEM_DESCRIPTION_STORAGE_ID = new StorageId("systemdescription.json");
+
+    private static final StoragePath SYSTEM_STORAGE_PATH = StoragePath.of(new StorageId("system"));
 
     private final ModelStore modelStore;
 
@@ -18,13 +20,9 @@ public class SystemDescriptionStorage {
         this.modelStore = modelStore;
     }
 
-    private StoragePath resolveSystemDescriptionPath() {
-        return StoragePath.of(STORAGE_ID_SYSTEM_DESCRIPTION);
-    }
-
     public SystemDescription load() {
         try {
-            SystemDescription systemDescription = modelStore.load(resolveSystemDescriptionPath(), SystemDescription.class);
+            SystemDescription systemDescription = modelStore.load(SYSTEM_STORAGE_PATH, SYSTEM_DESCRIPTION_STORAGE_ID, SystemDescription.class);
             return systemDescription;
         } catch (ModelStoreException e) {
             e.printStackTrace();

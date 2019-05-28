@@ -6,9 +6,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.drift.core.recording.SubSystemState;
 import io.drift.core.store.storage.Storable;
 
-public class DBSnapShot implements Storable {
+public class DBSnapShot implements Storable, SubSystemState {
 
 	private DBSnapshotId id;
 

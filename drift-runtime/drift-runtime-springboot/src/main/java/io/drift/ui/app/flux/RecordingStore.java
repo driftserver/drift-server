@@ -4,6 +4,9 @@ import io.drift.core.recording.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class RecordingStore {
 
@@ -27,4 +30,14 @@ public class RecordingStore {
         return getRecording(recordingId).getSubSystemDescription(subSystem);
     }
 
+    public RecorderControlDTO getRecorderControlState(RecordingId recordingId) {
+        RecordingSessionSettings recordingSessionSettings = service.getRecordingSessionSettings(recordingId);
+        return new RecorderControlDTO(recordingSessionSettings.isAutoSave());
+    }
+
+    public List<RecordingSummaryDTO> getRecordingSummaries() {
+        return service.getRecordings().stream()
+                .map(summary -> new RecordingSummaryDTO(summary.getRecordingId(), summary.getName()))
+                .collect(Collectors.toList());
+    }
 }

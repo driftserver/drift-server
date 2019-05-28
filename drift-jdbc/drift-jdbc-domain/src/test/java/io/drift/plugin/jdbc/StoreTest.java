@@ -3,7 +3,7 @@ package io.drift.plugin.jdbc;
 import io.drift.core.store.ModelStore;
 import io.drift.core.store.ModelStoreException;
 import io.drift.core.store.serialization.JsonModelSerializer;
-import io.drift.core.store.storage.InMemoryModelStorage;
+import io.drift.core.store.storage.FileSystemModelStorage;
 import io.drift.core.store.storage.StorageId;
 import io.drift.core.store.storage.StoragePath;
 import io.drift.core.system.SystemDescription;
@@ -15,12 +15,13 @@ import junit.framework.TestCase;
 
 public class StoreTest extends TestCase {
 
+/*
 	private ModelStore createStore() {
 		ModelStore store = new ModelStore();
 		JsonModelSerializer modelSerializer = new JsonModelSerializer();
 		modelSerializer.registerModule(new DriftJDBCJacksonModule());
 		store.getSerializationManager().registerSerializer(modelSerializer);
-		store.getModelStorageManager().registerStorage(new InMemoryModelStorage());
+		store.getModelStorageManager().registerStorage(new FileSystemModelStorage());
 		return store;
 	}
 
@@ -59,5 +60,5 @@ public class StoreTest extends TestCase {
 
 
 	}
-
+*/
 }

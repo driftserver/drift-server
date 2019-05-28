@@ -3,6 +3,32 @@
 <body>
 <wicket:extend>
 
+    <wicket:fragment wicket:id="recordingsFragment">
+        <div class="container">
+            <h2>Recordings</h2>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table table-striped table-border">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr wicket:id="recordings">
+                            <td>
+                                <a wicket:id="select">
+                                    <span wicket:id="name"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </wicket:fragment>
+
     <wicket:fragment wicket:id="createRecordingModalFragment">
         <div id="createRecordingModalId" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
@@ -23,7 +49,7 @@
                         </div>
                         <div class="modal-footer">
                             <a class="btn" data-dismiss="modal">Close</a>
-                            <input class="btn btn-primary" type="submit" >Create</input>
+                            <input class="btn btn-primary" type="submit">Create</input>
                         </div>
                     </form>
                 </div>
@@ -44,7 +70,8 @@
             </div>
         </div>
     </div>
-    <div wicket:id="createRecordingModal"/>
+    <div wicket:id="recordings"></div>
+    <div wicket:id="createRecordingModal"></div>
 
 </wicket:extend>
 </body>

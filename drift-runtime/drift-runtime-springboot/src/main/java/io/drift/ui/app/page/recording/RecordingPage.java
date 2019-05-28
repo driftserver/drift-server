@@ -216,9 +216,11 @@ public class RecordingPage extends MainLayout {
             add(ajaxLink("stopRecording", target -> {
                 recordingActions.finish(state.getRecordingId());
             }));
-            add(ajaxLink("saveRecording", target -> {
+            Link saveLink;
+            add(saveLink = ajaxLink("saveRecording", target -> {
                 recordingActions.save(state.getRecordingId());
             }));
+            saveLink.setEnabled(!recorderStore.getRecorderControlState(state.getRecordingId()).isAutosave());
 
         }
     }

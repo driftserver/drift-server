@@ -1,48 +1,67 @@
 package io.drift.core.store;
 
-import org.junit.Assert;
-
 import io.drift.core.store.serialization.JsonModelSerializer;
-import io.drift.core.store.storage.InMemoryModelStorage;
+import io.drift.core.store.storage.FileSystemModelStorage;
 import io.drift.core.store.storage.StorageId;
 import io.drift.core.store.storage.StoragePath;
 import junit.framework.TestCase;
+import org.junit.Assert;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
 
 public class StoreTest extends TestCase {
+
+	private Path modelStorageDir;
+
+	protected void setUp() throws Exception {
+		modelStorageDir = Files.createTempDirectory("model");
+		System.out.println("modelStorageDir: " + modelStorageDir);
+	}
 
 	private ModelStore createStore() {
 		ModelStore store = new ModelStore();
 
 		store.getSerializationManager().registerSerializer(new JsonModelSerializer());
-		store.getModelStorageManager().registerStorage(new InMemoryModelStorage());
-		store.getMetaDataManager().registerMetaDataCreator(MyModel.class, new MyModelMetaModelCreator());
+		store.getModelStorageManager().registerStorage(new FileSystemModelStorage(modelStorageDir));
 		return store;
 	}
 
 	public void testSaveThenGetMetaData() throws ModelStoreException {
 		ModelStore store = createStore();
 
-		StoragePath storageId = new StoragePath(new StorageId("a"), new StorageId("b"));
+		StorageId storageId = new StorageId(UUID.randomUUID().toString());
+		StoragePath parentPath = new StoragePath(new StorageId("a"), new StorageId("b"));
 
 		String att1 = "att1";
 		String att2 = "att2";
 		MyModel model = new MyModel(att1, att2);
-		store.save(model, storageId);
+		MetaData metaData = MetaData.builder()
+				.withPath(parentPath)
+				.withStorageId(storageId)
+				.build();
+		store.save(model, metaData);
 
-		MetaModel metaModel = store.getMetaModel(storageId);
-		Assert.assertNotNull(metaModel);
-		Assert.assertEquals(MyModel.class.toString(), metaModel.getModelType());
+		MetaData metaData1 = store.getMetaData(storageId);
+		Assert.assertNotNull(metaData1);
+		Assert.assertEquals(metaData1.getStorageId(), metaData.getStorageId());
 	}
 
 	public void testSaveThenLoad() throws ModelStoreException {
 		ModelStore store = createStore();
 
-		StoragePath storageId = new StoragePath(new StorageId("a"), new StorageId("b"));
+		StorageId storageId = new StorageId("id");
+		StoragePath parentPath = new StoragePath(new StorageId("a"), new StorageId("b"));
 
 		String att1 = "att1";
 		String att2 = "att2";
 		MyModel model = new MyModel(att1, att2);
-		store.save(model, storageId);
+		MetaData metaData = MetaData.builder()
+				.withPath(parentPath)
+				.withStorageId(storageId)
+				.build();
+		store.save(model, metaData);
 
 		MyModel model2 = store.load(storageId, MyModel.class);
 

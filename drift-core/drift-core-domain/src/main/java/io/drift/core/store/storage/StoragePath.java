@@ -1,10 +1,21 @@
 package io.drift.core.store.storage;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StoragePath {
+
+	public static StoragePath fromExternal(String string) {
+		String[] parts = string.split("/");
+		StorageId[] ids = new StorageId[parts.length];
+		for (int i= 0; i < parts.length; i++) {
+			ids[i] = new StorageId(parts[i]);
+		}
+		return new StoragePath(ids);
+	}
 
 	public static StoragePath of(StorageId... fragments) {
 		return new StoragePath(fragments);
@@ -16,9 +27,17 @@ public class StoragePath {
 		this.fragments = Arrays.asList(fragments);
 	}
 
+	public StoragePath(List<StorageId> fragments) {
+		this.fragments = fragments;
+	}
+
 	public StoragePath(StoragePath parent, StorageId... subFragments) {
 		this.fragments = new ArrayList<>(parent.fragments);
 		this.fragments.addAll(Arrays.asList(subFragments));
+	}
+
+	public String toExternal() {
+		return fragments.stream().map(fragment->fragment.getId()).collect(Collectors.joining("/"));
 	}
 
 	@Override
@@ -54,4 +73,15 @@ public class StoragePath {
 		return new StoragePath(this, subFragments);
 	}
 
+	public boolean isDirectChild(StoragePath parent) {
+		return parent.equals(getParentPath());
+	}
+
+	private StoragePath getParentPath() {
+		return new StoragePath(fragments.subList(0, fragments.size()-2));
+	}
+
+	public StorageId lastfragment() {
+		return fragments.get(fragments.size()-1);
+	}
 }

@@ -1,15 +1,20 @@
 package io.drift.core.recording;
 
+import io.drift.core.store.MetaData;
 import io.drift.core.store.ModelStore;
 import io.drift.core.store.ModelStoreException;
 import io.drift.core.store.storage.StorageId;
 import io.drift.core.store.storage.StoragePath;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class RecordingStorage {
 
-    private static final StorageId STORAGE_ID_RECORDINGS = new StorageId("recordings");
+    private static final StoragePath RECORDINGS_PATH = StoragePath.of(new StorageId("recordings"));
 
     private final ModelStore modelStore;
 
@@ -17,18 +22,10 @@ public class RecordingStorage {
         this.modelStore = modelStore;
     }
 
-    private StoragePath resolveRecordingPath(RecordingId recordingId) {
-        return resolveRecordingsPath().resolve(recordingId);
-    }
-
-    private StoragePath resolveRecordingsPath() {
-        return StoragePath.of(STORAGE_ID_RECORDINGS);
-    }
-
 
     public Recording load(RecordingId recordingId) {
         try {
-            return modelStore.load(resolveRecordingPath(recordingId), Recording.class);
+            return modelStore.load(recordingId , Recording.class);
         } catch (ModelStoreException e) {
             e.printStackTrace(); ;
             throw new IllegalArgumentException(e);
@@ -37,7 +34,13 @@ public class RecordingStorage {
 
     public void store(Recording recording) {
         try {
-            modelStore.save(recording, resolveRecordingPath(recording.getId()));
+            MetaData metaData = MetaData.builder()
+                    .withStorageId(recording.getId())
+                    .withPath(RECORDINGS_PATH)
+                    .withTimeStamp(LocalDateTime.now())
+                    .withDescription(recording.getName())
+                    .build();
+            modelStore.save(recording, metaData);
         } catch (ModelStoreException e) {
             e.printStackTrace(); ;
             throw new IllegalArgumentException(e);
@@ -45,4 +48,14 @@ public class RecordingStorage {
 
     }
 
+    public List<RecordingSummary> list() {
+        try {
+            return modelStore.list(RECORDINGS_PATH).stream()
+                .map(metaData -> new RecordingSummary(new RecordingId(metaData.getStorageId().getId()), metaData.getTimeStamp(), metaData.getDescription()))
+                .collect(Collectors.toList());
+        } catch (ModelStoreException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(e);
+        }
+    }
 }
