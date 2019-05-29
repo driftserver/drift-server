@@ -10,20 +10,27 @@
 
                     <h3>Recording</h3>
 
-                    <h5>Initial state</h5>
+                    <a wicket:id="selectInitialState">
+                        <h5>Initial state</h5>
+                    </a>
+
                     <div class="list-group"></div>
 
                     <h5>Steps</h5>
                     <div class="list-group">
                         <wicket:container wicket:id="steps">
-                            <a wicket:id="select" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <a wicket:id="select"
+                               class="list-group-item list-group-item-action flex-column align-items-start">
                                 <span wicket:id="title"/>
                             </a>
                         </wicket:container>
 
                     </div>
 
-                    <h5>Final state</h5>
+                    <a wicket:id="selectFinalState">
+                        <h5>Final state</h5>
+                    </a>
+
                     <div class="list-group">
                         <a class="list-group-item list-group-item-action flex-column align-items-start">
                             <span/>
@@ -69,15 +76,16 @@
                 <div>
                     <div class="btn-group" role="group">
                         <a wicket:id="previousButton" class="btn" href="#">previous</a>
-                        <a wicket:id="nextButton"  class="btn" href="#">next</a>
+                        <a wicket:id="nextButton" class="btn" href="#">next</a>
                     </div>
                 </div>
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-3">
                             <div class="list-group" wicket:id="interactions">
-                                <a wicket:id="select" class="list-group-item list-group-item-action flex-column align-items-start">
-                                    <span wicket:id="interactionThumbnail" />
+                                <a wicket:id="select"
+                                   class="list-group-item list-group-item-action flex-column align-items-start">
+                                    <span wicket:id="interactionThumbnail"/>
                                 </a>
                             </div>
                         </div>
@@ -100,6 +108,7 @@
             <div class="col-9">
                 <div _wicket:id="stepDetails"></div>
                 <div wicket:id="systemInteractions"></div>
+                <div wicket:id="systemState"></div>
             </div>
         </div>
     </wicket:fragment>
@@ -111,6 +120,32 @@
             <a class="btn btn-secondary" wicket:id="takeSnapshot"><i class="fa fa-camera-retro"></i> Take Snapshot</a>
             <a class="btn btn-secondary" wicket:id="stopRecording"><i class="fa fa-plug"></i> Disconnect</a>
             <a class="btn btn-secondary" wicket:id="saveRecording"><i class="fa fa-save"></i> Save</a>
+        </div>
+    </wicket:fragment>
+
+    <wicket:fragment wicket:id="systemStateFragment">
+        <div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="list-group">
+                                    <wicket:container wicket:id="subSystems">
+                                        <a wicket:id="selectSubSystem"
+                                           class="list-group-item list-group-item-action flex-column align-items-start">
+                                            <span wicket:id="subSystemName"/>
+                                        </a>
+                                    </wicket:container>
+                                </div>
+                            </div>
+                            <div class="col-9">
+                                <div wicket:id="selectedSubSystemState"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </wicket:fragment>
 

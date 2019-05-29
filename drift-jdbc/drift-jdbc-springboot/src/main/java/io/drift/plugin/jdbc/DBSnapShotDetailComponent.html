@@ -1,0 +1,33 @@
+<html>
+<body>
+<wicket:fragment wicket:id="tableSnapShotFragment">
+    <span wicket:id="tableName"/>
+    <table _style="table-layout: fixed;width: 170px;" class="table table-bordered table-sm table-hover ">
+        <thead>
+        <tr class="">
+            <th wicket:id="columnsInOrder" style="width:150pt">
+                <span wicket:id="columnName"/>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr wicket:id="rows">
+            <td wicket:id="columns" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
+                <span wicket:id="value"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</wicket:fragment>
+
+<wicket:panel>
+    <div>
+        <wicket:container wicket:id="tableSnapShots">
+            <div wicket:id="tableSnapShot"/>
+        </wicket:container>
+    </div>
+
+</wicket:panel>
+</body>
+</html>
+

@@ -20,8 +20,7 @@ public class RecordingActions {
     @Autowired
     private IDGenerator idGenerator;
 
-    public Recording create(EnvironmentDTO environmentDTO) {
-        EnvironmentKey environmentKey = new EnvironmentKey(environmentDTO.getKey());
+    public Recording create(EnvironmentKey environmentKey) {
         RecordingDescriptor recordingDescriptor = RecordingDescriptor.builder()
                 .withRecordingId(new RecordingId(idGenerator.createId()))
                 .withEnvironmentKey(environmentKey)

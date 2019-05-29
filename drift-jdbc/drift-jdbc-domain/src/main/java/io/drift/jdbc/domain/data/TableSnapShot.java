@@ -1,9 +1,10 @@
 package io.drift.jdbc.domain.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableSnapShot {
+public class TableSnapShot implements Serializable {
 
 	private List<Row> rows = new ArrayList<>();
 

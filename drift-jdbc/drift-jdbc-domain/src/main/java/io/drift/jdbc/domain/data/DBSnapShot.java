@@ -1,5 +1,6 @@
 package io.drift.jdbc.domain.data;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.drift.core.recording.SubSystemState;
 import io.drift.core.store.storage.Storable;
 
-public class DBSnapShot implements Storable, SubSystemState {
+public class DBSnapShot implements Serializable, Storable, SubSystemState {
 
 	private DBSnapshotId id;
 

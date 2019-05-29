@@ -1,6 +1,7 @@
 package io.drift.ui.app.page.recordings;
 
 import io.drift.core.recording.RecordingId;
+import io.drift.core.system.EnvironmentKey;
 import io.drift.ui.app.flux.EnvironmentDTO;
 import io.drift.ui.app.flux.RecordingActions;
 import io.drift.ui.app.flux.RecordingStore;
@@ -60,7 +61,7 @@ public class RecordingsPage extends MainLayout2 {
             Form form = new StatelessForm<FormData>("form", new CompoundPropertyModel<>(formData)) {
                 @Override
                 protected void onSubmit() {
-                    navigateToRecording(recordingActions.create(formData.environment).getId());
+                    navigateToRecording(recordingActions.create(new EnvironmentKey(formData.environment.getKey())).getId());
                 }
 
             };

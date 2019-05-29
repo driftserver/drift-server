@@ -1,12 +1,10 @@
 package io.drift.ui.app.page.recording;
 
-import io.drift.core.recording.RecordingId;
-import io.drift.core.recording.RecordingStep;
-import io.drift.core.recording.SubSystemDescription;
-import io.drift.core.recording.SystemInteraction;
+import io.drift.core.recording.*;
 import io.drift.ui.app.flux.RecordingActions;
 import io.drift.ui.app.flux.RecordingStore;
 import io.drift.ui.app.page.layout.MainLayout;
+import io.drift.ui.app.page.recordings.RecordingsPage;
 import io.drift.ui.config.WicketComponentRegistry;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -57,10 +55,29 @@ public class RecordingPage extends MainLayout {
 
     }
 
+    class SystemStateFragmentState implements  Serializable {
+        private String selectedSubSystem;
+
+        public String getSelectedSubSystem() {
+            return selectedSubSystem;
+        }
+
+        public void setSelectedSubSystem(String selectedSubSystem) {
+            this.selectedSubSystem = selectedSubSystem;
+        }
+
+        public boolean isSubSystemSelected() {
+            return selectedSubSystem != null;
+        }
+    }
+
     class RecorderPageState implements Serializable {
         private RecordingId recordingId;
+        private boolean initialStateSelected;
+        private boolean finalStateSelected;
         private Integer selectedSystemInteractionIdx;
         private Integer selectedScenarioItemIdx;
+        private SystemStateFragmentState systemStateFragmentState;
 
         public RecordingId getRecordingId() {
             return recordingId;
@@ -78,11 +95,19 @@ public class RecordingPage extends MainLayout {
             this.recordingId = recordingId;
         }
 
+        private void resetSelections() {
+            initialStateSelected = false;
+            finalStateSelected = false;
+            selectedScenarioItemIdx = null;
+            selectedSystemInteractionIdx = null;
+        }
+
         public void setSelectedSystemInteractionIdx(Integer selectedSystemInteractionIdx) {
             this.selectedSystemInteractionIdx = selectedSystemInteractionIdx;
         }
 
         public void setSelectedScenarioItemIdx(Integer selectedScenarioItemIdx) {
+            resetSelections();
             this.selectedScenarioItemIdx = selectedScenarioItemIdx;
         }
 
@@ -114,8 +139,31 @@ public class RecordingPage extends MainLayout {
                 selectedScenarioItemIdx++;
         }
 
-    }
+        public void setInitalStateSelected() {
+            resetSelections();
+            initialStateSelected = true;
+            systemStateFragmentState = new SystemStateFragmentState();
+        }
 
+        public boolean isInitialStateSelected() {
+            return initialStateSelected;
+        }
+
+        public void setFinalStateSelected() {
+            resetSelections();
+            finalStateSelected = true;
+            systemStateFragmentState = new SystemStateFragmentState();
+        }
+
+        public boolean isFinalStateSelected() {
+            return finalStateSelected;
+        }
+
+        public SystemStateFragmentState getSystemStateFragmentState() {
+            return systemStateFragmentState;
+        }
+
+    }
 
     public class ScenarioStepDetailsFragment extends Fragment {
         public ScenarioStepDetailsFragment(String id) {
@@ -132,6 +180,23 @@ public class RecordingPage extends MainLayout {
     }
     private SubSystemDescription getSelectedSubSystem() {
         return recorderStore.getSubSystemDescription(state.getRecordingId(), getSelectedSystemInteraction().getSubSystem());
+    }
+    private SubSystemDescription  getSubSystemDescription(String subSystem) {
+        return recorderStore.getSubSystemDescription(state.getRecordingId(), subSystem);
+    }
+
+    private SubSystemState getSelectedSubSystemState() {
+        String subSystemName = state.getSystemStateFragmentState().getSelectedSubSystem();
+        return getSelectedSystemState().getSubSystemState(subSystemName);
+    }
+
+    private SystemState getSelectedSystemState() {
+        if (state.isInitialStateSelected())
+            return recorderStore.getRecording(state.getRecordingId()).getInitialState();
+        else if (state.isFinalStateSelected())
+            return recorderStore.getRecording(state.getRecordingId()).getFinalstate();
+        else
+            return null;
     }
 
     public class SystemInteractionsFragment extends Fragment {
@@ -163,6 +228,25 @@ public class RecordingPage extends MainLayout {
         }
     }
 
+    public class SystemStateFragment extends Fragment {
+        public SystemStateFragment(String id) {
+            super(id, "systemStateFragment", RecordingPage.this);
+            add(listView("subSystems", getSelectedSystemState().getSubSystemStates(), item -> {
+                Link<Void> select = ajaxLink("selectSubSystem", target -> {
+                    state.getSystemStateFragmentState().setSelectedSubSystem(item.getModelObject());
+                    target.add(scenarioRecorder);
+                });
+                item.add(select);
+                select.add(label("subSystemName", item.getModelObject()));
+            }));
+            if (state.getSystemStateFragmentState().isSubSystemSelected()) {
+                add(createSubSystemStateDetail("selectedSubSystemState", getSelectedSubSystemState(), getSubSystemDescription(state.getSystemStateFragmentState().getSelectedSubSystem())));
+            } else {
+                add(label("selectedSubSystemState", "[selectedSubSystemState]"));
+            }
+        }
+    }
+
     @SpringBean
     private WicketComponentRegistry registry;
 
@@ -174,10 +258,23 @@ public class RecordingPage extends MainLayout {
         return registry.render(id, systemInteraction, SystemInteractionDetailView.class, subSystemDescription);
     }
 
+    private Component createSubSystemStateDetail(String id, SubSystemState subSystemState, SubSystemDescription subSystemDescription) {
+        return registry.render(id, subSystemState, SubSystemStateDetailView.class, subSystemDescription);
+    }
+
+
     public class ScenarioFragment extends Fragment {
 
         public ScenarioFragment(String id) {
             super(id, "scenarioFragment", RecordingPage.this);
+            add(ajaxLink("selectInitialState", target -> {
+                state.setInitalStateSelected();
+                target.add(scenarioRecorder);
+            }));
+            add(ajaxLink("selectFinalState", target -> {
+                state.setFinalStateSelected();
+                target.add(scenarioRecorder);
+            }));
             add(listView("steps", indices(recorderStore.getRecording(state.getRecordingId()).getSteps()), stepItem -> {
                 Integer idx = stepItem.getModelObject();
                 Link<Void> select = ajaxLink("select", target -> {
@@ -227,13 +324,14 @@ public class RecordingPage extends MainLayout {
 
     public class ScenarioRecorderFragment extends Fragment {
 
-        private Component scenario, systemInteractions; // , stepDetails
+        private Component scenario, systemInteractions, systemState; // , stepDetails
 
         public ScenarioRecorderFragment(String id) {
             super(id, "scenarioRecorderFragment", RecordingPage.this);
             add(scenario = label("scenario", "[Scenario]"));
             // add(stepDetails = label("stepDetails", "[Step Details]"));
             add(systemInteractions = label("systemInteractions", "[System Interactions]"));
+            add(systemState = label("systemState", "[System State]"));
             scenario.setOutputMarkupId(true);
             //stepDetails.setOutputMarkupId(true);
         }
@@ -242,6 +340,7 @@ public class RecordingPage extends MainLayout {
         protected void onConfigure() {
             // stepDetails.setVisible(state.isScenarioItemselected());
             systemInteractions.setVisible(state.isScenarioItemselected());
+            systemState.setVisible(state.isInitialStateSelected() || state.isFinalStateSelected());
             super.onConfigure();
         }
 
@@ -252,10 +351,16 @@ public class RecordingPage extends MainLayout {
                 // replace(stepDetails = new ScenarioStepDetailsFragment("stepDetails"));
                 replace(systemInteractions = new SystemInteractionsFragment("systemInteractions"));
             }
+            if (state.isInitialStateSelected() || state.isFinalStateSelected()) {
+                replace(systemState = new SystemStateFragment("systemState"));
+            }
+
             super.onBeforeRender();
         }
 
     }
+
+
 
     private ScenarioRecorderFragment scenarioRecorder;
 
