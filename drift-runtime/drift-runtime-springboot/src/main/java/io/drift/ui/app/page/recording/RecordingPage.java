@@ -4,10 +4,10 @@ import io.drift.core.recording.*;
 import io.drift.ui.app.flux.RecordingActions;
 import io.drift.ui.app.flux.RecordingStore;
 import io.drift.ui.app.page.layout.MainLayout;
-import io.drift.ui.app.page.recordings.RecordingsPage;
 import io.drift.ui.config.WicketComponentRegistry;
+import io.drift.ui.infra.ListSelector;
+import io.drift.ui.infra.Selector;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -27,201 +27,146 @@ public class RecordingPage extends MainLayout {
     @SpringBean
     RecordingStore recorderStore;
 
-    private RecorderPageState state;
+    class ScenarioItemSelector extends Selector<Selector> implements Serializable {
 
-    class PagingState implements Serializable {
+        static final String INITIAL_STATE = "initial state";
+        static final String SCENARIO_STEP = "scenario step";
+        static final String FINAL_STATE = "initial state";
 
-        private Integer idx;
+        private String selection;
+        private ScenarioStepSelector scenarioStepSelector = new ScenarioStepSelector(this);
+        private SystemStateSubSystemSelector systemStateSubSystemSelector = new SystemStateSubSystemSelector(this);
 
-        private int maxIdx;
+        public ScenarioItemSelector() { super(null);}
 
-        public int getSelection() {
-            return idx;
+        public void selectInitialState() {
+            selection = INITIAL_STATE;
         }
-
-        public boolean isSelected() {
-            return idx != null;
-        }
-
-        public void decrease() {
-            if (idx != null && idx > 0)
-                idx--;
-        }
-
-        public void increase() {
-            if (idx < maxIdx)
-                idx++;
-        }
-
-    }
-
-    class SystemStateFragmentState implements  Serializable {
-        private String selectedSubSystem;
-
-        public String getSelectedSubSystem() {
-            return selectedSubSystem;
-        }
-
-        public void setSelectedSubSystem(String selectedSubSystem) {
-            this.selectedSubSystem = selectedSubSystem;
-        }
-
-        public boolean isSubSystemSelected() {
-            return selectedSubSystem != null;
-        }
-    }
-
-    class RecorderPageState implements Serializable {
-        private RecordingId recordingId;
-        private boolean initialStateSelected;
-        private boolean finalStateSelected;
-        private Integer selectedSystemInteractionIdx;
-        private Integer selectedScenarioItemIdx;
-        private SystemStateFragmentState systemStateFragmentState;
-
-        public RecordingId getRecordingId() {
-            return recordingId;
-        }
-
-        public int getSelectedScenarioItemIdx() {
-            return selectedScenarioItemIdx;
-        }
-
-        public int getSelectedSystemInteractionIdx() {
-            return selectedSystemInteractionIdx;
-        }
-
-        public void setRecordingId(RecordingId recordingId) {
-            this.recordingId = recordingId;
-        }
-
-        private void resetSelections() {
-            initialStateSelected = false;
-            finalStateSelected = false;
-            selectedScenarioItemIdx = null;
-            selectedSystemInteractionIdx = null;
-        }
-
-        public void setSelectedSystemInteractionIdx(Integer selectedSystemInteractionIdx) {
-            this.selectedSystemInteractionIdx = selectedSystemInteractionIdx;
-        }
-
-        public void setSelectedScenarioItemIdx(Integer selectedScenarioItemIdx) {
-            resetSelections();
-            this.selectedScenarioItemIdx = selectedScenarioItemIdx;
-        }
-
-        public boolean isScenarioItemselected() {
-            return selectedScenarioItemIdx != null;
-        }
-
-        public boolean isSystemInteractionSelected() {
-            return selectedSystemInteractionIdx != null;
-        }
-
-        public void decreaseSystemInteractionIdx() {
-            if (selectedSystemInteractionIdx > 0)
-                selectedSystemInteractionIdx--;
-        }
-
-        public void increaseSystemInteractionIdx() {
-            if (selectedSystemInteractionIdx < getSelectedScenarioItem().getSystemInteractions().size() - 1)
-                selectedSystemInteractionIdx++;
-        }
-
-        public void decreaseSelectedScenarioItemIdx() {
-            if (selectedScenarioItemIdx > 0)
-                selectedScenarioItemIdx--;
-        }
-
-        public void increaseSelectedScenarioItemIdx() {
-            if (selectedScenarioItemIdx < recorderStore.getRecording(state.getRecordingId()).getSteps().size() - 1)
-                selectedScenarioItemIdx++;
-        }
-
-        public void setInitalStateSelected() {
-            resetSelections();
-            initialStateSelected = true;
-            systemStateFragmentState = new SystemStateFragmentState();
-        }
-
         public boolean isInitialStateSelected() {
-            return initialStateSelected;
+            return INITIAL_STATE.equals(selection);
         }
 
-        public void setFinalStateSelected() {
-            resetSelections();
-            finalStateSelected = true;
-            systemStateFragmentState = new SystemStateFragmentState();
+        public void selectFinalState() {
+            selection = FINAL_STATE;
         }
-
         public boolean isFinalStateSelected() {
-            return finalStateSelected;
+            return FINAL_STATE.equals(selection);
         }
 
-        public SystemStateFragmentState getSystemStateFragmentState() {
-            return systemStateFragmentState;
+        public void selectScenarioStep(Integer idx) {
+            selection = SCENARIO_STEP;
+            scenarioStepSelector.select(idx);
+        }
+        public boolean isScenarioStepSelected() {
+            return SCENARIO_STEP.equals(selection);
+        }
+
+        public ScenarioStepSelector getScenarioStepSelector() {
+            return scenarioStepSelector;
+        }
+
+        public SystemStateSubSystemSelector getSystemStateSubSystemSelector() {
+            return systemStateSubSystemSelector;
+        }
+
+        public SystemState getSelectedSystemState() {
+            if (isInitialStateSelected())
+                return recorderStore.getRecording(recordingId).getInitialState();
+            else if (isFinalStateSelected())
+                return recorderStore.getRecording(recordingId).getFinalstate();
+            else
+                return null;
+        }
+
+        public SubSystemDescription getSubSystemDescription(String subSystemKey) {
+            return recorderStore.getRecording(recordingId).getSubSystemDescription(subSystemKey);
+        }
+
+        public void selectedLastScenarioItem() {
+            selectScenarioStep(recorderStore.getRecordingStepCount(recordingId) - 1);
+        }
+    }
+    class SystemInteractionsSelector extends ListSelector<ScenarioStepSelector> {
+        public SystemInteractionsSelector(ScenarioStepSelector parentselector) { super(parentselector); }
+
+        public SystemInteraction getSelectedSystemInteraction() {
+            return getParentselector().getSelectedScenarioItem().getSystemInteractions().get(getSelection());
+        }
+
+        public SubSystemDescription getSelectedSubSystem() {
+            return getParentselector().getParentselector().getSubSystemDescription(getSelectedSystemInteraction().getSubSystem());
+        }
+    }
+    class ScenarioStepSelector extends ListSelector<ScenarioItemSelector> {
+
+        private SystemInteractionsSelector systemInteractionsSelector = new SystemInteractionsSelector(this);
+
+        public ScenarioStepSelector(ScenarioItemSelector parentSelector) { super(parentSelector); }
+
+        public RecordingStep getSelectedScenarioItem() {
+            return recorderStore.getRecordingStep(recordingId, getSelection());
+        }
+
+        public SystemInteractionsSelector getSystemInteractionsSelector() {
+            return systemInteractionsSelector;
+        }
+    }
+    class SystemStateSubSystemSelector extends ListSelector<ScenarioItemSelector> {
+        public SystemStateSubSystemSelector(ScenarioItemSelector parentSelector) { super(parentSelector); }
+
+        public SubSystemState getSelectedSubSystemState() {
+            String selectedSubSystemKey = getSelectedSubSystemKey();
+            return getParentselector().getSelectedSystemState().getSubSystemState(selectedSubSystemKey);
+        }
+
+        public String getSelectedSubSystemKey() {
+            int idx = getSelection();
+            return getParentselector().getSelectedSystemState().getOrderedSubSystemKeys().get(idx);
+        }
+
+        public SubSystemDescription getSubSystemDescription() {
+            return recorderStore.getSubSystemDescription(recordingId, getSelectedSubSystemKey());
         }
 
     }
 
+    private ScenarioItemSelector scenarioItemSelector;
+    private RecordingId recordingId;
+
+    /*
     public class ScenarioStepDetailsFragment extends Fragment {
         public ScenarioStepDetailsFragment(String id) {
             super(id, "scenarioStepDetailsFragment", RecordingPage.this);
             add(label("title", "[title]"));
         }
     }
+    */
 
-    private RecordingStep getSelectedScenarioItem() {
-        return recorderStore.getRecordingStep(state.getRecordingId(), state.getSelectedScenarioItemIdx());
-    }
-    private SystemInteraction getSelectedSystemInteraction() {
-        return getSelectedScenarioItem().getSystemInteractions().get(state.getSelectedSystemInteractionIdx());
-    }
-    private SubSystemDescription getSelectedSubSystem() {
-        return recorderStore.getSubSystemDescription(state.getRecordingId(), getSelectedSystemInteraction().getSubSystem());
-    }
-    private SubSystemDescription  getSubSystemDescription(String subSystem) {
-        return recorderStore.getSubSystemDescription(state.getRecordingId(), subSystem);
-    }
-
-    private SubSystemState getSelectedSubSystemState() {
-        String subSystemName = state.getSystemStateFragmentState().getSelectedSubSystem();
-        return getSelectedSystemState().getSubSystemState(subSystemName);
-    }
-
-    private SystemState getSelectedSystemState() {
-        if (state.isInitialStateSelected())
-            return recorderStore.getRecording(state.getRecordingId()).getInitialState();
-        else if (state.isFinalStateSelected())
-            return recorderStore.getRecording(state.getRecordingId()).getFinalstate();
-        else
-            return null;
-    }
 
     public class SystemInteractionsFragment extends Fragment {
         public SystemInteractionsFragment(String id) {
             super(id, "systemInteractionsFragment", RecordingPage.this);
+            SystemInteractionsSelector selector = scenarioItemSelector.getScenarioStepSelector().getSystemInteractionsSelector();
             add(ajaxLink("previousButton", target -> {
-                state.decreaseSystemInteractionIdx();
+                selector.decrease();
                 target.add(scenarioRecorder);
             }));
             add(ajaxLink("nextButton", target -> {
-                state.increaseSystemInteractionIdx();
+                selector.increase();
                 target.add(scenarioRecorder);
             }));
-            add(listView("interactions", getSelectedScenarioItem().getSystemInteractions(), item -> {
+            add(listView("interactions", scenarioItemSelector.getScenarioStepSelector().getSelectedScenarioItem().getSystemInteractions(), item -> {
                 SystemInteraction systemInteraction = item.getModelObject();
                 int index = item.getIndex();
                 Link<Void> select = ajaxLink("select", target -> {
-                    state.setSelectedSystemInteractionIdx(index);
+                    selector.select(index);
                     target.add(scenarioRecorder);
                 });
                 select.add(createSystemInteraction("interactionThumbnail", systemInteraction));
                 item.add(select);
             }));
-            if (state.isSystemInteractionSelected()) {
-                add(createSystemInteractionDetail("interactionDetail", getSelectedSystemInteraction(), getSelectedSubSystem()));
+            if (selector.isSelected()) {
+                add(createSystemInteractionDetail("interactionDetail", selector.getSelectedSystemInteraction(), selector.getSelectedSubSystem()));
             } else {
                 add(label("interactionDetail"));
             }
@@ -231,16 +176,17 @@ public class RecordingPage extends MainLayout {
     public class SystemStateFragment extends Fragment {
         public SystemStateFragment(String id) {
             super(id, "systemStateFragment", RecordingPage.this);
-            add(listView("subSystems", getSelectedSystemState().getSubSystemStates(), item -> {
+            SystemStateSubSystemSelector subSystemSelector = scenarioItemSelector.getSystemStateSubSystemSelector();
+            add(listView("subSystems", indices(scenarioItemSelector.getSelectedSystemState().getOrderedSubSystemKeys()), item -> {
                 Link<Void> select = ajaxLink("selectSubSystem", target -> {
-                    state.getSystemStateFragmentState().setSelectedSubSystem(item.getModelObject());
+                    subSystemSelector.select(item.getModelObject());
                     target.add(scenarioRecorder);
                 });
                 item.add(select);
                 select.add(label("subSystemName", item.getModelObject()));
             }));
-            if (state.getSystemStateFragmentState().isSubSystemSelected()) {
-                add(createSubSystemStateDetail("selectedSubSystemState", getSelectedSubSystemState(), getSubSystemDescription(state.getSystemStateFragmentState().getSelectedSubSystem())));
+            if (subSystemSelector.isSelected()) {
+                add(createSubSystemStateDetail("selectedSubSystemState",subSystemSelector.getSelectedSubSystemState(), subSystemSelector.getSubSystemDescription()));
             } else {
                 add(label("selectedSubSystemState", "[selectedSubSystemState]"));
             }
@@ -263,36 +209,38 @@ public class RecordingPage extends MainLayout {
     }
 
 
+
     public class ScenarioFragment extends Fragment {
+
 
         public ScenarioFragment(String id) {
             super(id, "scenarioFragment", RecordingPage.this);
             add(ajaxLink("selectInitialState", target -> {
-                state.setInitalStateSelected();
+                scenarioItemSelector.selectInitialState();
                 target.add(scenarioRecorder);
             }));
             add(ajaxLink("selectFinalState", target -> {
-                state.setFinalStateSelected();
+                scenarioItemSelector.selectFinalState();
                 target.add(scenarioRecorder);
             }));
-            add(listView("steps", indices(recorderStore.getRecording(state.getRecordingId()).getSteps()), stepItem -> {
+            add(listView("steps", indices(recorderStore.getRecording(recordingId).getSteps()), stepItem -> {
                 Integer idx = stepItem.getModelObject();
                 Link<Void> select = ajaxLink("select", target -> {
-                    state.setSelectedScenarioItemIdx(idx);
+                    scenarioItemSelector.selectScenarioStep(idx);
                     target.add(scenarioRecorder);
                 });
                 stepItem.add(select);
-                if (state.isScenarioItemselected() && idx.equals(state.getSelectedScenarioItemIdx())) {
+                if (scenarioItemSelector.isScenarioStepSelected() && idx.equals(scenarioItemSelector.getScenarioStepSelector().getSelection())) {
                     addClass(select, "active");
                 }
                 select.add(label("title", idx));
             }));
             add(ajaxLink("previous", target -> {
-                state.decreaseSelectedScenarioItemIdx();
+                scenarioItemSelector.getScenarioStepSelector().decrease();
                 target.add(scenarioRecorder);
             }));
             add(ajaxLink("next", target -> {
-                state.increaseSelectedScenarioItemIdx();
+                scenarioItemSelector.getScenarioStepSelector().increase();
                 target.add(scenarioRecorder);
             }));
         }
@@ -303,21 +251,21 @@ public class RecordingPage extends MainLayout {
         public RecorderControlsFragment(String id) {
             super(id, "recorderControlsFragment", RecordingPage.this);
             add(ajaxLink("startRecording", target -> {
-                recordingActions.start(state.getRecordingId());
+                recordingActions.start(recordingId);
             }));
             add(ajaxLink("takeSnapshot", target -> {
-                recordingActions.takeSnapshot(state.getRecordingId());
-                state.setSelectedScenarioItemIdx(recorderStore.getRecordingStepCount(state.getRecordingId()) - 1);
+                recordingActions.takeSnapshot(recordingId);
+                scenarioItemSelector.selectedLastScenarioItem();
                 target.add(scenarioRecorder);
             }));
             add(ajaxLink("stopRecording", target -> {
-                recordingActions.finish(state.getRecordingId());
+                recordingActions.finish(recordingId);
             }));
             Link saveLink;
             add(saveLink = ajaxLink("saveRecording", target -> {
-                recordingActions.save(state.getRecordingId());
+                recordingActions.save(recordingId);
             }));
-            saveLink.setEnabled(!recorderStore.getRecorderControlState(state.getRecordingId()).isAutosave());
+            saveLink.setEnabled(!recorderStore.getRecorderControlState(recordingId).isAutosave());
 
         }
     }
@@ -339,19 +287,19 @@ public class RecordingPage extends MainLayout {
         @Override
         protected void onConfigure() {
             // stepDetails.setVisible(state.isScenarioItemselected());
-            systemInteractions.setVisible(state.isScenarioItemselected());
-            systemState.setVisible(state.isInitialStateSelected() || state.isFinalStateSelected());
+            systemInteractions.setVisible(scenarioItemSelector.isScenarioStepSelected());
+            systemState.setVisible(scenarioItemSelector.isInitialStateSelected() || scenarioItemSelector.isFinalStateSelected());
             super.onConfigure();
         }
 
         @Override
         protected void onBeforeRender() {
             replace(scenario = new ScenarioFragment("scenario"));
-            if (state.isScenarioItemselected()) {
+            if (scenarioItemSelector.isScenarioStepSelected()) {
                 // replace(stepDetails = new ScenarioStepDetailsFragment("stepDetails"));
                 replace(systemInteractions = new SystemInteractionsFragment("systemInteractions"));
             }
-            if (state.isInitialStateSelected() || state.isFinalStateSelected()) {
+            if (scenarioItemSelector.isInitialStateSelected() || scenarioItemSelector.isFinalStateSelected()) {
                 replace(systemState = new SystemStateFragment("systemState"));
             }
 
@@ -366,8 +314,8 @@ public class RecordingPage extends MainLayout {
 
     public RecordingPage(PageParameters pageParameters) {
 
-        state = new RecorderPageState();
-        state.setRecordingId(new RecordingId(pageParameters.get("id").toString()));
+        scenarioItemSelector  = new ScenarioItemSelector();
+        recordingId = new RecordingId(pageParameters.get("id").toString());
 
         add(new RecorderControlsFragment("recorderControls"));
         add(scenarioRecorder = new ScenarioRecorderFragment("recordedScenario"));

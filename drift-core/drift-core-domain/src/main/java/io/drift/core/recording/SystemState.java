@@ -1,9 +1,7 @@
 package io.drift.core.recording;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SystemState {
 
@@ -13,12 +11,15 @@ public class SystemState {
         subSystems.put(name, state);
     }
 
-    public List<String> getSubSystemStates() {
-        return new ArrayList<>(subSystems.keySet());
+    private List<String> orderedSubSystemKeys;
+
+    public List<String> getOrderedSubSystemKeys() {
+        if (orderedSubSystemKeys==null) orderedSubSystemKeys = subSystems.keySet().stream().sorted().collect(Collectors.toList());
+        return orderedSubSystemKeys;
     }
 
-    public SubSystemState getSubSystemState(String name) {
-        return subSystems.get(name);
+    public SubSystemState getSubSystemState(String subSystemKey) {
+        return subSystems.get(subSystemKey);
     }
 
 }
