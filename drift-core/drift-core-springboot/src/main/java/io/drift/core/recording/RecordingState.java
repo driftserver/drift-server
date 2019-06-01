@@ -4,6 +4,7 @@ public enum RecordingState {
 
     CREATED,
     CONNECTED,
-    DISCONNECTED;
+    DISCONNECTED,
+    RESTORED
 
 }

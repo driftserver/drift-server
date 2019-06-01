@@ -5,17 +5,28 @@ import java.util.Map;
 
 public class SerializationManager {
 
-	private Map<String, Serializer> serializerMap = new HashMap<>();
+	private Map<String, Serializer> serializerForFormat = new HashMap<>();
 
-	private Serializer defaultSerializer;
+	private Map<Class<?>, String> formatForClass = new HashMap<>();
 
-	public void registerSerializer(Serializer modelSerializer) {
-		serializerMap.put(modelSerializer.getFormat(), modelSerializer);
-		defaultSerializer = modelSerializer;
+	private String defaultFormat;
+
+	public void registerSerializer(Serializer serializer) {
+		serializerForFormat.put(serializer.getFormat(), serializer);
 	}
 
 	public Serializer forClass(Class<?> _class) {
-		return defaultSerializer;
+		String format = formatForClass.get(_class);
+		format = format == null ? defaultFormat : format;
+		return serializerForFormat.get(format);
+	}
+
+	public void setDefaultFormat(String format) {
+		this.defaultFormat = format;
+	}
+
+	public void setFormatForForClass(String format, Class<?> _class) {
+		formatForClass.put(_class, format);
 	}
 
 }

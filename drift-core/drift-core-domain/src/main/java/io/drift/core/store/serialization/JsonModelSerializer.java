@@ -9,17 +9,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.databind.jsontype.NamedType;
 import io.drift.core.store.storage.Storable;
 
 public class JsonModelSerializer extends Serializer {
 
-	static public String FORMAT = "json";
+	static public String JSON_FORMAT = "json";
 
 	private ObjectMapper objectMapper;
 
 	public JsonModelSerializer() {
-		super(FORMAT);
+		super(JSON_FORMAT);
 		initmapper();
 	}
 
@@ -48,7 +47,7 @@ public class JsonModelSerializer extends Serializer {
 		}
 	}
 
-    public void registerModule(Module module) {
+    public void registerJacksonModule(Module module) {
 		objectMapper.registerModule(module);
     }
 }

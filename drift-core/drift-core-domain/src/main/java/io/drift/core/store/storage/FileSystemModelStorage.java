@@ -29,7 +29,7 @@ public class FileSystemModelStorage implements ModelStorage {
 	@Override
 	public String readContent(StoragePath storagePath, StorageId storageId) throws ModelStorageException {
 		try {
-			return Files.lines(getPath(storagePath, storageId)).collect(Collectors.joining());
+			return Files.lines(getPath(storagePath, storageId)).collect(Collectors.joining(System.lineSeparator()));
 		} catch (IOException e) {
 			throw new ModelStorageException(e);
 		}

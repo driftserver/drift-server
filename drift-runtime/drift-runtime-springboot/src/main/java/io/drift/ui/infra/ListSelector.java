@@ -10,6 +10,8 @@ public class ListSelector<PARENT_SELECTOR_CLASS extends Selector > extends Selec
 
     private int maxIdx;
 
+    protected ListSelector() {}
+
     public ListSelector(PARENT_SELECTOR_CLASS parentSelector) {
         super(parentSelector);
     }

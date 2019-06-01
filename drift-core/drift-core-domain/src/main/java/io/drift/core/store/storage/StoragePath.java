@@ -15,6 +15,7 @@ public class StoragePath {
 			ids[i] = new StorageId(parts[i]);
 		}
 		return new StoragePath(ids);
+
 	}
 
 	public static StoragePath of(StorageId... fragments) {

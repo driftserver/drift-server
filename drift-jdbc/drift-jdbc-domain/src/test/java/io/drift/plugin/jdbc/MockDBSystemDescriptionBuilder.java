@@ -29,6 +29,7 @@ public class MockDBSystemDescriptionBuilder {
         connectionDetails.setJdbcUrl("jdbc://url");
         connectionDetails.setUserName("user1");
         connectionDetails.setPassword("examplepassword");
+        connectionDetails.setTableNames(new String[] {"OWNERS", "PETS", "VETS"});
 
         systemDescription.addConnectionDetails(db.getKey(), localEnv.getKey(), connectionDetails);
 

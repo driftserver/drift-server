@@ -44,15 +44,15 @@ public class AcmeDriftConfig {
         };
     }
 
-    @Bean
-    ModelStore getModelStore() {
-        ModelStore modelStore = new ModelStore();
-        JsonModelSerializer modelSerializer = new JsonModelSerializer();
-        modelSerializer.registerModule(new DriftJDBCJacksonModule());
 
-        modelStore.getSerializationManager().registerSerializer(modelSerializer);
-        modelStore.getModelStorageManager().registerStorage(new FileSystemModelStorage(Paths.get("store")));
-        return modelStore;
+    @Bean(name="modelStore")
+    AcmeModelStoreFactory modelStoreFactory() {
+        return new AcmeModelStoreFactory();
+    }
+
+    @Bean
+    ModelStore getModelStore() throws Exception {
+        return modelStoreFactory().getObject();
     }
 
     @Bean

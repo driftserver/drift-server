@@ -3,7 +3,9 @@ package io.drift.plugin.jdbc;
 import io.drift.core.store.ModelStore;
 import io.drift.core.store.ModelStoreException;
 import io.drift.core.store.serialization.JsonModelSerializer;
+import io.drift.core.store.serialization.YamlModelSerializer;
 import io.drift.core.store.storage.FileSystemModelStorage;
+import io.drift.core.store.storage.ModelStorageException;
 import io.drift.core.store.storage.StorageId;
 import io.drift.core.store.storage.StoragePath;
 import io.drift.core.system.SystemDescription;
@@ -12,6 +14,7 @@ import io.drift.jdbc.domain.data.DBSnapShot;
 import io.drift.jdbc.domain.metadata.DBMetaData;
 import io.drift.jdbc.infra.DriftJDBCJacksonModule;
 import junit.framework.TestCase;
+import org.junit.Assert;
 
 public class StoreTest extends TestCase {
 
@@ -19,7 +22,7 @@ public class StoreTest extends TestCase {
 	private ModelStore createStore() {
 		ModelStore store = new ModelStore();
 		JsonModelSerializer modelSerializer = new JsonModelSerializer();
-		modelSerializer.registerModule(new DriftJDBCJacksonModule());
+		modelSerializer.registerJacksonModule(new DriftJDBCJacksonModule());
 		store.getSerializationManager().registerSerializer(modelSerializer);
 		store.getModelStorageManager().registerStorage(new FileSystemModelStorage());
 		return store;
@@ -61,4 +64,80 @@ public class StoreTest extends TestCase {
 
 	}
 */
+
+    public void test_system_description_yaml_serialization() throws ModelStoreException {
+        YamlModelSerializer yamlModelSerializer = createYamlSerializer();
+        SystemDescription dbSystemDescription = generateMockSystemDescription();
+
+        String content = yamlModelSerializer.from(dbSystemDescription);
+        System.out.println(content);
+
+        SystemDescription dbSystemDescription2 = (SystemDescription) yamlModelSerializer.loadModel(content, SystemDescription.class);
+        String content2 = yamlModelSerializer.from(dbSystemDescription2);
+
+        Assert.assertEquals(content, content2);
+
+    }
+
+    private SystemDescription generateMockSystemDescription() {
+        MockDBSystemDescriptionBuilder mockDBSystemDescriptionBuilder = new MockDBSystemDescriptionBuilder();
+        return mockDBSystemDescriptionBuilder.createDummy();
+    }
+
+    private YamlModelSerializer createYamlSerializer() {
+        YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
+        yamlModelSerializer.registerModule(new DriftJDBCJacksonModule());
+        return yamlModelSerializer;
+    }
+
+    public void test_parse_system_description() throws ModelStoreException {
+
+        YamlModelSerializer yamlModelSerializer = createYamlSerializer();
+
+        String content = "---\n" +
+                "\n" +
+                "environments:\n" +
+                "- key: LOCAL\n" +
+                "  name: Local\n" +
+                "- key: DEV\n" +
+                "  name: Develop\n" +
+                "\n" +
+                "subSystems:\n" +
+                "- key: PETSDB\n" +
+                "  type: jdbc\n" +
+                "  name: Pets Database\n" +
+                "- key: PRODUCTSDB\n" +
+                "  type: jdbc\n" +
+                "  name: Product Catalog\n" +
+                "\n" +
+                "connectionDetails:\n" +
+                "  \n" +
+                "  PETSDB::LOCAL: !<JDBCConnectionDetails>\n" +
+                "    userName: user1\n" +
+                "    password: pwd\n" +
+                "    jdbcUrl: jdbc:h2:tcp://localhost/./test\n" +
+                "    tableNames:\n" +
+                "    - OWNERS\n" +
+                "    - PETS\n" +
+                "    - VETS\n" +
+                "\n" +
+                "  PRODUCTSDB::LOCAL: !<JDBCConnectionDetails>\n" +
+                "    userName: user1\n" +
+                "    password: pwd\n" +
+                "    jdbcUrl: jdbc:h2:tcp://localhost/./test2\n" +
+                "    tableNames:\n" +
+                "    - CUSTOMER\n" +
+                "    - PRODUCT\n" +
+                "    - SUPPLIER\n" +
+                "    \n";
+
+        SystemDescription dbSystemDescription2 = (SystemDescription) yamlModelSerializer.loadModel(content, SystemDescription.class);
+
+        String content2 = yamlModelSerializer.from(dbSystemDescription2);
+
+        Assert.assertEquals(content, content2);
+
+    }
+
+
 }

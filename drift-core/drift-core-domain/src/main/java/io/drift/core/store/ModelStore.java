@@ -1,18 +1,20 @@
 package io.drift.core.store;
 
+import io.drift.core.store.serialization.JsonModelSerializer;
 import io.drift.core.store.serialization.SerializationManager;
 import io.drift.core.store.serialization.Serializer;
 import io.drift.core.store.storage.*;
+import io.drift.core.system.SystemDescription;
 
 import java.util.List;
 
 public class ModelStore {
 
-	private static SerializationManager serialization = new SerializationManager();
+	private SerializationManager serialization = new SerializationManager();
 
-	private static ModelStorageManager storage = new ModelStorageManager();
+	private ModelStorageManager storage = new ModelStorageManager();
 
-	private static MetaDataStorage metaDataStorage = new LuceneMetaDataStorage();
+	private MetaDataStorage metaDataStorage;
 
 	public ModelStorageManager getModelStorageManager() {
 		return storage;
@@ -57,4 +59,30 @@ public class ModelStore {
 	public MetaData getMetaData(StorageId storageId) throws ModelStoreException {
 		return metaDataStorage.readMetaData(storageId);
 	}
+
+	public ModelStore withMetaDataStorage(MetaDataStorage metaDataStorage) {
+		this.metaDataStorage = metaDataStorage;
+		return this;
+	}
+
+	public ModelStore withSerializer(Serializer serializer) {
+		getSerializationManager().registerSerializer(serializer);
+		return this;
+	}
+
+	public ModelStore withModelStorage(ModelStorage modelStorage) {
+		getModelStorageManager().registerStorage(modelStorage);
+		return this;
+	}
+
+	public ModelStore withDefaultFormat(String format) {
+		getSerializationManager().setDefaultFormat(format);
+		return this;
+	}
+
+	public ModelStore withFormatForClass(Class<?> _class, String format) {
+		getSerializationManager().setFormatForForClass(format, _class);
+		return this;
+	}
+
 }

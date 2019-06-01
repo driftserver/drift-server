@@ -73,7 +73,12 @@ public class DriftJDBCJacksonModule extends SimpleModule {
     
     public DriftJDBCJacksonModule() {
         super();
-        registerSubtypes(DBMetaData.class, DBDelta.class, JDBCConnectionDetails.class);
+        registerSubtypes(
+                DBSnapShot.class,
+                DBMetaData.class,
+                DBDelta.class,
+                JDBCConnectionDetails.class
+        );
 
         addKeyDeserializer(SubSystemEnvironmentKey.class, new SubSystemEnvironmentKeyDeserializer());
 

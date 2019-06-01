@@ -7,7 +7,6 @@ import io.drift.core.recording.RecordingDomainService;
 import io.drift.core.recording.RecordingId;
 import io.drift.core.store.IDGenerator;
 import io.drift.core.system.EnvironmentKey;
-import io.drift.core.system.SystemDescriptionDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +28,7 @@ public class RecordingActions {
     }
 
     public void start(RecordingId recordingId) {
-        recordingDomainService.start(recordingId);
+        recordingDomainService.connect(recordingId);
     }
 
     public void takeSnapshot(RecordingId recordingId) {
@@ -37,10 +36,12 @@ public class RecordingActions {
     }
 
     public void finish(RecordingId recordingId) {
-        recordingDomainService.finish(recordingId);
+        recordingDomainService.disconnect(recordingId);
     }
 
     public void save(RecordingId recordingId) {
         recordingDomainService.save(recordingId);
     }
+
+    public void closeSession(RecordingId recordingId) { recordingDomainService.closeSession(recordingId); };
 }

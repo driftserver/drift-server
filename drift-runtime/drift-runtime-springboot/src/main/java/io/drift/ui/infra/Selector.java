@@ -10,4 +10,6 @@ public class Selector<PARENT_SELECTOR_CLASS extends Selector > {
 
     public PARENT_SELECTOR_CLASS getParentselector() { return parentSelector; }
 
+    protected Selector() {}
+
 }

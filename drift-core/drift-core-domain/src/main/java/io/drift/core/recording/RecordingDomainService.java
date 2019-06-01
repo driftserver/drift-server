@@ -6,11 +6,11 @@ public interface RecordingDomainService {
 
     Recording create(RecordingDescriptor recordingDescriptor);
 
-    void start(RecordingId recordingId);
+    void connect(RecordingId recordingId);
 
     void takeSnapShot(RecordingId recordingId);
 
-    void finish(RecordingId recordingId);
+    void disconnect(RecordingId recordingId);
 
     Recording getById(RecordingId recordingId);
 
@@ -19,5 +19,7 @@ public interface RecordingDomainService {
     List<RecordingSummary> getRecordings();
 
     RecordingSessionSettings getRecordingSessionSettings(RecordingId recordingId);
+
+    void closeSession(RecordingId recordingId);
 
 }

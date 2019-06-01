@@ -1,5 +1,6 @@
 package io.drift.plugin.jdbc;
 
+import io.drift.core.recording.SubSystemState;
 import io.drift.core.system.SubSystemKey;
 import io.drift.jdbc.domain.data.*;
 import io.drift.jdbc.domain.metadata.DBMetaData;
@@ -26,6 +27,15 @@ public class JDBCRecordingSession {
         this.subSystemKey = subSystemKey;
         initDBMetaData();
         initSnapshotBuilder();
+    }
+
+    public JDBCRecordingSession(JDBCConnectionDetails jdbcConnectionDetails, JDBCConnectionManager connectionManager, SubSystemKey subSystemKey, DBMetaData dbMetaData, DBSnapShot lastDBSnapshot) {
+        this.jdbcConnectionDetails = jdbcConnectionDetails;
+        this.connectionManager = connectionManager;
+        this.subSystemKey = subSystemKey;
+        this.dbMetaData = dbMetaData;
+        initSnapshotBuilder();
+        this.lastDBSnapshot = lastDBSnapshot;
     }
 
     private void initDBMetaData() {
@@ -74,4 +84,6 @@ public class JDBCRecordingSession {
     public SubSystemKey getSubSystemKey() {
         return subSystemKey;
     }
+
+
 }

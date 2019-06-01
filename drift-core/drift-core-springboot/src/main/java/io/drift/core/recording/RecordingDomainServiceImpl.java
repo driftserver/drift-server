@@ -35,35 +35,30 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         Recording recording = new Recording(recordingId);
         recording.setName("Recording " + environmentKey.getName() + " " + LocalDateTime.now().format(formatter));
         recording.setEnvironmentKey(environmentKey);
-        recording.setInitialState(new SystemState());
-        recording.setFinalstate(new SystemState());
 
         SystemDescription systemDescription = systemDescriptionStorage.load();
         RecordingContext recordingContext = new RecordingContext(recording, systemDescription);
         recordingContext.setState(RecordingState.CREATED);
 
         contexts.put(recordingId, recordingContext);
+        reportSessionCount();
         return recording;
     }
 
     @Override
-    public void start(RecordingId recordingId) {
+    public void connect(RecordingId recordingId) {
         RecordingContext context = restoreContext(recordingId);
+        Recording recording = context.getRecording();
+        if (recording.getInitialState()==null) {
+            recording.setInitialState(new SystemState());
+            recording.setFinalstate(new SystemState());
+            contributions.forEach(contribution -> contribution.onFirstConnect(context));
+        } else {
+            contributions.forEach(contribution -> contribution.onReconnect(context));
+        }
         context.setState(RecordingState.CONNECTED);
-        contributions.forEach(contribution -> contribution.start(context));
 
         if (context.getSettings().isAutoSave()) save(recordingId);
-    }
-
-    private RecordingContext restoreContext(RecordingId recordingId) {
-        RecordingContext context = contexts.get(recordingId);
-        if (context == null) {
-            Recording recording = recordingStorage.load(recordingId);
-            SystemDescription systemDescription = systemDescriptionStorage.load();
-            context = new RecordingContext(recording, systemDescription);
-            contexts.put(recordingId, context);
-        }
-        return context;
     }
 
     @Override
@@ -83,13 +78,18 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     }
 
     @Override
-    public void finish(RecordingId recordingId) {
+    public void disconnect(RecordingId recordingId) {
         RecordingContext context = restoreContext(recordingId);
         context.setState(RecordingState.DISCONNECTED);
-        contributions.forEach(contribution -> contribution.finish(context));
+        contributions.forEach(contribution -> contribution.onDisconnect(context));
 
         if (context.getSettings().isAutoSave()) save(recordingId);
 
+    }
+
+    @Override
+    public void save(RecordingId recordingId) {
+        recordingStorage.store(getById(recordingId));
     }
 
     @Override
@@ -97,9 +97,17 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         return restoreContext(recordingId).getRecording();
     }
 
-    @Override
-    public void save(RecordingId recordingId) {
-        recordingStorage.store(getById(recordingId));
+    private RecordingContext restoreContext(RecordingId recordingId) {
+        RecordingContext context = contexts.get(recordingId);
+        if (context == null) {
+            Recording recording = recordingStorage.load(recordingId);
+            SystemDescription systemDescription = systemDescriptionStorage.load();
+            context = new RecordingContext(recording, systemDescription);
+            context.setState(RecordingState.DISCONNECTED);
+            contexts.put(recordingId, context);
+            reportSessionCount();
+        }
+        return context;
     }
 
     @Override
@@ -110,5 +118,19 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     @Override
     public RecordingSessionSettings getRecordingSessionSettings(RecordingId recordingId) {
         return restoreContext(recordingId).getSettings();
+    }
+
+    @Override
+    public void closeSession(RecordingId recordingId) {
+        RecordingContext context = restoreContext(recordingId);
+        if (context.getState() != RecordingState.DISCONNECTED) {
+            disconnect(recordingId);
+        }
+        contexts.remove(recordingId);
+        reportSessionCount();
+    }
+
+    private void reportSessionCount() {
+        System.out.println("#contexts: " + contexts.size());
     }
 }
