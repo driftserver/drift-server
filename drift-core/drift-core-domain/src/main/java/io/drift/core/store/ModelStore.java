@@ -1,10 +1,8 @@
 package io.drift.core.store;
 
-import io.drift.core.store.serialization.JsonModelSerializer;
 import io.drift.core.store.serialization.SerializationManager;
 import io.drift.core.store.serialization.Serializer;
 import io.drift.core.store.storage.*;
-import io.drift.core.system.SystemDescription;
 
 import java.util.List;
 
@@ -35,8 +33,9 @@ public class ModelStore {
 	@SuppressWarnings("unchecked")
 	public <STORABLE extends Storable> STORABLE load(StoragePath path, StorageId storageId, Class<STORABLE> modelClass)
 			throws ModelStoreException {
-		Serializer modelSerializer = serialization.forClass(modelClass);
-		String content = storage.forPath(path).readContent(path, storageId);
+		String format = serialization.formatForClass(modelClass);
+		Serializer modelSerializer = serialization.forFormat(format);
+		String content = storage.forPath(path).readContent(storageId, path, format);
 		return (STORABLE) modelSerializer.loadModel(content, modelClass);
 	}
 
@@ -47,10 +46,11 @@ public class ModelStore {
 	public <STORABLE extends Storable> void save(STORABLE model, MetaData metaData) throws ModelStoreException {
 		@SuppressWarnings("unchecked")
 		Class<STORABLE> modelClass = (Class<STORABLE>) model.getClass();
-		Serializer modelSerializer = serialization.forClass(modelClass);
+		String format = serialization.formatForClass(modelClass);
+		Serializer modelSerializer = serialization.forFormat(format);
 		String content = modelSerializer.from(model);
 
-		storage.forPath(metaData.getPath()).writeContent(metaData.getPath(), metaData.getStorageId(), content);
+		storage.forPath(metaData.getPath()).writeContent(metaData.getStorageId(), content, metaData.getPath(), format);
 
 		metaDataStorage.writeMetaData(metaData);
 

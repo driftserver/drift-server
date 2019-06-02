@@ -130,6 +130,11 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         reportSessionCount();
     }
 
+    @Override
+    public boolean isConnected(RecordingId recordingId) {
+        return restoreContext(recordingId).getState().equals(RecordingState.CONNECTED);
+    }
+
     private void reportSessionCount() {
         System.out.println("#contexts: " + contexts.size());
     }

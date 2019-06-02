@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SystemDescriptionStorage {
 
-    private static final StorageId SYSTEM_DESCRIPTION_STORAGE_ID = new StorageId("systemdescription.yaml");
+    private static final StorageId SYSTEM_DESCRIPTION_STORAGE_ID = new StorageId("systemdescription");
 
     private static final StoragePath SYSTEM_STORAGE_PATH = StoragePath.of(new StorageId("system"));
 

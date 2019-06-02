@@ -32,7 +32,8 @@ public class RecordingStore {
 
     public RecorderControlDTO getRecorderControlState(RecordingId recordingId) {
         RecordingSessionSettings recordingSessionSettings = service.getRecordingSessionSettings(recordingId);
-        return new RecorderControlDTO(recordingSessionSettings.isAutoSave());
+        boolean isConnected = service.isConnected(recordingId);
+        return new RecorderControlDTO(recordingSessionSettings.isAutoSave(), isConnected);
     }
 
     public List<RecordingSummaryDTO> getRecordingSummaries() {

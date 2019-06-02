@@ -1,6 +1,7 @@
 package io.drift.ui.app.page.recording;
 
 import io.drift.core.recording.*;
+import io.drift.ui.app.flux.RecorderControlDTO;
 import io.drift.ui.app.flux.RecordingActions;
 import io.drift.ui.app.flux.RecordingStore;
 import io.drift.ui.app.page.layout.MainLayout;
@@ -32,6 +33,7 @@ public class RecordingPage extends MainLayout {
 
     @SpringBean
     RecordingStore recorderStore;
+    private final RecorderControlsFragment recorderControls;
 
     class ScenarioItemSelector extends Selector<Selector> implements Serializable {
 
@@ -287,29 +289,49 @@ public class RecordingPage extends MainLayout {
 
     class RecorderControlsFragment extends Fragment {
 
+        private Link connectLink, snapshotLink, disconnectLink, saveLink;
+
         public RecorderControlsFragment(String id) {
             super(id, "recorderControlsFragment", RecordingPage.this);
-            add(ajaxLink("startRecording", target -> {
+
+            add(connectLink =ajaxLink("startRecording", target -> {
                 recordingActions.start(recordingId);
                 if (!scenarioItemSelector.isScenarioItemSelected()) {
                     scenarioItemSelector.selectInitialState();
                 }
-                target.add(scenarioRecorder);
+                refresh(target);
             }));
-            add(ajaxLink("takeSnapshot", target -> {
+            add(snapshotLink = ajaxLink("takeSnapshot", target -> {
                 recordingActions.takeSnapshot(recordingId);
                 scenarioItemSelector.selectLastStep();
-                target.add(scenarioRecorder);
+                refresh(target);
             }));
-            add(ajaxLink("stopRecording", target -> {
+            add(disconnectLink = ajaxLink("stopRecording", target -> {
                 recordingActions.finish(recordingId);
+                refresh(target);
             }));
-            Link saveLink;
             add(saveLink = ajaxLink("saveRecording", target -> {
                 recordingActions.save(recordingId);
+                refresh(target);
             }));
-            saveLink.setEnabled(!recorderStore.getRecorderControlState(recordingId).isAutosave());
 
+        }
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            RecorderControlDTO recorderControlState = recorderStore.getRecorderControlState(recordingId);
+            boolean connected = recorderControlState.isConnected();
+
+            connectLink.setEnabled(!connected);
+            snapshotLink.setEnabled(connected);
+            disconnectLink.setEnabled(connected);
+
+            saveLink.setVisible(!recorderControlState.isAutosave());
+        }
+
+        private void refresh(AjaxRequestTarget target) {
+            target.add(scenarioRecorder, recorderControls);
         }
     }
 
@@ -361,14 +383,16 @@ public class RecordingPage extends MainLayout {
         scenarioItemSelector = new ScenarioItemSelector();
         recordingId = new RecordingId(pageParameters.get("id").toString());
 
-        add(new RecorderControlsFragment("recorderControls"));
+        add(recorderControls = new RecorderControlsFragment("recorderControls"));
         add(scenarioRecorder = new ScenarioRecorderFragment("recordedScenario"));
+
+        recorderControls.setOutputMarkupId(true);
+        scenarioRecorder.setOutputMarkupId(true);
 
         add(addUnloadTracker("unloadTracker", target -> {
             recordingActions.closeSession(recordingId);
         }));
 
-        scenarioRecorder.setOutputMarkupId(true);
     }
 
     // from https://stackoverflow.com/questions/20238886/onbeforeunload-event-with-apache-wicket

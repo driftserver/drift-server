@@ -20,6 +20,8 @@ public interface RecordingDomainService {
 
     RecordingSessionSettings getRecordingSessionSettings(RecordingId recordingId);
 
+    boolean isConnected(RecordingId recordingId);
+
     void closeSession(RecordingId recordingId);
 
 }

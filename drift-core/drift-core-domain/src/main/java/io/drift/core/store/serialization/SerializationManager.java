@@ -1,5 +1,7 @@
 package io.drift.core.store.serialization;
 
+import io.drift.core.store.storage.Storable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,18 +17,22 @@ public class SerializationManager {
 		serializerForFormat.put(serializer.getFormat(), serializer);
 	}
 
-	public Serializer forClass(Class<?> _class) {
-		String format = formatForClass.get(_class);
-		format = format == null ? defaultFormat : format;
-		return serializerForFormat.get(format);
-	}
-
 	public void setDefaultFormat(String format) {
 		this.defaultFormat = format;
 	}
 
 	public void setFormatForForClass(String format, Class<?> _class) {
 		formatForClass.put(_class, format);
+	}
+
+	public String formatForClass(Class<?> modelClass) {
+		String format = formatForClass.get(modelClass);
+		format = format == null ? defaultFormat : format;
+		return format;
+	}
+
+	public Serializer forFormat(String format) {
+		return serializerForFormat.get(format);
 	}
 
 }

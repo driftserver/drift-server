@@ -1,11 +1,9 @@
 package io.drift.core.store.storage;
 
-import java.util.List;
-
 public interface ModelStorage {
 
-	public void writeContent(StoragePath storagePath, StorageId storageId, String model) throws ModelStorageException;
+	void writeContent(StorageId storageId, String model, StoragePath storagePath, String format) throws ModelStorageException;
 
-	public String readContent(StoragePath storagePath, StorageId storageId) throws ModelStorageException;
+	String readContent(StorageId storageId, StoragePath storagePath, String format) throws ModelStorageException;
 
 }
