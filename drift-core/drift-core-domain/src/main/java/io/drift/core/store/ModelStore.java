@@ -85,4 +85,7 @@ public class ModelStore {
 		return this;
 	}
 
+	public void shutDown() {
+		metaDataStorage.shutDown();
+	}
 }

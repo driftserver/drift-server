@@ -52,7 +52,7 @@ public class AcmeModelStoreFactory implements FactoryBean<ModelStore>, Disposabl
 
     @Override
     public void destroy() {
-        if (luceneMetaDataStorage != null) luceneMetaDataStorage.shutdown();
+        if (luceneMetaDataStorage != null) luceneMetaDataStorage.shutDown();
     }
 
 }

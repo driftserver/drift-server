@@ -95,23 +95,7 @@ public class StoreTest extends TestCase {
         YamlModelSerializer yamlModelSerializer = createYamlSerializer();
 
         String content = "---\n" +
-                "\n" +
-                "environments:\n" +
-                "- key: LOCAL\n" +
-                "  name: Local\n" +
-                "- key: DEV\n" +
-                "  name: Develop\n" +
-                "\n" +
-                "subSystems:\n" +
-                "- key: PETSDB\n" +
-                "  type: jdbc\n" +
-                "  name: Pets Database\n" +
-                "- key: PRODUCTSDB\n" +
-                "  type: jdbc\n" +
-                "  name: Product Catalog\n" +
-                "\n" +
                 "connectionDetails:\n" +
-                "  \n" +
                 "  PETSDB::LOCAL: !<JDBCConnectionDetails>\n" +
                 "    userName: user1\n" +
                 "    password: pwd\n" +
@@ -120,7 +104,6 @@ public class StoreTest extends TestCase {
                 "    - OWNERS\n" +
                 "    - PETS\n" +
                 "    - VETS\n" +
-                "\n" +
                 "  PRODUCTSDB::LOCAL: !<JDBCConnectionDetails>\n" +
                 "    userName: user1\n" +
                 "    password: pwd\n" +
@@ -129,7 +112,19 @@ public class StoreTest extends TestCase {
                 "    - CUSTOMER\n" +
                 "    - PRODUCT\n" +
                 "    - SUPPLIER\n" +
-                "    \n";
+                "environments:\n" +
+                "- key: LOCAL\n" +
+                "  name: Local\n" +
+                "- key: DEV\n" +
+                "  name: Develop\n" +
+                "subSystems:\n" +
+                "- key: PETSDB\n" +
+                "  type: jdbc\n" +
+                "  name: Pets Database\n" +
+                "- key: PRODUCTSDB\n" +
+                "  type: jdbc\n" +
+                "  name: Product Catalog\n"
+                ;
 
         SystemDescription dbSystemDescription2 = (SystemDescription) yamlModelSerializer.loadModel(content, SystemDescription.class);
 
