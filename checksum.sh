@@ -10,7 +10,7 @@ checksum_file() {
   echo `openssl md5 $1 | awk '{print $2}'`
 }
 
-FILES=("0.0.2-SNAPSHOT")
+FILES=()
 while read -r -d ''; do
 	FILES+=("$REPLY")
 done < <(find . -name 'pom.xml' -type f -print0)
