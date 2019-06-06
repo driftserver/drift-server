@@ -30,7 +30,5 @@ jobs:
 
       - run: mvn clean install
 
-      - run: mvn -f drift-sample/drift-sample-springboot/pom.xml spring-boot:repackage
-
       - store_artifacts:
           path: drift-sample/drift-sample-springboot/target/drift-sample-springboot-0.0.2-SNAPSHOT.jar
