@@ -28,16 +28,9 @@ jobs:
             - ~/.m2
           key: v-{{ checksum "/tmp/checksum.txt" }}
 
-      - run: mvn clean install surefire-report:report
+      - run: mvn clean install
 
-      - run: mvn site
-      
+      - run: mvn -f drift-sample/drift-sample-springboot/pom.xml spring-boot:repackage
+
       - store_artifacts:
-          path: drift-core/target/site
-      
-      - store_artifacts:
-          path: drift-core/target/drift-core-0.0.2-SNAPSHOT.jar
-            
-      - store_artifacts:
-          path: drift-server/target/drift-server-0.0.2-SNAPSHOT.jar
-         
+          path: drift-sample/drift-sample-springboot/target/drift-sample-springboot-0.0.2-SNAPSHOT.jar
