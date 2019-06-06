@@ -1,5 +1,5 @@
 .idea
-store
+/store
 
 # Compiled class file
 *.class
