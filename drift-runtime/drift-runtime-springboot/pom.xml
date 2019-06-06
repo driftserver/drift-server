@@ -23,10 +23,6 @@
 		<!-- Drift -->
 		<dependency>
 			<groupId>io.drift</groupId>
-			<artifactId>drift-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.drift</groupId>
 			<artifactId>drift-core-springboot</artifactId>
 		</dependency>
 

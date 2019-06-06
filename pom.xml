@@ -47,29 +47,29 @@
             <dependency>
                 <groupId>io.drift</groupId>
                 <artifactId>drift-core</artifactId>
-                <version>${drift.version}</version>
+                <version>0.0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.drift</groupId>
                 <artifactId>drift-core-domain</artifactId>
-                <version>${drift.version}</version>
+                <version>0.0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.drift</groupId>
                 <artifactId>drift-core-springboot</artifactId>
-                <version>${drift.version}</version>
+                <version>0.0.2-SNAPSHOT</version>
             </dependency>
 
             <!-- runtimes -->
             <dependency>
                 <groupId>io.drift</groupId>
                 <artifactId>drift-runtime</artifactId>
-                <version>${drift.version}</version>
+                <version>0.0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.drift</groupId>
                 <artifactId>drift-runtime-springboot</artifactId>
-                <version>${drift.version}</version>
+                <version>0.0.2-SNAPSHOT</version>
             </dependency>
 
             <!-- jdbc modules -->

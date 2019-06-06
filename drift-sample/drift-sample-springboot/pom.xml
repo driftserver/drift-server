@@ -16,10 +16,6 @@
         <!-- Drift -->
         <dependency>
             <groupId>io.drift</groupId>
-            <artifactId>drift-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.drift</groupId>
             <artifactId>drift-jdbc-springboot</artifactId>
         </dependency>
         <!-- database connection -->
