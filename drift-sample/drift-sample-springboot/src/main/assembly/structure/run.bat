@@ -1,0 +1,1 @@
+java -jar lib\drift-sample-springboot-0.0.2-SNAPSHOT.jar

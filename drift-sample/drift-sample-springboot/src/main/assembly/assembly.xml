@@ -1,0 +1,20 @@
+<assembly>
+    <id>bin</id>
+    <!-- Specifies that our binary distribution is a zip package -->
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>src/main/assembly/structure</directory>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>target/drift-sample-springboot-0.0.2-SNAPSHOT-spring-boot.jar</source>
+            <outputDirectory>drift-sample-springboot-0.0.2-SNAPSHOT/lib</outputDirectory>
+        </file>
+    </files>
+</assembly>

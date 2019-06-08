@@ -1,0 +1,40 @@
+---
+
+subSystems:
+- key: PETSDB
+  type: jdbc
+  name: Pets Database
+- key: PRODUCTSDB
+  type: jdbc
+  name: Product Catalog
+
+environments:
+- key: LOCAL
+  name: Local
+- key: DEV
+  name: Develop
+
+connectionDetails:
+  
+  PETSDB::LOCAL: !<JDBCConnectionDetails>
+  
+    userName: user1
+    password: pwd
+    jdbcUrl: jdbc:h2:tcp://localhost/./test
+
+    tableNames:
+    - OWNERS
+    - PETS
+    - VETS
+
+  PRODUCTSDB::LOCAL: !<JDBCConnectionDetails>
+  
+    userName: user1
+    password: pwd
+    jdbcUrl: jdbc:h2:tcp://localhost/./test2
+
+    tableNames:
+    - CUSTOMER
+    - PRODUCT
+    - SUPPLIER
+    
