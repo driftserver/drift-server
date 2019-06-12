@@ -68,7 +68,6 @@
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:5.1.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:5.1.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.apache.wicket:wicket-extensions:8.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.26" level="project" />
     <orderEntry type="library" name="Maven: org.wicketstuff:wicketstuff-annotation:8.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.wicketstuff:wicketstuff-jquery:8.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.wicketstuff:wicketstuff-minis:8.4.0" level="project" />
@@ -115,6 +114,8 @@
     <orderEntry type="library" name="Maven: org.webjars:animate.css:3.5.2" level="project" />
     <orderEntry type="library" name="Maven: org.webjars.bower:summernote:0.8.11" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.8.1" level="project" />
+    <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.26" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.4.197" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework.boot:spring-boot-devtools:2.1.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.1.4.RELEASE" level="project" />

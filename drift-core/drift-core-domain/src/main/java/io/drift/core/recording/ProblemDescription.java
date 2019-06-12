@@ -39,7 +39,7 @@ public class ProblemDescription implements Serializable {
 
     private void recursiveGetMessages(List<String> messages, Throwable throwable) {
         if (throwable != null) {
-            messages.add(throwable.getMessage());
+            messages.add(throwable.getClass().getName() + ": " + throwable.getMessage());
             recursiveGetMessages(messages, throwable.getCause());
         }
 

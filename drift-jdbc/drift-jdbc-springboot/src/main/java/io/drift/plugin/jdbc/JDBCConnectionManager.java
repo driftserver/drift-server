@@ -1,7 +1,8 @@
 package io.drift.plugin.jdbc;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.drift.jdbc.domain.system.JDBCConnectionDetails;
-import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -16,12 +17,22 @@ public class JDBCConnectionManager {
     public DataSource getDataSource(JDBCConnectionDetails connectionDetails) {
         String key = connectionDetails.getJdbcUrl();
         DataSource dataSource = dataSources.get(key);
-        if (dataSource==null) {
-            JdbcDataSource jdbcDataSource = new JdbcDataSource();
-            jdbcDataSource.setURL(connectionDetails.getJdbcUrl());
-            jdbcDataSource.setUser(connectionDetails.getUserName());
-            jdbcDataSource.setPassword(connectionDetails.getPassword());
-            dataSource = jdbcDataSource;
+        if (dataSource == null) {
+
+            HikariConfig config = new HikariConfig();
+            HikariDataSource hikariDataSource;
+
+            config.setJdbcUrl(connectionDetails.getJdbcUrl());
+            config.setUsername(connectionDetails.getUserName());
+            config.setPassword(connectionDetails.getPassword());
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+            hikariDataSource = new HikariDataSource(config);
+
+
+            dataSource = hikariDataSource;
             dataSources.put(key, dataSource);
         }
         return dataSource;
