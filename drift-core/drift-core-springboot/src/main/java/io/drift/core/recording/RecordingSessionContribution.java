@@ -4,7 +4,7 @@ public interface RecordingSessionContribution {
 
     void onFirstConnect(RecordingContext context);
 
-    void takeSnapshot(RecordingContext context);
+    void takeSnapshot(RecordingContext recordingContext);
 
     void onDisconnect(RecordingContext context);
 

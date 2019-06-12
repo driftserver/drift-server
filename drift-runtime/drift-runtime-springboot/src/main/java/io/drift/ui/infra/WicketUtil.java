@@ -1,6 +1,7 @@
 package io.drift.ui.infra;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -32,6 +33,10 @@ public class WicketUtil {
 
 	public static void addClass(Component component, String className) {
 		component.add(new AttributeAppender("class", className, " "));
+	}
+
+	public static void addClasses(Component component, String... classNames) {
+		Arrays.stream(classNames).forEach(className -> addClass(component, className));
 	}
 
 	public static void addCssResource(String fileName, Class<?> location, IHeaderResponse response) {

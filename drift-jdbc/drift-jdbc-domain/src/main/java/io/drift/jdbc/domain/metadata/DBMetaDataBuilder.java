@@ -49,7 +49,7 @@ public class DBMetaDataBuilder {
 			tableMetaData.setPrimaryKey(buildPK(jdbcMetaData, tableName, tableMetaData));
 			return tableMetaData;
 		} catch (SQLException e) {
-			throw new RuntimeException("could not getSystemDescription metadata for table " + tableName, e);
+			throw new RuntimeException("could not get table metadata" + tableName, e);
 		}
 	}
 
@@ -57,7 +57,7 @@ public class DBMetaDataBuilder {
 		try {
 			return dataSource.getConnection().getMetaData();
 		} catch (SQLException e) {
-			throw new RuntimeException("could not getSystemDescription metadata from jdbc datasource", e);
+			throw new RuntimeException("could not get db metadata", e);
 		}
 	}
 

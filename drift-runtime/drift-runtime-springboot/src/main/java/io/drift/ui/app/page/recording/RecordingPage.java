@@ -14,6 +14,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -287,9 +288,117 @@ public class RecordingPage extends MainLayout {
         }
     }
 
+
+    class ProblemDescriptionListFragment extends Fragment {
+
+        private ListSelector exceptionSelector = new ListSelector(null);
+        private ListSelector problemSelector = new ListSelector(exceptionSelector);
+
+        private WebMarkupContainer overview, problemDetail, exceptionDetail;
+
+        public ProblemDescriptionListFragment(String id) {
+            super(id, "problemDescriptionListFragment", RecordingPage.this);
+            setOutputMarkupId(true);
+            add(overview = new WebMarkupContainer("overview"));
+            overview.add(listView("problems", recorderStore.getActionResult(recordingId).getProblemDescriptions(), (item) -> {
+
+                ProblemDescription problemDescription = item.getModelObject();
+                item.add(new Label("description", getFormatted(problemDescription)));
+
+                Link select = ajaxLink("select", (target)-> {
+                    problemSelector.select(0);
+                    target.add(ProblemDescriptionListFragment.this);
+                });
+
+                item.add(select);
+
+            }));
+            add(problemDetail = new WebMarkupContainer("problemDetail"));
+            add(exceptionDetail = new WebMarkupContainer("exceptionDetail"));
+
+        }
+
+        private String getFormatted(ProblemDescription problemDescription) {
+            return String.format(
+                    "%s while %s for %s ",
+                    problemDescription.getProblem(),
+                    problemDescription.getAction(),
+                    problemDescription.getLocation()
+            );
+        }
+
+        protected void onConfigure() {
+            super.onConfigure();
+            overview.setVisible(!problemSelector.isSelected());
+            problemDetail.setVisible(problemSelector.isSelected() && !exceptionSelector.isSelected());
+            exceptionDetail.setVisible(problemSelector.isSelected() && exceptionSelector.isSelected());
+
+            if (problemDetail.isVisible()) {
+                replace(problemDetail = new WebMarkupContainer("problemDetail"));
+                ProblemDescription problemDescription = recorderStore.getActionResult(recordingId).getProblemDescriptions().get(problemSelector.getSelection());
+
+                problemDetail.add(ajaxLink("unselect", (target)-> {
+                    problemSelector.emptySelection();
+                    target.add(ProblemDescriptionListFragment.this);
+                }));
+
+                problemDetail.add(label("description", getFormatted(problemDescription)));
+
+                problemDetail.add(listView("exceptions", problemDescription.getMessages(), (item) -> {
+                    item.add(label("message", item.getModelObject()));
+                    item.add(ajaxLink("selectException", (target)-> {
+                        exceptionSelector.select(0);
+                        target.add(ProblemDescriptionListFragment.this);
+                    }));
+
+                }));
+            }
+
+            if (exceptionDetail.isVisible()) {
+                replace(exceptionDetail = new WebMarkupContainer("exceptionDetail"));
+
+                ProblemDescription problemDescription = recorderStore.getActionResult(recordingId).getProblemDescriptions().get(problemSelector.getSelection());
+                String exception = problemDescription.getMessages().get(exceptionSelector.getSelection());
+
+                exceptionDetail.add(ajaxLink("unselectProblem", (target)-> {
+                    problemSelector.emptySelection();
+                    exceptionSelector.emptySelection();
+                    target.add(ProblemDescriptionListFragment.this);
+                }));
+
+                exceptionDetail.add(label("problemDescription", getFormatted(problemDescription)));
+
+                exceptionDetail.add(ajaxLink("unselectException", (target)-> {
+                    exceptionSelector.emptySelection();
+                    target.add(ProblemDescriptionListFragment.this);
+                }));
+
+                exceptionDetail.add(label("exception", exception));
+
+            }
+        }
+    }
+
+    class ActionResultFragment extends Fragment {
+        Label problemCount;
+        public ActionResultFragment(String id) {
+            super(id, "actionResultFragment", RecordingPage.this);
+
+            int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
+            add(problemCount = label("problemCount", ""+count + " problems"));
+            add(new ProblemDescriptionListFragment("problemDescriptions"));
+        }
+        protected void onConfigure() {
+            int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
+            replace(problemCount = label("problemCount", ""+count + " problems"));
+            super.onConfigure();
+        }
+    }
+
     class RecorderControlsFragment extends Fragment {
 
         private Link connectLink, snapshotLink, disconnectLink, saveLink;
+        private ActionResultFragment actionResult;
 
         public RecorderControlsFragment(String id) {
             super(id, "recorderControlsFragment", RecordingPage.this);
@@ -314,7 +423,7 @@ public class RecordingPage extends MainLayout {
                 recordingActions.save(recordingId);
                 refresh(target);
             }));
-
+            add(actionResult = new ActionResultFragment("actionResult"));
         }
 
         @Override
@@ -328,6 +437,9 @@ public class RecordingPage extends MainLayout {
             disconnectLink.setEnabled(connected);
 
             saveLink.setVisible(!recorderControlState.isAutosave());
+
+            int problemCount = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
+            actionResult.setVisible(problemCount > 0);
         }
 
         private void refresh(AjaxRequestTarget target) {
@@ -394,8 +506,6 @@ public class RecordingPage extends MainLayout {
         }));
 
     }
-
-    // from https://stackoverflow.com/questions/20238886/onbeforeunload-event-with-apache-wicket
 
     static String CUSTOM_EVENT_NAME = "UnloadDetectedCustomEvent";
 

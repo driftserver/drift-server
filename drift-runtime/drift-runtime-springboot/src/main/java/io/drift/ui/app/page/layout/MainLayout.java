@@ -10,13 +10,14 @@ import static io.drift.ui.infra.WicketUtil.addCssResource;
 
 public abstract class MainLayout extends WebPage {
 
-	public MainLayout()  {
-		add(new Menu("menu"));
+	public MainLayout() {
+		// add(new Menu("menu"));
 	}
 
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		addCssResource("bootstrap.min.css", MainLayout.class, response);
+		addCssResource("css/sidebar.css", MainLayout.class, response);
 		// addCssResource("css/font-awesome-5.8.2.css", MainLayout.class, response);
 	}
 

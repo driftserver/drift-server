@@ -1,6 +1,7 @@
 package io.drift.ui.app.page.workbench;
 
 import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
+import io.drift.ui.app.page.layout.MainLayout;
 import io.drift.ui.app.page.layout.MainLayout2;
 import io.drift.ui.app.page.recordings.RecordingsPage;
 import io.drift.ui.app.page.system.SystemPage;
@@ -14,8 +15,7 @@ import java.util.List;
 import static io.drift.ui.infra.WicketUtil.*;
 
 @MountPath("/")
-@WicketHomePage
-public class WorkbenchPage extends MainLayout2 {
+public class WorkbenchPage extends MainLayout {
 
 	class WorkbenchCardProps implements Serializable {
 		String title;

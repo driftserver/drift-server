@@ -1,5 +1,6 @@
 package io.drift.plugin.jdbc;
 
+import io.drift.core.recording.ProblemDescription;
 import io.drift.core.recording.RecordingContext;
 import io.drift.core.recording.RecordingId;
 import io.drift.core.recording.RecordingSessionContribution;
@@ -36,17 +37,31 @@ public class JDBCContribution implements RecordingSessionContribution {
         sessionsById.put(recordingContext.getRecordingId(), jdbcRecordingSessions);
 
         jdbcSubSystems.forEach((subSystemKey, jdbcSubSystem) -> {
+            String location = subSystemKey.getName();
+            String action = null;
+            try {
+                action = "getting connection details";
+                JDBCConnectionDetails connectionDetails = (JDBCConnectionDetails) jdbcSubSystem;
 
-            JDBCConnectionDetails connectionDetails = (JDBCConnectionDetails) jdbcSubSystem;
-            JDBCRecordingSession session = new JDBCRecordingSession(connectionDetails, connectionManager, subSystemKey);
-            jdbcRecordingSessions.add(session);
+                action = "creating new jdbc recording session";
+                JDBCRecordingSession session = new JDBCRecordingSession(connectionDetails, connectionManager, subSystemKey);
+                jdbcRecordingSessions.add(session);
 
-            recordingContext.getRecording().addSubSystemDescription(subSystemKey.getName(), session.getDbMetaData());
+                action = "adding db metadata as subsystem description to recording";
+                recordingContext.getRecording().addSubSystemDescription(subSystemKey.getName(), session.getDbMetaData());
 
-            session.takeSnapshot();
+                action = "taking initial snapshot";
+                session.takeSnapshot();
 
-            recordingContext.getRecording().getInitialState().addSubSystemState(subSystemKey.getName(), session.getLastSnapshot());
-            recordingContext.getRecording().getFinalstate().addSubSystemState(subSystemKey.getName(), session.getLastSnapshot());
+                action = "saving snapshot as initial state of the database ";
+                recordingContext.getRecording().getInitialState().addSubSystemState(subSystemKey.getName(), session.getLastSnapshot());
+
+                action = "saving snapshot as current final state of the database";
+                recordingContext.getRecording().getFinalstate().addSubSystemState(subSystemKey.getName(), session.getLastSnapshot());
+            } catch (Exception e) {
+                recordingContext.getActionResult().addProblem(new ProblemDescription(location, action, e.getMessage(), e));
+                e.printStackTrace();
+            }
 
         });
 
@@ -75,10 +90,26 @@ public class JDBCContribution implements RecordingSessionContribution {
         List<JDBCRecordingSession> sessions = sessionsById.get(recordingContext.getRecordingId());
 
         sessions.forEach(session -> {
-            session.takeSnapshot();
-            recordingContext.getCurrentStep().getSystemInteractions().add(session.getLastDelta());
-            recordingContext.getRecording().getInitialState().addSubSystemState(session.getSubSystemKey().getName(), session.getLastSnapshot());
-            recordingContext.getRecording().getFinalstate().addSubSystemState(session.getSubSystemKey().getName(), session.getLastSnapshot());
+
+            String location = session.getSubSystemKey().getName();
+            String action = null;
+
+            try {
+                action = "taking snapshot";
+                session.takeSnapshot();
+
+                action = "adding delta to system interactions";
+                recordingContext.getCurrentStep().getSystemInteractions().add(session.getLastDelta());
+
+                action = "setting initial system state";
+                recordingContext.getRecording().getInitialState().addSubSystemState(session.getSubSystemKey().getName(), session.getLastSnapshot());
+
+                action = "setting final system state";
+                recordingContext.getRecording().getFinalstate().addSubSystemState(session.getSubSystemKey().getName(), session.getLastSnapshot());
+            } catch (Exception e) {
+                recordingContext.getActionResult().addProblem(new ProblemDescription(location, action, e.getMessage(), e));
+                e.printStackTrace();
+            }
         });
 
     }

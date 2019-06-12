@@ -24,4 +24,6 @@ public interface RecordingDomainService {
 
     void closeSession(RecordingId recordingId);
 
+    ActionResult getActionResult(RecordingId recordingId);
+
 }

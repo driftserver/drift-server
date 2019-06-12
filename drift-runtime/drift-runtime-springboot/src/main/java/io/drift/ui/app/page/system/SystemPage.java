@@ -1,7 +1,9 @@
 package io.drift.ui.app.page.system;
 
+import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
 import io.drift.ui.app.flux.SubSystemSettingsDTO;
 import io.drift.ui.app.flux.SystemStore;
+import io.drift.ui.app.page.layout.MainLayout;
 import io.drift.ui.app.page.layout.MainLayout2;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -14,7 +16,8 @@ import static io.drift.ui.infra.WicketUtil.label;
 import static io.drift.ui.infra.WicketUtil.listView;
 
 @MountPath("system")
-public class SystemPage  extends MainLayout2 {
+@WicketHomePage
+public class SystemPage  extends MainLayout {
 
     @SpringBean
     SystemStore systemStore;

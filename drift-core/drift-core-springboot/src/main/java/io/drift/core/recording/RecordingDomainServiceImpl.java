@@ -36,8 +36,10 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         recording.setName("Recording " + environmentKey.getName() + " " + LocalDateTime.now().format(formatter));
         recording.setEnvironmentKey(environmentKey);
 
+        ActionResult actionLogger = new ActionResult();
+
         SystemDescription systemDescription = systemDescriptionStorage.load();
-        RecordingContext recordingContext = new RecordingContext(recording, systemDescription);
+        RecordingContext recordingContext = new RecordingContext(recording, systemDescription, actionLogger);
         recordingContext.setState(RecordingState.CREATED);
 
         contexts.put(recordingId, recordingContext);
@@ -63,17 +65,18 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     @Override
     public void takeSnapShot(RecordingId recordingId) {
-        RecordingContext context = restoreContext(recordingId);
+        RecordingContext recordingContext = restoreContext(recordingId);
+
 
         RecordingStep step = new RecordingStep();
-        step.setTitle("step " + context.getRecording().getSteps().size());
-        context.getRecording().addStep(step);
-        context.setCurrentStep(step);
+        step.setTitle("step " + recordingContext.getRecording().getSteps().size());
+        recordingContext.getRecording().addStep(step);
+        recordingContext.setCurrentStep(step);
 
-        context.getRecording().setFinalstate(new SystemState());
-        contributions.forEach(contribution -> contribution.takeSnapshot(context));
+        recordingContext.getRecording().setFinalstate(new SystemState());
+        contributions.forEach(contribution -> contribution.takeSnapshot(recordingContext));
 
-        if (context.getSettings().isAutoSave()) save(recordingId);
+        if (recordingContext.getSettings().isAutoSave()) save(recordingId);
 
     }
 
@@ -102,7 +105,8 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         if (context == null) {
             Recording recording = recordingStorage.load(recordingId);
             SystemDescription systemDescription = systemDescriptionStorage.load();
-            context = new RecordingContext(recording, systemDescription);
+            ActionResult actionLogger = new ActionResult();
+            context = new RecordingContext(recording, systemDescription, actionLogger);
             context.setState(RecordingState.DISCONNECTED);
             contexts.put(recordingId, context);
             reportSessionCount();
@@ -137,5 +141,10 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     private void reportSessionCount() {
         System.out.println("#contexts: " + contexts.size());
+    }
+
+    @Override
+    public ActionResult getActionResult(RecordingId recordingId) {
+        return restoreContext(recordingId).getActionResult();
     }
 }

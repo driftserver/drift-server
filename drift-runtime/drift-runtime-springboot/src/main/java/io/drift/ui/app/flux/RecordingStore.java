@@ -41,4 +41,8 @@ public class RecordingStore {
                 .map(summary -> new RecordingSummaryDTO(summary.getRecordingId(), summary.getName()))
                 .collect(Collectors.toList());
     }
+
+    public ActionResult getActionResult(RecordingId recordingId) {
+        return service.getActionResult(recordingId);
+    }
 }

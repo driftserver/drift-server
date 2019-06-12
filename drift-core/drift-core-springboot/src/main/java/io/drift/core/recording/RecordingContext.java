@@ -17,13 +17,16 @@ public class RecordingContext {
 
     private SystemDescription systemDescription;
 
+    private ActionResult actionResult;
+
     private RecordingStep currentStep;
 
     private RecordingSessionSettings settings = new RecordingSessionSettings();
 
-    public RecordingContext(Recording recording, SystemDescription systemDescription) {
+    public RecordingContext(Recording recording, SystemDescription systemDescription, ActionResult actionResult) {
         this.recording = recording;
         this.systemDescription = systemDescription;
+        this.actionResult = actionResult;
     }
 
     public Recording getRecording() {
@@ -70,4 +73,7 @@ public class RecordingContext {
         return settings;
     }
 
+    public ActionResult getActionResult() {
+        return actionResult;
+    }
 }

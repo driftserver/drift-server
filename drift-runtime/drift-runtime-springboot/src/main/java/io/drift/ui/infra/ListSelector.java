@@ -37,4 +37,8 @@ public class ListSelector<PARENT_SELECTOR_CLASS extends Selector > extends Selec
     public void select(Integer idx) {
         this.idx = idx;
     }
+
+    public void emptySelection() {
+        idx = null;
+    }
 }

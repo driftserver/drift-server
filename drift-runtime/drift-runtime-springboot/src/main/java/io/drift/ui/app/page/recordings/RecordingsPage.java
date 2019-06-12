@@ -1,11 +1,13 @@
 package io.drift.ui.app.page.recordings;
 
+import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
 import io.drift.core.recording.RecordingId;
 import io.drift.core.system.EnvironmentKey;
 import io.drift.ui.app.flux.EnvironmentDTO;
 import io.drift.ui.app.flux.RecordingActions;
 import io.drift.ui.app.flux.RecordingStore;
 import io.drift.ui.app.flux.SystemStore;
+import io.drift.ui.app.page.layout.MainLayout;
 import io.drift.ui.app.page.layout.MainLayout2;
 import io.drift.ui.app.page.recording.RecordingPage;
 import org.apache.wicket.markup.html.form.*;
@@ -23,7 +25,7 @@ import java.util.List;
 import static io.drift.ui.infra.WicketUtil.*;
 
 @MountPath("recordings")
-public class RecordingsPage extends MainLayout2 {
+public class RecordingsPage extends MainLayout {
 
     @SpringBean
     private RecordingActions recordingActions;
