@@ -4,13 +4,26 @@ import java.io.Serializable;
 
 public class SubSystemDTO implements Serializable {
 
-    private String name;
+    private String key;
+    private String type;
+    private String description;
 
-    public SubSystemDTO(String name) {
-        this.name = name;
+    public SubSystemDTO(String key, String type, String description) {
+        this.key = key;
+        this.type = type;
+        this.description = description;
     }
 
-    public String getName() {
-        return name;
+    public String getKey() {
+        return key;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
 }

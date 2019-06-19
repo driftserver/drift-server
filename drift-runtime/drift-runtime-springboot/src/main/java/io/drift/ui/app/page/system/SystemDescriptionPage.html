@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:extend>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+
+                    <div class="card-body">
+                        <h5 >System Description</h5>
+
+                        <h6 >System Structure</h6>
+
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>key</th>
+                                <th>type</th>
+                                <th>description</th>
+                            </tr>
+                            </thead>
+                            <tr wicket:id="subSystems">
+                                <td>
+                                    <div wicket:id="key"/>
+                                </td>
+                                <td>
+                                    <div wicket:id="type"/>
+                                </td>
+                                <td>
+                                    <div wicket:id="description"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <h6>Environments</h6>
+
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>key</th>
+                                <th>description</th>
+                            </tr>
+                            </thead>
+                            <tr wicket:id="environments">
+                                <td>
+                                    <div wicket:id="key"/>
+                                </td>
+                                <td>
+                                    <div wicket:id="description"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</wicket:extend>
+</body>
+</html>

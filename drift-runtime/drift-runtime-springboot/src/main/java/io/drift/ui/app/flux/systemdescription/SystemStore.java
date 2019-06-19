@@ -21,7 +21,7 @@ public class SystemStore {
 
     public List<SubSystemDTO> getSubsystems() {
         return getSystemDescription().getSubSystems().stream()
-                .map(subsystem -> new SubSystemDTO(subsystem.getName()))
+                .map(subsystem -> new SubSystemDTO(subsystem.getKey().getName(), subsystem.getType(), subsystem.getName()))
                 .collect(Collectors.toList());
     }
 

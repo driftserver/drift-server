@@ -1,5 +1,6 @@
 package io.drift.ui.app.page.recordings;
 
+import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
 import io.drift.core.recording.RecordingId;
 import io.drift.core.system.EnvironmentKey;
 import io.drift.ui.app.flux.systemdescription.EnvironmentDTO;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 import static io.drift.ui.infra.WicketUtil.*;
 
 @MountPath("recordings")
+@WicketHomePage
 public class RecordingsPage extends MainLayout {
 
     @SpringBean

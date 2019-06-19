@@ -1,10 +1,8 @@
 package io.drift.ui.app.page.workbench;
 
-import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
 import io.drift.ui.app.page.layout.MainLayout;
-import io.drift.ui.app.page.layout.MainLayout2;
 import io.drift.ui.app.page.recordings.RecordingsPage;
-import io.drift.ui.app.page.system.SystemPage;
+import io.drift.ui.app.page.system.SystemDescriptionPage;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.wicketstuff.annotation.mount.MountPath;
 
@@ -46,7 +44,7 @@ public class WorkbenchPage extends MainLayout {
 		workflows.add(new WorkbenchCardProps() {{
 			title = "System";
 			description = "Connection details by subsystem and environment, (sub)system partitioning";
-			page = SystemPage.class;
+			page = SystemDescriptionPage.class;
 		}});
 
 		add(listView("workflows", workflows, (workflowItem)-> {

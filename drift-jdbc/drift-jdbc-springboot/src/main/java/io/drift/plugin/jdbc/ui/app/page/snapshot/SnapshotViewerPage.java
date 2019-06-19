@@ -81,7 +81,7 @@ public class SnapshotViewerPage extends MainLayout {
         } else if (viewPart instanceof TableViewPart) {
             return new SVTableFragment(id, (TableViewPart)viewPart);
         }
-        return null; // label(id, "no view for " + viewPart.getClass().getName());
+        return null; // label(id, "no view for " + viewPart.getClass().getDescription());
 
     }
 
