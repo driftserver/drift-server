@@ -1,4 +1,4 @@
-package io.drift.ui.app.flux;
+package io.drift.ui.app.flux.recording;
 
 import io.drift.core.recording.RecordingId;
 

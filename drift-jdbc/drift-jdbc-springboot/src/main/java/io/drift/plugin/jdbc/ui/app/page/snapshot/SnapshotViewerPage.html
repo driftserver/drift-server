@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:extend>
+
+    <wicket:fragment wicket:id="tableFragment">
+        <table class="table table-bordered table-sm" style="width: auto !important;">
+            <tr>
+                <th>
+                    <span wicket:id="name"></span>
+                </th>
+                <th>
+                    #
+                </th>
+                <th>
+                    name
+                </th>
+                <wicket:container wicket:id="relationHeaders">
+                    <th><span wicket:id="relationName"></span></th>
+                </wicket:container>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    #1
+                </td>
+                <td>
+                    Bart
+                </td>
+                <wicket:container wicket:id="relationSelections">
+                    <th><a href="#" wicket:id="relationSelection">[..]</a></th>
+                </wicket:container>
+            </tr>
+        </table>
+
+    </wicket:fragment>
+
+    <wicket:fragment wicket:id="modelFragment">
+        <div class="container">
+            <wicket:container wicket:id="tables">
+                <div wicket:id="table"></div>
+            </wicket:container>
+        </div>
+    </wicket:fragment>
+
+    <wicket:fragment wicket:id="rootsViewFragment">
+        <div class="container">
+            <table class="table table-bordered table-sm" style="width: auto !important;">
+                <wicket:container wicket:id="roots">
+                    <tr>
+                        <td>
+                            <a wicket:id="rootSelection">
+                                [<span wicket:id="rootName"></span>]
+                            </a>
+                        </td>
+                    </tr>
+                </wicket:container>
+                <wicket:container wicket:id="childParts">
+                    <div wicket:id="childPart" ></div>
+                </wicket:container>
+            </table>
+        </div>
+    </wicket:fragment>
+
+    <div wicket:id="viewPart" ></div>
+
+</wicket:extend>
+</body>
+</html>

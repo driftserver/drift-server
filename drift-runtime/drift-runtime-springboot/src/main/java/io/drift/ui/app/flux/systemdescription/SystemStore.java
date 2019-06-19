@@ -1,4 +1,4 @@
-package io.drift.ui.app.flux;
+package io.drift.ui.app.flux.systemdescription;
 
 import io.drift.core.system.*;
 import org.springframework.beans.factory.annotation.Autowired;

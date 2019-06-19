@@ -1,10 +1,9 @@
 package io.drift.ui.app.page.system;
 
 import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
-import io.drift.ui.app.flux.SubSystemSettingsDTO;
-import io.drift.ui.app.flux.SystemStore;
+import io.drift.ui.app.flux.systemdescription.SubSystemSettingsDTO;
+import io.drift.ui.app.flux.systemdescription.SystemStore;
 import io.drift.ui.app.page.layout.MainLayout;
-import io.drift.ui.app.page.layout.MainLayout2;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;

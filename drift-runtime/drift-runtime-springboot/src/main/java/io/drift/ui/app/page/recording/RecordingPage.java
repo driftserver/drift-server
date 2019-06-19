@@ -1,9 +1,9 @@
 package io.drift.ui.app.page.recording;
 
 import io.drift.core.recording.*;
-import io.drift.ui.app.flux.RecorderControlDTO;
-import io.drift.ui.app.flux.RecordingActions;
-import io.drift.ui.app.flux.RecordingStore;
+import io.drift.ui.app.flux.recording.RecorderControlDTO;
+import io.drift.ui.app.flux.recording.RecordingActions;
+import io.drift.ui.app.flux.recording.RecordingStore;
 import io.drift.ui.app.page.layout.MainLayout;
 import io.drift.ui.config.WicketComponentRegistry;
 import io.drift.ui.infra.ListSelector;

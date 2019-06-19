@@ -1,4 +1,4 @@
-package io.drift.ui.app.flux;
+package io.drift.ui.app.flux.systemdescription;
 
 import io.drift.ui.app.component.editor.component.NavListComponent;
 import io.drift.ui.app.component.editor.document.CompositeDocumentElement;
