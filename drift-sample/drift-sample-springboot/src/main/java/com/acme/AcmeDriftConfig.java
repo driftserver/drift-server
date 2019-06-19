@@ -6,20 +6,11 @@ import de.agilecoders.wicket.core.Bootstrap;
 import io.drift.core.store.IDGenerator;
 import io.drift.core.store.IDGeneratorUUIDImpl;
 import io.drift.core.store.ModelStore;
-import io.drift.core.store.serialization.JsonModelSerializer;
-import io.drift.core.store.storage.FileSystemModelStorage;
-import io.drift.jdbc.domain.data.DBDelta;
-import io.drift.jdbc.domain.data.DBSnapShot;
-import io.drift.jdbc.domain.metadata.DBMetaData;
-import io.drift.jdbc.infra.DriftJDBCJacksonModule;
 import io.drift.ui.config.DefaultDriftSpringSecurityConfig;
 import org.apache.wicket.settings.RequestCycleSettings;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-
-import java.nio.file.Paths;
 
 @SpringBootApplication(exclude = {
         org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
