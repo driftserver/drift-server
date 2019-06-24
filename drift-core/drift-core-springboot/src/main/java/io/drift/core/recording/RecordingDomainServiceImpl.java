@@ -50,6 +50,10 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     @Override
     public void connect(RecordingId recordingId) {
         RecordingContext context = restoreContext(recordingId);
+        connect(context);
+    }
+
+    private void connect(RecordingContext context) {
         Recording recording = context.getRecording();
         if (recording.getInitialState()==null) {
             recording.setInitialState(new SystemState());
@@ -60,23 +64,30 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         }
         context.setState(RecordingState.CONNECTED);
 
-        if (context.getSettings().isAutoSave()) save(recordingId);
+        autoSave(context);
     }
+
+    private void autoSave(RecordingContext context) {
+        if (context.getSettings().isAutoSave()) save(context);
+    }
+
 
     @Override
     public void takeSnapShot(RecordingId recordingId) {
         RecordingContext recordingContext = restoreContext(recordingId);
 
+        if (!RecordingState.CONNECTED.equals(recordingContext.getState())){
+            connect(recordingContext);
+        } else {
+            RecordingStep step = new RecordingStep();
+            step.setTitle("step " + recordingContext.getRecording().getSteps().size());
+            recordingContext.getRecording().addStep(step);
+            recordingContext.setCurrentStep(step);
 
-        RecordingStep step = new RecordingStep();
-        step.setTitle("step " + recordingContext.getRecording().getSteps().size());
-        recordingContext.getRecording().addStep(step);
-        recordingContext.setCurrentStep(step);
-
-        recordingContext.getRecording().setFinalstate(new SystemState());
-        contributions.forEach(contribution -> contribution.takeSnapshot(recordingContext));
-
-        if (recordingContext.getSettings().isAutoSave()) save(recordingId);
+            recordingContext.getRecording().setFinalstate(new SystemState());
+            contributions.forEach(contribution -> contribution.takeSnapshot(recordingContext));
+        }
+        autoSave(recordingContext);
 
     }
 
@@ -86,13 +97,17 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         context.setState(RecordingState.DISCONNECTED);
         contributions.forEach(contribution -> contribution.onDisconnect(context));
 
-        if (context.getSettings().isAutoSave()) save(recordingId);
+        autoSave(context);
 
     }
 
     @Override
     public void save(RecordingId recordingId) {
-        recordingStorage.store(getById(recordingId));
+        save(restoreContext(recordingId));
+    }
+
+    private void save(RecordingContext recordingContext) {
+        recordingStorage.store(recordingContext.getRecording());
     }
 
     @Override

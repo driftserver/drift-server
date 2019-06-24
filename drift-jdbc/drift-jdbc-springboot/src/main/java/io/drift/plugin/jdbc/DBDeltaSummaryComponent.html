@@ -1,18 +1,23 @@
-<html>
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
 <body>
 <wicket:panel>
-    <h5>
         <div>
             <span class="fa fa-database"></span> <span wicket:id="name"></span>
         </div>
         <div>
-            <span class="text-success">I</span> <span wicket:id="inserts"></span>
-            /
-            <span class="text-warning">U</span> <span wicket:id="updates"></span>
-            /
-            <span class="text-danger">D</span> <span wicket:id="deletes"></span>
+            <div wicket:id="changes">
+                <span class="text-success">I</span> <span wicket:id="inserts"></span>
+                /
+                <span class="text-warning">U</span> <span wicket:id="updates"></span>
+                /
+                <span class="text-danger">D</span> <span wicket:id="deletes"></span>
+            </div>
+
+            <div wicket:id="noChanges">
+                <span>No changes</span>
+            </div>
         </div>
-    </h5>
 </wicket:panel>
 </body>
 </html>

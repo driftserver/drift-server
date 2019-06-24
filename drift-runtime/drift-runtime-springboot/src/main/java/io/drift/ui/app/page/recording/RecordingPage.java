@@ -1,7 +1,6 @@
 package io.drift.ui.app.page.recording;
 
 import io.drift.core.recording.*;
-import io.drift.ui.app.flux.recording.RecorderControlDTO;
 import io.drift.ui.app.flux.recording.RecordingActions;
 import io.drift.ui.app.flux.recording.RecordingStore;
 import io.drift.ui.app.page.layout.MainLayout;
@@ -9,10 +8,7 @@ import io.drift.ui.config.WicketComponentRegistry;
 import io.drift.ui.infra.ListSelector;
 import io.drift.ui.infra.Selector;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -22,7 +18,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import java.io.Serializable;
-import java.io.StringWriter;
 
 import static io.drift.ui.infra.WicketUtil.*;
 
@@ -40,8 +35,9 @@ public class RecordingPage extends MainLayout {
 
         static final String INITIAL_STATE = "initial state";
         static final String SCENARIO_STEP = "scenario step";
-        static final String FINAL_STATE = "initial state";
+        static final String FINAL_STATE = "final state";
 
+        private boolean focus = true;
         private String selection;
         private ScenarioStepSelector scenarioStepSelector = new ScenarioStepSelector(this);
         private SystemStateSubSystemSelector systemStateSubSystemSelector = new SystemStateSubSystemSelector(this);
@@ -73,6 +69,7 @@ public class RecordingPage extends MainLayout {
         public void selectScenarioStep(Integer idx) {
             selection = SCENARIO_STEP;
             scenarioStepSelector.select(idx);
+            scenarioStepSelector.setMaxIdx(recorderStore.getRecording(recordingId).getSteps().size()-1);
         }
 
         public boolean isScenarioStepSelected() {
@@ -111,6 +108,36 @@ public class RecordingPage extends MainLayout {
             }
         }
 
+        public void refocus(String keyCode) {
+            if ("38".equals(keyCode)) { // up
+                if (isScenarioStepSelected()) {
+                    if (scenarioStepSelector.getSelection() > 0) {
+                        scenarioStepSelector.decrease();
+                    } else {
+                        selectInitialState();
+                    }
+                } else if (isFinalStateSelected()){
+                    selectLastStep();
+                }
+
+            } else if ("40".equals(keyCode)) { // down
+                if (isScenarioStepSelected()) {
+                    if (scenarioStepSelector.getSelection() < scenarioStepSelector.getMaxIdx()) {
+                        scenarioStepSelector.increase();
+                    } else {
+                        selectFinalState();
+                    }
+                } else if (isInitialStateSelected()){
+                    selectScenarioStep(0);
+                }
+
+            }
+
+        }
+
+        public boolean hasFocus() {
+            return focus;
+        }
     }
 
     class SystemInteractionsSelector extends ListSelector<ScenarioStepSelector> {
@@ -146,7 +173,10 @@ public class RecordingPage extends MainLayout {
 
     class SystemStateSubSystemSelector extends ListSelector<ScenarioItemSelector> {
 
-        protected SystemStateSubSystemSelector() { } ;
+        protected SystemStateSubSystemSelector() {
+        }
+
+        ;
 
         public SystemStateSubSystemSelector(ScenarioItemSelector parentSelector) {
             super(parentSelector);
@@ -190,14 +220,6 @@ public class RecordingPage extends MainLayout {
         public SystemInteractionsFragment(String id) {
             super(id, "systemInteractionsFragment", RecordingPage.this);
             SystemInteractionsSelector selector = scenarioItemSelector.getScenarioStepSelector().getSystemInteractionsSelector();
-            add(ajaxLink("previousButton", target -> {
-                selector.decrease();
-                target.add(scenarioRecorder);
-            }));
-            add(ajaxLink("nextButton", target -> {
-                selector.increase();
-                target.add(scenarioRecorder);
-            }));
             add(listView("interactions", scenarioItemSelector.getScenarioStepSelector().getSelectedScenarioItem().getSystemInteractions(), item -> {
                 SystemInteraction systemInteraction = item.getModelObject();
                 int index = item.getIndex();
@@ -226,7 +248,7 @@ public class RecordingPage extends MainLayout {
                     target.add(scenarioRecorder);
                 });
                 item.add(select);
-                select.add(label("subSystemName", item.getModelObject()));
+                select.add(label("subSystemName", scenarioItemSelector.getSelectedSystemState().getOrderedSubSystemKeys().get(item.getModelObject())));
             }));
             if (subSystemSelector.isSelected()) {
                 add(createSubSystemStateDetail("selectedSubSystemState", subSystemSelector.getSelectedSubSystemState(), subSystemSelector.getSubSystemDescription()));
@@ -257,33 +279,50 @@ public class RecordingPage extends MainLayout {
 
         public ScenarioFragment(String id) {
             super(id, "scenarioFragment", RecordingPage.this);
-            add(ajaxLink("selectInitialState", target -> {
-                scenarioItemSelector.selectInitialState();
-                target.add(scenarioRecorder);
-            }));
-            add(ajaxLink("selectFinalState", target -> {
-                scenarioItemSelector.selectFinalState();
-                target.add(scenarioRecorder);
-            }));
+
+            {
+                Link initialState = ajaxLink("selectInitialState", target -> {
+                    scenarioItemSelector.selectInitialState();
+                    target.add(scenarioRecorder);
+                });
+
+                Label selected = label("selected");
+                if (scenarioItemSelector.hasFocus()) addClass(selected, "btn-outline-primary");
+                selected.setVisible(scenarioItemSelector.isInitialStateSelected());
+
+                add(initialState);
+                initialState.add(selected);
+            }
+
+            {
+                Link finalState = ajaxLink("selectFinalState", target -> {
+                    scenarioItemSelector.selectFinalState();
+                    target.add(scenarioRecorder);
+                });
+
+                Label selected = label("selected");
+                if (scenarioItemSelector.hasFocus()) addClass(selected, "btn-outline-primary");
+                selected.setVisible(scenarioItemSelector.isFinalStateSelected());
+
+                add(finalState);
+                finalState.add(selected);
+            }
+
             add(listView("steps", indices(recorderStore.getRecording(recordingId).getSteps()), stepItem -> {
                 Integer idx = stepItem.getModelObject();
-                Link<Void> select = ajaxLink("select", target -> {
+
+                Link<Void> step = ajaxLink("step", target -> {
                     scenarioItemSelector.selectScenarioStep(idx);
                     target.add(scenarioRecorder);
                 });
-                stepItem.add(select);
-                if (scenarioItemSelector.isScenarioStepSelected() && idx.equals(scenarioItemSelector.getScenarioStepSelector().getSelection())) {
-                    addClass(select, "active");
-                }
-                select.add(label("title", idx));
-            }));
-            add(ajaxLink("previous", target -> {
-                scenarioItemSelector.getScenarioStepSelector().decrease();
-                target.add(scenarioRecorder);
-            }));
-            add(ajaxLink("next", target -> {
-                scenarioItemSelector.getScenarioStepSelector().increase();
-                target.add(scenarioRecorder);
+
+                Label selected = label("selected");
+                if (scenarioItemSelector.hasFocus()) addClass(selected, "btn-outline-primary");
+                selected.setVisible(scenarioItemSelector.isScenarioStepSelected() && idx.equals(scenarioItemSelector.getScenarioStepSelector().getSelection()));
+
+                stepItem.add(step);
+                step.add(label("title", idx));
+                step.add(selected);
             }));
         }
     }
@@ -305,7 +344,7 @@ public class RecordingPage extends MainLayout {
                 ProblemDescription problemDescription = item.getModelObject();
                 item.add(new Label("description", getFormatted(problemDescription)));
 
-                Link select = ajaxLink("select", (target)-> {
+                Link select = ajaxLink("select", (target) -> {
                     problemSelector.select(0);
                     target.add(ProblemDescriptionListFragment.this);
                 });
@@ -337,7 +376,7 @@ public class RecordingPage extends MainLayout {
                 replace(problemDetail = new WebMarkupContainer("problemDetail"));
                 ProblemDescription problemDescription = recorderStore.getActionResult(recordingId).getProblemDescriptions().get(problemSelector.getSelection());
 
-                problemDetail.add(ajaxLink("unselect", (target)-> {
+                problemDetail.add(ajaxLink("unselect", (target) -> {
                     problemSelector.emptySelection();
                     target.add(ProblemDescriptionListFragment.this);
                 }));
@@ -346,7 +385,7 @@ public class RecordingPage extends MainLayout {
 
                 problemDetail.add(listView("exceptions", problemDescription.getMessages(), (item) -> {
                     item.add(label("message", item.getModelObject()));
-                    item.add(ajaxLink("selectException", (target)-> {
+                    item.add(ajaxLink("selectException", (target) -> {
                         exceptionSelector.select(0);
                         target.add(ProblemDescriptionListFragment.this);
                     }));
@@ -360,7 +399,7 @@ public class RecordingPage extends MainLayout {
                 ProblemDescription problemDescription = recorderStore.getActionResult(recordingId).getProblemDescriptions().get(problemSelector.getSelection());
                 String exception = problemDescription.getMessages().get(exceptionSelector.getSelection());
 
-                exceptionDetail.add(ajaxLink("unselectProblem", (target)-> {
+                exceptionDetail.add(ajaxLink("unselectProblem", (target) -> {
                     problemSelector.emptySelection();
                     exceptionSelector.emptySelection();
                     target.add(ProblemDescriptionListFragment.this);
@@ -368,7 +407,7 @@ public class RecordingPage extends MainLayout {
 
                 exceptionDetail.add(label("problemDescription", getFormatted(problemDescription)));
 
-                exceptionDetail.add(ajaxLink("unselectException", (target)-> {
+                exceptionDetail.add(ajaxLink("unselectException", (target) -> {
                     exceptionSelector.emptySelection();
                     target.add(ProblemDescriptionListFragment.this);
                 }));
@@ -381,46 +420,32 @@ public class RecordingPage extends MainLayout {
 
     class ActionResultFragment extends Fragment {
         Label problemCount;
+
         public ActionResultFragment(String id) {
             super(id, "actionResultFragment", RecordingPage.this);
 
             int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
-            add(problemCount = label("problemCount", ""+count + " problems"));
+            add(problemCount = label("problemCount", "" + count + " problems"));
             add(new ProblemDescriptionListFragment("problemDescriptions"));
         }
+
         protected void onConfigure() {
             int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
-            replace(problemCount = label("problemCount", ""+count + " problems"));
+            replace(problemCount = label("problemCount", "" + count + " problems"));
             super.onConfigure();
         }
     }
 
     class RecorderControlsFragment extends Fragment {
 
-        private Link connectLink, snapshotLink, disconnectLink, saveLink;
         private ActionResultFragment actionResult;
 
         public RecorderControlsFragment(String id) {
             super(id, "recorderControlsFragment", RecordingPage.this);
 
-            add(connectLink =ajaxLink("startRecording", target -> {
-                recordingActions.start(recordingId);
-                if (!scenarioItemSelector.isScenarioItemSelected()) {
-                    scenarioItemSelector.selectInitialState();
-                }
-                refresh(target);
-            }));
-            add(snapshotLink = ajaxLink("takeSnapshot", target -> {
+            add(ajaxLink("takeSnapshot", target -> {
                 recordingActions.takeSnapshot(recordingId);
                 scenarioItemSelector.selectLastStep();
-                refresh(target);
-            }));
-            add(disconnectLink = ajaxLink("stopRecording", target -> {
-                recordingActions.finish(recordingId);
-                refresh(target);
-            }));
-            add(saveLink = ajaxLink("saveRecording", target -> {
-                recordingActions.save(recordingId);
                 refresh(target);
             }));
             add(actionResult = new ActionResultFragment("actionResult"));
@@ -429,15 +454,6 @@ public class RecordingPage extends MainLayout {
         @Override
         protected void onConfigure() {
             super.onConfigure();
-            RecorderControlDTO recorderControlState = recorderStore.getRecorderControlState(recordingId);
-            boolean connected = recorderControlState.isConnected();
-
-            connectLink.setEnabled(!connected);
-            snapshotLink.setEnabled(connected);
-            disconnectLink.setEnabled(connected);
-
-            saveLink.setVisible(!recorderControlState.isAutosave());
-
             int problemCount = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
             actionResult.setVisible(problemCount > 0);
         }
@@ -500,38 +516,14 @@ public class RecordingPage extends MainLayout {
 
         recorderControls.setOutputMarkupId(true);
         scenarioRecorder.setOutputMarkupId(true);
-
-        add(addUnloadTracker("unloadTracker", target -> {
-            recordingActions.closeSession(recordingId);
+        add(arrowkeyBehavior((keyCode, target) -> {
+            scenarioItemSelector.refocus(keyCode);
+            target.add(scenarioRecorder);
         }));
 
-    }
-
-    static String CUSTOM_EVENT_NAME = "UnloadDetectedCustomEvent";
-
-    private WebMarkupContainer addUnloadTracker(String id, SerializableConsumer<AjaxRequestTarget> lambda) {
-
-        return (WebMarkupContainer) new WebMarkupContainer(id) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void renderHead(IHeaderResponse response) {
-                super.renderHead(response);
-                StringWriter sw = new StringWriter();
-                sw.append("console.log('binding onbeforeunload handler') ; $(window).bind('beforeunload', function() { $('#");
-                sw.append(getMarkupId());
-                sw.append("').trigger('");
-                sw.append(CUSTOM_EVENT_NAME);
-                sw.append("'); });");
-                response.render(OnDomReadyHeaderItem.forScript(sw.toString()));
-            }
-
-        }
-        .setOutputMarkupId(true)
-        .add(new AjaxEventBehavior(CUSTOM_EVENT_NAME) {
-            private static final long serialVersionUID = 1L;
-            protected void onEvent(final AjaxRequestTarget target) { lambda.accept(target); }
-        });
+        add(unloadTrackingBehaviour("unloadTracker", target -> {
+            recordingActions.closeSession(recordingId);
+        }));
 
     }
 

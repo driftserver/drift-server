@@ -41,4 +41,12 @@ public class ListSelector<PARENT_SELECTOR_CLASS extends Selector > extends Selec
     public void emptySelection() {
         idx = null;
     }
+
+    public void setMaxIdx(int maxIdx) {
+        this.maxIdx = maxIdx;
+    }
+
+    public int getMaxIdx() {
+        return maxIdx;
+    }
 }
