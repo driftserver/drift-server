@@ -37,18 +37,19 @@ public class RecordingPage extends MainLayout {
         static final String SCENARIO_STEP = "scenario step";
         static final String FINAL_STATE = "final state";
 
-        private boolean focus = true;
         private String selection;
         private ScenarioStepSelector scenarioStepSelector = new ScenarioStepSelector(this);
         private SystemStateSubSystemSelector systemStateSubSystemSelector = new SystemStateSubSystemSelector(this);
 
         public ScenarioItemSelector() {
             super(null);
+            setFocus(true);
         }
 
         public void selectInitialState() {
             if (recorderStore.getRecording(recordingId).getInitialState() != null) {
                 selection = INITIAL_STATE;
+                systemStateSubSystemSelector.setMaxIdx(recorderStore.getRecording(recordingId).getInitialState().getOrderedSubSystemKeys().size());
                 systemStateSubSystemSelector.selectFirstSubSystem();
             }
         }
@@ -59,6 +60,7 @@ public class RecordingPage extends MainLayout {
 
         public void selectFinalState() {
             selection = FINAL_STATE;
+            systemStateSubSystemSelector.setMaxIdx(recorderStore.getRecording(recordingId).getFinalstate().getOrderedSubSystemKeys().size());
             systemStateSubSystemSelector.selectFirstSubSystem();
         }
 
@@ -101,15 +103,22 @@ public class RecordingPage extends MainLayout {
             return recorderStore.getRecording(recordingId).getSubSystemDescription(subSystemKey);
         }
 
-        public void selectLastStep() {
+        public void selectLast() {
             Recording recording = recorderStore.getRecording(recordingId);
             if (recording.getSteps().size() > 0) {
                 selectScenarioStep(recording.getSteps().size() - 1);
+            } else if(recording.getInitialState()!=null) {
+                selectInitialState();
             }
         }
 
-        public void refocus(String keyCode) {
-            if ("38".equals(keyCode)) { // up
+        public void handleArrowNavigation(String keyCode) {
+            if (!hasFocus()) {
+                if (isInitialStateSelected() || isFinalStateSelected()) {
+                    systemStateSubSystemSelector.handleArrowNavigation(keyCode);
+                }
+            }
+            else if (KEY_UP.equals(keyCode)) {
                 if (isScenarioStepSelected()) {
                     if (scenarioStepSelector.getSelection() > 0) {
                         scenarioStepSelector.decrease();
@@ -117,10 +126,10 @@ public class RecordingPage extends MainLayout {
                         selectInitialState();
                     }
                 } else if (isFinalStateSelected()){
-                    selectLastStep();
+                    selectLast();
                 }
 
-            } else if ("40".equals(keyCode)) { // down
+            } else if (KEY_DOWN.equals(keyCode)) {
                 if (isScenarioStepSelected()) {
                     if (scenarioStepSelector.getSelection() < scenarioStepSelector.getMaxIdx()) {
                         scenarioStepSelector.increase();
@@ -131,13 +140,16 @@ public class RecordingPage extends MainLayout {
                     selectScenarioStep(0);
                 }
 
+            } else if (KEY_RIGHT.equals(keyCode)) {
+                if (isInitialStateSelected() || isFinalStateSelected()) {
+                    systemStateSubSystemSelector.setFocus(true);
+                    setFocus(false);
+                }
+
             }
 
         }
 
-        public boolean hasFocus() {
-            return focus;
-        }
     }
 
     class SystemInteractionsSelector extends ListSelector<ScenarioStepSelector> {
@@ -176,7 +188,6 @@ public class RecordingPage extends MainLayout {
         protected SystemStateSubSystemSelector() {
         }
 
-        ;
 
         public SystemStateSubSystemSelector(ScenarioItemSelector parentSelector) {
             super(parentSelector);
@@ -199,6 +210,17 @@ public class RecordingPage extends MainLayout {
         public void selectFirstSubSystem() {
             if (getParentselector().getSelectedSystemState().getOrderedSubSystemKeys().size() > 0) {
                 select(0);
+            }
+        }
+
+        public void handleArrowNavigation(String keyCode) {
+            if (KEY_LEFT.equals(keyCode)) {
+                setFocus(false);
+                getParentselector().setFocus(true);
+            } else if (KEY_UP.equals(keyCode)) {
+                decrease();
+            } else if (KEY_DOWN.equals(keyCode)) {
+                increase();
             }
         }
     }
@@ -249,6 +271,12 @@ public class RecordingPage extends MainLayout {
                 });
                 item.add(select);
                 select.add(label("subSystemName", scenarioItemSelector.getSelectedSystemState().getOrderedSubSystemKeys().get(item.getModelObject())));
+
+                Label selected = label("selected");
+                if (subSystemSelector.hasFocus()) addClass(selected, "btn-outline-primary");
+                selected.setVisible(subSystemSelector.isSelected() && subSystemSelector.getSelection() == item.getModelObject());
+                select.add(selected);
+
             }));
             if (subSystemSelector.isSelected()) {
                 add(createSubSystemStateDetail("selectedSubSystemState", subSystemSelector.getSelectedSubSystemState(), subSystemSelector.getSubSystemDescription()));
@@ -280,6 +308,14 @@ public class RecordingPage extends MainLayout {
         public ScenarioFragment(String id) {
             super(id, "scenarioFragment", RecordingPage.this);
 
+            WebMarkupContainer noSnapshots, scenarioItems;
+
+            add(noSnapshots = div("noSnapshots"));
+            noSnapshots.setVisible(recorderStore.getRecording(recordingId).getInitialState()==null);
+
+            add(scenarioItems = div("scenarioItems"));
+            scenarioItems.setVisible(recorderStore.getRecording(recordingId).getInitialState()!=null);
+
             {
                 Link initialState = ajaxLink("selectInitialState", target -> {
                     scenarioItemSelector.selectInitialState();
@@ -290,7 +326,7 @@ public class RecordingPage extends MainLayout {
                 if (scenarioItemSelector.hasFocus()) addClass(selected, "btn-outline-primary");
                 selected.setVisible(scenarioItemSelector.isInitialStateSelected());
 
-                add(initialState);
+                scenarioItems.add(initialState);
                 initialState.add(selected);
             }
 
@@ -304,11 +340,11 @@ public class RecordingPage extends MainLayout {
                 if (scenarioItemSelector.hasFocus()) addClass(selected, "btn-outline-primary");
                 selected.setVisible(scenarioItemSelector.isFinalStateSelected());
 
-                add(finalState);
+                scenarioItems.add(finalState);
                 finalState.add(selected);
             }
 
-            add(listView("steps", indices(recorderStore.getRecording(recordingId).getSteps()), stepItem -> {
+            scenarioItems.add(listView("steps", indices(recorderStore.getRecording(recordingId).getSteps()), stepItem -> {
                 Integer idx = stepItem.getModelObject();
 
                 Link<Void> step = ajaxLink("step", target -> {
@@ -321,7 +357,7 @@ public class RecordingPage extends MainLayout {
                 selected.setVisible(scenarioItemSelector.isScenarioStepSelected() && idx.equals(scenarioItemSelector.getScenarioStepSelector().getSelection()));
 
                 stepItem.add(step);
-                step.add(label("title", idx));
+                step.add(label("title", recorderStore.getRecording(recordingId).getSteps().get(idx).getTitle()));
                 step.add(selected);
             }));
         }
@@ -445,7 +481,7 @@ public class RecordingPage extends MainLayout {
 
             add(ajaxLink("takeSnapshot", target -> {
                 recordingActions.takeSnapshot(recordingId);
-                scenarioItemSelector.selectLastStep();
+                scenarioItemSelector.selectLast();
                 refresh(target);
             }));
             add(actionResult = new ActionResultFragment("actionResult"));
@@ -517,7 +553,7 @@ public class RecordingPage extends MainLayout {
         recorderControls.setOutputMarkupId(true);
         scenarioRecorder.setOutputMarkupId(true);
         add(arrowkeyBehavior((keyCode, target) -> {
-            scenarioItemSelector.refocus(keyCode);
+            scenarioItemSelector.handleArrowNavigation(keyCode);
             target.add(scenarioRecorder);
         }));
 

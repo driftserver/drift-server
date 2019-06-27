@@ -7,7 +7,8 @@
         <div>
             <div>
                 <div>
-                   <div class="list-group">
+                   <div wicket:id="noSnapshots">No snapshots yet</div>
+                   <div wicket:id="scenarioItems" class="list-group">
 
                        <a wicket:id="selectInitialState" class="list-group-item list-group-item-action flex-column align-items-start">
                            <span>Initial state </span>
@@ -179,6 +180,7 @@
                                         <a wicket:id="selectSubSystem"
                                            class="list-group-item list-group-item-action flex-column align-items-start">
                                             <span wicket:id="subSystemName"/>
+                                            <li wicket:id="selected" class="fa fa-caret-right float-right"></li>
                                         </a>
                                     </wicket:container>
                                 </div>

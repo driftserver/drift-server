@@ -6,8 +6,6 @@ public class ListSelector<PARENT_SELECTOR_CLASS extends Selector > extends Selec
 
     private Integer idx;
 
-    private int minIdx;
-
     private int maxIdx;
 
     protected ListSelector() {}
@@ -30,7 +28,7 @@ public class ListSelector<PARENT_SELECTOR_CLASS extends Selector > extends Selec
     }
 
     public void increase() {
-        if (idx < maxIdx)
+        if (idx < maxIdx-1)
             idx++;
     }
 
@@ -49,4 +47,5 @@ public class ListSelector<PARENT_SELECTOR_CLASS extends Selector > extends Selec
     public int getMaxIdx() {
         return maxIdx;
     }
+
 }
