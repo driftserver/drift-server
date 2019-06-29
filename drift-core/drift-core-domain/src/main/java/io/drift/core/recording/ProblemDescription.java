@@ -8,14 +8,12 @@ public class ProblemDescription implements Serializable {
 
     private String location;
     private String action;
-    private String problem;
     private Exception exception;
 
 
-    public ProblemDescription(String location, String action, String problem, Exception exception) {
+    public ProblemDescription(String location, String action, Exception exception) {
         this.location = location;
         this.action = action;
-        this.problem = problem;
         this.exception = exception;
     }
 
@@ -28,12 +26,12 @@ public class ProblemDescription implements Serializable {
     }
 
     public String getProblem() {
-        return problem;
+        return exception.getMessage();
     }
 
     public List<String> getMessages() {
         List<String> messages = new ArrayList<>();
-        recursiveGetMessages(messages, exception);
+        recursiveGetMessages(messages, exception.getCause());
         return messages;
     }
 
@@ -45,4 +43,27 @@ public class ProblemDescription implements Serializable {
 
     }
 
+    public Exception getException() {
+        return exception;
+    }
+
+    public boolean isDriftException() {
+        return exception != null && exception instanceof DriftException;
+    }
+
+    public DriftException getDriftException() {
+        return (DriftException) exception;
+    }
+
+    public Throwable getException(int depth) {
+        return getException(exception, depth);
+    }
+
+    private Throwable getException(Exception exception, int depth) {
+        if (depth==0) {
+            return exception;
+        } else {
+            return exception.getCause();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package io.drift.ui.app.page.recording;
 
 import io.drift.core.recording.*;
+import io.drift.ui.app.component.stacktrace.ProblemDescriptionListComponent;
 import io.drift.ui.app.flux.recording.RecordingActions;
 import io.drift.ui.app.flux.recording.RecordingStore;
 import io.drift.ui.app.page.layout.MainLayout;
@@ -13,6 +14,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
@@ -364,95 +366,6 @@ public class RecordingPage extends MainLayout {
     }
 
 
-    class ProblemDescriptionListFragment extends Fragment {
-
-        private ListSelector exceptionSelector = new ListSelector(null);
-        private ListSelector problemSelector = new ListSelector(exceptionSelector);
-
-        private WebMarkupContainer overview, problemDetail, exceptionDetail;
-
-        public ProblemDescriptionListFragment(String id) {
-            super(id, "problemDescriptionListFragment", RecordingPage.this);
-            setOutputMarkupId(true);
-            add(overview = new WebMarkupContainer("overview"));
-            overview.add(listView("problems", recorderStore.getActionResult(recordingId).getProblemDescriptions(), (item) -> {
-
-                ProblemDescription problemDescription = item.getModelObject();
-                item.add(new Label("description", getFormatted(problemDescription)));
-
-                Link select = ajaxLink("select", (target) -> {
-                    problemSelector.select(0);
-                    target.add(ProblemDescriptionListFragment.this);
-                });
-
-                item.add(select);
-
-            }));
-            add(problemDetail = new WebMarkupContainer("problemDetail"));
-            add(exceptionDetail = new WebMarkupContainer("exceptionDetail"));
-
-        }
-
-        private String getFormatted(ProblemDescription problemDescription) {
-            return String.format(
-                    "%s while %s for %s ",
-                    problemDescription.getProblem(),
-                    problemDescription.getAction(),
-                    problemDescription.getLocation()
-            );
-        }
-
-        protected void onConfigure() {
-            super.onConfigure();
-            overview.setVisible(!problemSelector.isSelected());
-            problemDetail.setVisible(problemSelector.isSelected() && !exceptionSelector.isSelected());
-            exceptionDetail.setVisible(problemSelector.isSelected() && exceptionSelector.isSelected());
-
-            if (problemDetail.isVisible()) {
-                replace(problemDetail = new WebMarkupContainer("problemDetail"));
-                ProblemDescription problemDescription = recorderStore.getActionResult(recordingId).getProblemDescriptions().get(problemSelector.getSelection());
-
-                problemDetail.add(ajaxLink("unselect", (target) -> {
-                    problemSelector.emptySelection();
-                    target.add(ProblemDescriptionListFragment.this);
-                }));
-
-                problemDetail.add(label("description", getFormatted(problemDescription)));
-
-                problemDetail.add(listView("exceptions", problemDescription.getMessages(), (item) -> {
-                    item.add(label("message", item.getModelObject()));
-                    item.add(ajaxLink("selectException", (target) -> {
-                        exceptionSelector.select(0);
-                        target.add(ProblemDescriptionListFragment.this);
-                    }));
-
-                }));
-            }
-
-            if (exceptionDetail.isVisible()) {
-                replace(exceptionDetail = new WebMarkupContainer("exceptionDetail"));
-
-                ProblemDescription problemDescription = recorderStore.getActionResult(recordingId).getProblemDescriptions().get(problemSelector.getSelection());
-                String exception = problemDescription.getMessages().get(exceptionSelector.getSelection());
-
-                exceptionDetail.add(ajaxLink("unselectProblem", (target) -> {
-                    problemSelector.emptySelection();
-                    exceptionSelector.emptySelection();
-                    target.add(ProblemDescriptionListFragment.this);
-                }));
-
-                exceptionDetail.add(label("problemDescription", getFormatted(problemDescription)));
-
-                exceptionDetail.add(ajaxLink("unselectException", (target) -> {
-                    exceptionSelector.emptySelection();
-                    target.add(ProblemDescriptionListFragment.this);
-                }));
-
-                exceptionDetail.add(label("exception", exception));
-
-            }
-        }
-    }
 
     class ActionResultFragment extends Fragment {
         Label problemCount;
@@ -462,7 +375,8 @@ public class RecordingPage extends MainLayout {
 
             int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
             add(problemCount = label("problemCount", "" + count + " problems"));
-            add(new ProblemDescriptionListFragment("problemDescriptions"));
+            add(new ProblemDescriptionListComponent("problemDescriptions", LambdaModel.of( ()-> {
+                return recorderStore.getActionResult(recordingId).getProblemDescriptions(); } )));
         }
 
         protected void onConfigure() {

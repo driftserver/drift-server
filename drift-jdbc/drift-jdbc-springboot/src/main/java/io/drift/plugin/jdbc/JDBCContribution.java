@@ -1,5 +1,6 @@
 package io.drift.plugin.jdbc;
 
+import com.zaxxer.hikari.pool.HikariPool;
 import io.drift.core.recording.ProblemDescription;
 import io.drift.core.recording.RecordingContext;
 import io.drift.core.recording.RecordingId;
@@ -59,8 +60,7 @@ public class JDBCContribution implements RecordingSessionContribution {
                 action = "saving snapshot as current final state of the database";
                 recordingContext.getRecording().getFinalstate().addSubSystemState(subSystemKey.getName(), session.getLastSnapshot());
             } catch (Exception e) {
-                recordingContext.getActionResult().addProblem(new ProblemDescription(location, action, e.getMessage(), e));
-                e.printStackTrace();
+                recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, wrapException(e)));
             }
 
         });
@@ -107,8 +107,7 @@ public class JDBCContribution implements RecordingSessionContribution {
                 action = "setting final system state";
                 recordingContext.getRecording().getFinalstate().addSubSystemState(session.getSubSystemKey().getName(), session.getLastSnapshot());
             } catch (Exception e) {
-                recordingContext.getActionResult().addProblem(new ProblemDescription(location, action, e.getMessage(), e));
-                e.printStackTrace();
+                recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, wrapException(e)));
             }
         });
 
@@ -119,6 +118,13 @@ public class JDBCContribution implements RecordingSessionContribution {
         RecordingId recordingId = recordingContext.getRecordingId();
         sessionsById.get(recordingId).forEach(JDBCRecordingSession::close);
         sessionsById.remove(recordingId);
+    }
+
+    private Exception wrapException(Exception e) {
+        if (e instanceof HikariPool.PoolInitializationException) {
+            return new DriftJDBCContributionException(DriftJDBCContributionExceptionType.CONNECTION_POOL_INIT_ERROR, e);
+        }
+        else return e;
     }
 
 }

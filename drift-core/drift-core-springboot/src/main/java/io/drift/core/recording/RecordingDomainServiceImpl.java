@@ -29,17 +29,15 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     @Override
     public Recording create(RecordingDescriptor recordingDescriptor) {
         RecordingId recordingId = recordingDescriptor.getRecordingId();
-        EnvironmentKey environmentKey =recordingDescriptor.getEnvironmentKey();
+        EnvironmentKey environmentKey = recordingDescriptor.getEnvironmentKey();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Recording recording = new Recording(recordingId);
         recording.setName("Recording " + environmentKey.getName() + " " + LocalDateTime.now().format(formatter));
         recording.setEnvironmentKey(environmentKey);
 
-        ActionResult actionLogger = new ActionResult();
-
         SystemDescription systemDescription = systemDescriptionStorage.load();
-        RecordingContext recordingContext = new RecordingContext(recording, systemDescription, actionLogger);
+        RecordingContext recordingContext = new RecordingContext(recording, systemDescription);
         recordingContext.setState(RecordingState.CREATED);
 
         contexts.put(recordingId, recordingContext);
@@ -48,14 +46,50 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     }
 
     @Override
-    public void connect(RecordingId recordingId) {
+    public RecordingContext getById(RecordingId recordingId) {
+        return restoreContext(recordingId);
+    }
+
+    @Override
+    public void takeSnapShot(RecordingId recordingId) {
+        RecordingContext recordingContext = restoreContext(recordingId);
+
+        if (!RecordingState.CONNECTED.equals(recordingContext.getState())) {
+            recordingContext.startAsyncAction();
+            connect(recordingContext);
+        }
+
+        recordingContext.startSynchronousAction();
+        RecordingStep step = new RecordingStep();
+        step.setTitle("step " + recordingContext.getRecording().getSteps().size());
+        recordingContext.getRecording().addStep(step);
+        recordingContext.setCurrentStep(step);
+
+        recordingContext.getRecording().setFinalstate(new SystemState());
+        contributions.forEach(contribution -> contribution.takeSnapshot(recordingContext));
+
+        autoSave(recordingContext);
+
+    }
+
+    @Override
+    public List<RecordingSummary> getRecordings() {
+        return recordingStorage.list();
+    }
+
+    @Override
+    public void closeSession(RecordingId recordingId) {
         RecordingContext context = restoreContext(recordingId);
-        connect(context);
+        if (context.getState() != RecordingState.DISCONNECTED) {
+            disconnect(context);
+        }
+        contexts.remove(recordingId);
+        reportSessionCount();
     }
 
     private void connect(RecordingContext context) {
         Recording recording = context.getRecording();
-        if (recording.getInitialState()==null) {
+        if (recording.getInitialState() == null) {
             recording.setInitialState(new SystemState());
             recording.setFinalstate(new SystemState());
             contributions.forEach(contribution -> contribution.onFirstConnect(context));
@@ -67,33 +101,15 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         autoSave(context);
     }
 
+    private void save(RecordingContext recordingContext) {
+        recordingStorage.store(recordingContext.getRecording());
+    }
+
     private void autoSave(RecordingContext context) {
         if (context.getSettings().isAutoSave()) save(context);
     }
 
-
-    @Override
-    public void takeSnapShot(RecordingId recordingId) {
-        RecordingContext recordingContext = restoreContext(recordingId);
-
-        if (!RecordingState.CONNECTED.equals(recordingContext.getState())){
-            connect(recordingContext);
-        } else {
-            RecordingStep step = new RecordingStep();
-            step.setTitle("step " + recordingContext.getRecording().getSteps().size());
-            recordingContext.getRecording().addStep(step);
-            recordingContext.setCurrentStep(step);
-
-            recordingContext.getRecording().setFinalstate(new SystemState());
-            contributions.forEach(contribution -> contribution.takeSnapshot(recordingContext));
-        }
-        autoSave(recordingContext);
-
-    }
-
-    @Override
-    public void disconnect(RecordingId recordingId) {
-        RecordingContext context = restoreContext(recordingId);
+    private void disconnect(RecordingContext context) {
         context.setState(RecordingState.DISCONNECTED);
         contributions.forEach(contribution -> contribution.onDisconnect(context));
 
@@ -101,27 +117,12 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     }
 
-    @Override
-    public void save(RecordingId recordingId) {
-        save(restoreContext(recordingId));
-    }
-
-    private void save(RecordingContext recordingContext) {
-        recordingStorage.store(recordingContext.getRecording());
-    }
-
-    @Override
-    public Recording getById(RecordingId recordingId) {
-        return restoreContext(recordingId).getRecording();
-    }
-
     private RecordingContext restoreContext(RecordingId recordingId) {
         RecordingContext context = contexts.get(recordingId);
         if (context == null) {
             Recording recording = recordingStorage.load(recordingId);
             SystemDescription systemDescription = systemDescriptionStorage.load();
-            ActionResult actionLogger = new ActionResult();
-            context = new RecordingContext(recording, systemDescription, actionLogger);
+            context = new RecordingContext(recording, systemDescription);
             context.setState(RecordingState.DISCONNECTED);
             contexts.put(recordingId, context);
             reportSessionCount();
@@ -129,37 +130,8 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         return context;
     }
 
-    @Override
-    public List<RecordingSummary> getRecordings() {
-        return recordingStorage.list();
-    }
-
-    @Override
-    public RecordingSessionSettings getRecordingSessionSettings(RecordingId recordingId) {
-        return restoreContext(recordingId).getSettings();
-    }
-
-    @Override
-    public void closeSession(RecordingId recordingId) {
-        RecordingContext context = restoreContext(recordingId);
-        if (context.getState() != RecordingState.DISCONNECTED) {
-            disconnect(recordingId);
-        }
-        contexts.remove(recordingId);
-        reportSessionCount();
-    }
-
-    @Override
-    public boolean isConnected(RecordingId recordingId) {
-        return restoreContext(recordingId).getState().equals(RecordingState.CONNECTED);
-    }
-
     private void reportSessionCount() {
         System.out.println("#contexts: " + contexts.size());
     }
 
-    @Override
-    public ActionResult getActionResult(RecordingId recordingId) {
-        return restoreContext(recordingId).getActionResult();
-    }
 }

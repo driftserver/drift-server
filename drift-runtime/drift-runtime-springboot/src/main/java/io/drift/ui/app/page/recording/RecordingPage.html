@@ -94,63 +94,13 @@
         </div>
     </wicket:fragment>
 
-    <wicket:fragment wicket:id="problemDescriptionListFragment">
-        <div wicket:id="overview">
-            <ul class="list-group list-group-flush">
-                <wicket:container wicket:id="problems">
-                    <li class="list-group-item">
-                        <span wicket:id="description"/>
-                        <a wicket:id="select">
-                            <i class="fa fa-chevron-right float-right"></i>
-                        </a>
-                    </li>
-                </wicket:container>
-            </ul>
-        </div>
-        <div wicket:id="problemDetail">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <a wicket:id="unselect">
-                        <i class="fa fa-chevron-left"></i>
-                    </a>
-                    <span class="float-right" wicket:id="description"></span>
-                </li>
-                <wicket:container wicket:id="exceptions">
-                    <li class="list-group-item">
-                        <b>Caused by: </b>
-                        <span wicket:id="message"></span>
-                        <a wicket:id="selectException">
-                            <i class="fa fa-chevron-right float-right"></i>
-                        </a>
-                    </li>
-                </wicket:container>
-            </ul>
-        </div>
-        <div wicket:id="exceptionDetail">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <a wicket:id="unselectProblem">
-                        <i class="fa fa-chevron-left"></i>
-                    </a>
-                    <span class="float-right" wicket:id="problemDescription"></span>
-                </li>
-                <li class="list-group-item">
-                    <a wicket:id="unselectException">
-                        <i class="fa fa-chevron-left"></i>
-                    </a>
-                    <span class="float-right" wicket:id="exception"></span>
-                </li>
-            </ul>
-        </div>
-    </wicket:fragment>
-
     <wicket:fragment wicket:id="actionResultFragment">
         <a data-toggle="modal" href="#problemDescriptions">
             <span class="badge badge-pill badge-danger" wicket:id="problemCount"></span>
         </a>
         <div id="problemDescriptions" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog  modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 id="myModalLabel" class="modal-title">Problems</h3>

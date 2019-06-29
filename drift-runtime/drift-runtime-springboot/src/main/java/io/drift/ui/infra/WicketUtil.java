@@ -25,11 +25,13 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -149,6 +151,10 @@ public class WicketUtil {
 		return link;
 	}
 
+	public static ExternalLink externalLink(String id, String url) {
+		return new ExternalLink(id, url);
+	}
+
 	public static <PARAM> AjaxFallbackLink<Void> ajaxLink(String wicketId, SerializableBiConsumer<AjaxRequestTarget, PARAM> lambda, PARAM param) {
 		AjaxFallbackLink<Void> link = new AjaxFallbackLink<Void>(wicketId) {
 			private static final long serialVersionUID = 1L;
@@ -173,6 +179,17 @@ public class WicketUtil {
 	}
 
 	static public <T> ListView<T> listView(String wicketId, List<T> items, SerializableConsumer<ListItem<T>> lambda) {
+		ListView<T> listView  = new ListView<T>(wicketId, items) {
+			@Override
+			protected void populateItem(final ListItem<T> item) {
+				lambda.accept(item);
+			}
+
+		};
+		return listView;
+	}
+
+	static public <T> ListView<T> listView(String wicketId, IModel<List<T>> items, SerializableConsumer<ListItem<T>> lambda) {
 		ListView<T> listView  = new ListView<T>(wicketId, items) {
 			@Override
 			protected void populateItem(final ListItem<T> item) {

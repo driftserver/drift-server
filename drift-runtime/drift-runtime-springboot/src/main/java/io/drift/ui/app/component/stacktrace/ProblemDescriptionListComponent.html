@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:panel>
+    <div wicket:id="overview">
+        <ul class="list-group list-group-flush">
+            <wicket:container wicket:id="problems">
+                <li class="list-group-item">
+                    <span wicket:id="description"/>
+                    <a wicket:id="select">
+                        <i class="fa fa-chevron-right float-right"></i>
+                    </a>
+                </li>
+            </wicket:container>
+        </ul>
+    </div>
+    <div wicket:id="problemDetail">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <span>
+                    <a wicket:id="unselect">
+                        <i class="fa fa-chevron-left"></i>
+                    </a>
+                </span>
+                <span wicket:id="description"></span>
+            </li>
+            <li class="list-group-item">
+                <a wicket:id="documentationLink" target="_blank">
+                    <span class="fa fa-sm fa-external-link-alt"> </span>
+                    See documentation for errorcode
+                    <span wicket:id="errorCode"></span>
+                </a>
+            </li>
+            <wicket:container wicket:id="exceptions">
+                <li class="list-group-item">
+                    <b>Caused by: </b>
+                    <span wicket:id="message"></span>
+                    <a wicket:id="selectException">
+                        <i class="fa fa-chevron-right float-right"></i>
+                    </a>
+                </li>
+            </wicket:container>
+        </ul>
+    </div>
+    <div wicket:id="exceptionDetail">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <span>
+                    <a wicket:id="unselectException">
+                        <i class="fa fa-chevron-left"></i>
+                    </a>
+                </span>
+                <code wicket:id="exception"></code>
+            </li>
+        </ul>
+    </div>
+</wicket:panel>
+</body>
+</html>

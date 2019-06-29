@@ -14,7 +14,7 @@ public class RecordingStore {
     RecordingDomainService service;
 
     public Recording getRecording(RecordingId recordingId) {
-        return service.getById(recordingId);
+        return getContext(recordingId).getRecording();
     }
 
     public RecordingStep getRecordingStep(RecordingId recordingId, int idxStep) {
@@ -22,18 +22,19 @@ public class RecordingStore {
         return recording.getSteps().size() == 0 ? null : recording.getSteps().get(idxStep);
     }
 
-    public int getRecordingStepCount(RecordingId recordingId) {
-        return getRecording(recordingId).getSteps().size();
-    }
-
     public SubSystemDescription getSubSystemDescription(RecordingId recordingId, String subSystem) {
         return getRecording(recordingId).getSubSystemDescription(subSystem);
     }
 
     public RecorderControlDTO getRecorderControlState(RecordingId recordingId) {
-        RecordingSessionSettings recordingSessionSettings = service.getRecordingSessionSettings(recordingId);
-        boolean isConnected = service.isConnected(recordingId);
-        return new RecorderControlDTO(recordingSessionSettings.isAutoSave(), isConnected);
+        RecordingContext context = getContext(recordingId);
+        boolean isAutoSave = getContext(recordingId).getSettings().isAutoSave();
+        boolean isConnected = context.getState().equals(RecordingState.CONNECTED);
+        return new RecorderControlDTO(isAutoSave, isConnected);
+    }
+
+    private RecordingContext getContext(RecordingId recordingId) {
+        return service.getById(recordingId);
     }
 
     public List<RecordingSummaryDTO> getRecordingSummaries() {
@@ -42,7 +43,7 @@ public class RecordingStore {
                 .collect(Collectors.toList());
     }
 
-    public ActionResult getActionResult(RecordingId recordingId) {
-        return service.getActionResult(recordingId);
+    public ActionLogger getActionResult(RecordingId recordingId) {
+        return getContext(recordingId).getActionLogger();
     }
 }

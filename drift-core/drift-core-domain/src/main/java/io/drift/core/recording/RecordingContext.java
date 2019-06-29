@@ -5,9 +5,7 @@ import io.drift.core.system.SubSystemConnectionDetails;
 import io.drift.core.system.SubSystemKey;
 import io.drift.core.system.SystemDescription;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RecordingContext {
 
@@ -17,16 +15,16 @@ public class RecordingContext {
 
     private SystemDescription systemDescription;
 
-    private ActionResult actionResult;
+    private ActionLogger actionLogger;
 
     private RecordingStep currentStep;
 
     private RecordingSessionSettings settings = new RecordingSessionSettings();
 
-    public RecordingContext(Recording recording, SystemDescription systemDescription, ActionResult actionResult) {
+    public RecordingContext(Recording recording, SystemDescription systemDescription) {
         this.recording = recording;
         this.systemDescription = systemDescription;
-        this.actionResult = actionResult;
+        actionLogger = new ActionLogger(false);
     }
 
     public Recording getRecording() {
@@ -41,20 +39,9 @@ public class RecordingContext {
         this.currentStep = currentStep;
     }
 
-    public SystemDescription getSystemDescription() {
-        return systemDescription;
-    }
-
     public Map<SubSystemKey, SubSystemConnectionDetails> getSubSystems(String subsystemType) {
         EnvironmentKey environmentKey = recording.getEnvironmentKey();
         return systemDescription.getConnectionDetails(environmentKey, subsystemType);
-    }
-
-    public List<SubSystemKey> getSubSystemKeys(String subsystemType) {
-        return systemDescription.getSubSystems().stream()
-                .filter(subSystem -> subSystem.getType().equals(subsystemType))
-                .map(subSystem -> subSystem.getKey())
-                .collect(Collectors.toList());
     }
 
     public RecordingId getRecordingId() {
@@ -73,7 +60,15 @@ public class RecordingContext {
         return settings;
     }
 
-    public ActionResult getActionResult() {
-        return actionResult;
+    public ActionLogger getActionLogger() {
+        return actionLogger;
+    }
+
+    public void startAsyncAction() {
+        actionLogger = new ActionLogger(true);
+    }
+
+    public void startSynchronousAction() {
+        actionLogger = new ActionLogger(false);
     }
 }

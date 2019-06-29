@@ -27,20 +27,8 @@ public class RecordingActions {
         return recordingDomainService.create(recordingDescriptor);
     }
 
-    public void start(RecordingId recordingId) {
-        recordingDomainService.connect(recordingId);
-    }
-
     public void takeSnapshot(RecordingId recordingId) {
         recordingDomainService.takeSnapShot(recordingId);
-    }
-
-    public void finish(RecordingId recordingId) {
-        recordingDomainService.disconnect(recordingId);
-    }
-
-    public void save(RecordingId recordingId) {
-        recordingDomainService.save(recordingId);
     }
 
     public void closeSession(RecordingId recordingId) { recordingDomainService.closeSession(recordingId); };
