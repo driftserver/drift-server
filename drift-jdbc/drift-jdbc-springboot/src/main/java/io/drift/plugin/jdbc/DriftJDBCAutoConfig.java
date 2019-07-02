@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigurationPackage
 public class DriftJDBCAutoConfig {
 
-
+    public static final String JDBC_SUBSYSTEM_TYPE = "jdbc";
 
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -110,6 +111,7 @@ public class WicketUtil {
 	public interface SerializableConsumer<T> extends Consumer<T>, Serializable {
 	}
 
+
 	public interface SerializableBiConsumer<T, U> extends BiConsumer<T, U>, Serializable {
 	}
 
@@ -137,6 +139,10 @@ public class WicketUtil {
 
 	public static Label label(String id) {
 		return new Label(id);
+	}
+
+	public static Label label(String id, SerializableSupplier<String> lambda) {
+		return new Label(id, LambdaModel.of(lambda));
 	}
 
 	public static AjaxFallbackLink<Void> ajaxLink(String wicketId, SerializableConsumer<AjaxRequestTarget> lambda) {

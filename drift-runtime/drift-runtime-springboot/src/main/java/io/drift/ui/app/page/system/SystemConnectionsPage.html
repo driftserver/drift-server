@@ -3,28 +3,85 @@
 <body>
 <wicket:extend>
 
+    <wicket:fragment wicket:id="actionResultFragment">
+        <a data-toggle="modal" href="#problemDescriptions">
+            <span class="badge badge-pill badge-danger" wicket:id="problemCount"></span>
+        </a>
+        <div id="problemDescriptions" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog  modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="myModalLabel" class="modal-title">Problems</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div wicket:id="problemDescriptions"></div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+    </wicket:fragment>
+
+
+    <wicket:fragment wicket:id="systemConnectionsFragment">
+        <span class="float-right">
+            <div>
+                <a class="btn btn-outline-primary" wicket:id="testConnectionSettings" href="#">Test <i class="fa fa-plug"></i> <span wicket:id="envKey"></span> </a>
+                <div wicket:id="actionResult"/>
+            </div>
+        </span>
+        <ul class="nav nav-pills">
+            <wicket:container wicket:id="environments">
+                <li class="nav-item">
+                    <a class="nav-link" wicket:id="select">
+                        <span wicket:id="key"></span>
+                    </a>
+                </li>
+            </wicket:container>
+        </ul>
+        <div wicket:id="environmentSettings"/>
+    </wicket:fragment>
+
     <wicket:fragment wicket:id="environmentSettingsFragment">
-        <h6 class="card-subtitle">Connection Details</h6>
-        <wicket:container wicket:id="subsystems">
-            <div wicket:id="subsystemSettings"/>
-        </wicket:container>
+
+        <br/>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>Subsystem</th>
+                <th>Connection settings</th>
+            </tr>
+            </thead>
+            <wicket:container wicket:id="subsystems">
+                <tr>
+                    <td>
+                        <div wicket:id="key"/>
+                    </td>
+                    <td>
+                        <div wicket:id="subsystemSettings"/>
+                    </td>
+                </tr>
+            </wicket:container>
+        </table>
     </wicket:fragment>
 
     <div class="container">
         <div class="row">
             <div class="col-12">
                 <div class="card">
-
                     <div class="card-body">
-                        <h5 >Connections</h5>
-                        <div wicket:id="environmentSettings" />
+                        <h5>Connection settings</h5>
+                        <h6>Connection details by environment</h6>
+
+                        <br/>
+
+                        <div wicket:id="systemConnections"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 
 </wicket:extend>
 </body>

@@ -1,6 +1,5 @@
 package io.drift.plugin.jdbc;
 
-import com.zaxxer.hikari.pool.HikariPool;
 import io.drift.core.recording.ProblemDescription;
 import io.drift.core.recording.RecordingContext;
 import io.drift.core.recording.RecordingId;
@@ -17,22 +16,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
-public class JDBCContribution implements RecordingSessionContribution {
+import static io.drift.plugin.jdbc.DriftJDBCAutoConfig.JDBC_SUBSYSTEM_TYPE;
 
-    public static final String JDBC_SUBSYSTEM_TYPE = "jdbc";
+@Component
+public class JDBCRecordingContribution implements RecordingSessionContribution {
 
     private final JDBCConnectionManager connectionManager;
 
     private Map<RecordingId, List<JDBCRecordingSession>> sessionsById = new HashMap<>();
 
-    public JDBCContribution(JDBCConnectionManager connectionManager) {
+    public JDBCRecordingContribution(JDBCConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
     }
 
-    public void onFirstConnect(RecordingContext recordingContext) {
-
-        Map<SubSystemKey, SubSystemConnectionDetails> jdbcSubSystems = recordingContext.getSubSystems(JDBC_SUBSYSTEM_TYPE);
+    public void onConnect(RecordingContext recordingContext) {
+        Map<SubSystemKey, SubSystemConnectionDetails> jdbcSubSystems = null;
+        try {
+            jdbcSubSystems = recordingContext.getSubSystems(JDBC_SUBSYSTEM_TYPE);
+        } catch (Exception e) {
+            recordingContext.getActionLogger().addProblem(new ProblemDescription("jdbc subsystems", "getting jdbc connection details", new DriftJDBCContributionException(DriftJDBCContributionExceptionType.NO_CONNECTION_DETAILS_ERROR, e)));
+            return;
+        }
 
         List<JDBCRecordingSession> jdbcRecordingSessions = new ArrayList<>();
         sessionsById.put(recordingContext.getRecordingId(), jdbcRecordingSessions);
@@ -46,21 +50,41 @@ public class JDBCContribution implements RecordingSessionContribution {
 
                 action = "creating new jdbc recording session";
                 JDBCRecordingSession session = new JDBCRecordingSession(connectionDetails, connectionManager, subSystemKey);
+
+                session.open();
+
                 jdbcRecordingSessions.add(session);
+            } catch (Exception e) {
+                recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, JDBCExceptionWrapper.wrap(e)));
+            }
+        });
+    }
+
+    public void initialize(RecordingContext recordingContext) {
+
+        List<JDBCRecordingSession> sessions = sessionsById.get(recordingContext.getRecordingId());
+
+        sessions.forEach(session -> {
+
+            String subSystemName = session.getSubSystemKey().getName();
+            String action = null;
+            try {
+
+                session.initialize();
 
                 action = "adding db metadata as subsystem description to recording";
-                recordingContext.getRecording().addSubSystemDescription(subSystemKey.getName(), session.getDbMetaData());
+                recordingContext.getRecording().addSubSystemDescription(subSystemName, session.getDbMetaData());
 
                 action = "taking initial snapshot";
                 session.takeSnapshot();
 
                 action = "saving snapshot as initial state of the database ";
-                recordingContext.getRecording().getInitialState().addSubSystemState(subSystemKey.getName(), session.getLastSnapshot());
+                recordingContext.getRecording().getInitialState().addSubSystemState(subSystemName, session.getLastSnapshot());
 
                 action = "saving snapshot as current final state of the database";
-                recordingContext.getRecording().getFinalstate().addSubSystemState(subSystemKey.getName(), session.getLastSnapshot());
+                recordingContext.getRecording().getFinalstate().addSubSystemState(subSystemName, session.getLastSnapshot());
             } catch (Exception e) {
-                recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, wrapException(e)));
+                recordingContext.getActionLogger().addProblem(new ProblemDescription(subSystemName, action, JDBCExceptionWrapper.wrap(e)));
             }
 
         });
@@ -69,19 +93,24 @@ public class JDBCContribution implements RecordingSessionContribution {
 
     @Override
     public void onReconnect(RecordingContext recordingContext) {
-        Map<SubSystemKey, SubSystemConnectionDetails> jdbcSubSystems = recordingContext.getSubSystems(JDBC_SUBSYSTEM_TYPE);
+        List<JDBCRecordingSession> sessions = sessionsById.get(recordingContext.getRecordingId());
 
-        List<JDBCRecordingSession> jdbcRecordingSessions = new ArrayList<>();
-        sessionsById.put(recordingContext.getRecordingId(), jdbcRecordingSessions);
+        sessions.forEach(session -> {
 
-        jdbcSubSystems.forEach((subSystemKey, jdbcSubSystem) -> {
+            String subSystemName = session.getSubSystemKey().getName();
+            String action = null;
+            try {
+                action = "getting last snapshot from final state";
+                DBSnapShot lastDBSnapshot = (DBSnapShot) recordingContext.getRecording().getFinalstate().getSubSystemState(subSystemName);
 
-            JDBCConnectionDetails connectionDetails = (JDBCConnectionDetails) jdbcSubSystem;
-            DBSnapShot lastDBSnapshot = (DBSnapShot) recordingContext.getRecording().getFinalstate().getSubSystemState(subSystemKey.getName());
-            DBMetaData dbMetaData = (DBMetaData) recordingContext.getRecording().getSubSystemDescription(subSystemKey.getName());
+                action = "getting db metadata from subsystem description";
+                DBMetaData dbMetaData = (DBMetaData) recordingContext.getRecording().getSubSystemDescription(subSystemName);
 
-            JDBCRecordingSession session = new JDBCRecordingSession(connectionDetails, connectionManager, subSystemKey, dbMetaData, lastDBSnapshot);
-            jdbcRecordingSessions.add(session);
+                action = "reconnecting jdbc session";
+                session.reconnect(lastDBSnapshot, dbMetaData);
+            } catch (Exception e) {
+                recordingContext.getActionLogger().addProblem(new ProblemDescription(subSystemName, action, JDBCExceptionWrapper.wrap(e)));
+            }
 
         });
     }
@@ -107,7 +136,7 @@ public class JDBCContribution implements RecordingSessionContribution {
                 action = "setting final system state";
                 recordingContext.getRecording().getFinalstate().addSubSystemState(session.getSubSystemKey().getName(), session.getLastSnapshot());
             } catch (Exception e) {
-                recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, wrapException(e)));
+                recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, JDBCExceptionWrapper.wrap(e)));
             }
         });
 
@@ -118,13 +147,6 @@ public class JDBCContribution implements RecordingSessionContribution {
         RecordingId recordingId = recordingContext.getRecordingId();
         sessionsById.get(recordingId).forEach(JDBCRecordingSession::close);
         sessionsById.remove(recordingId);
-    }
-
-    private Exception wrapException(Exception e) {
-        if (e instanceof HikariPool.PoolInitializationException) {
-            return new DriftJDBCContributionException(DriftJDBCContributionExceptionType.CONNECTION_POOL_INIT_ERROR, e);
-        }
-        else return e;
     }
 
 }

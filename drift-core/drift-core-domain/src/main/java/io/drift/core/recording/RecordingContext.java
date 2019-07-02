@@ -71,4 +71,12 @@ public class RecordingContext {
     public void startSynchronousAction() {
         actionLogger = new ActionLogger(false);
     }
+
+    public boolean isConnected() {
+        return RecordingState.CONNECTED.equals(state);
+    }
+
+    public boolean isInitialized() {
+        return recording.getInitialState() == null;
+    }
 }

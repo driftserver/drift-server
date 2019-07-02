@@ -38,13 +38,16 @@ public class SystemDescription implements Storable {
     }
 
     public SubSystemConnectionDetails getConnectionDetails(SubSystemKey subSystemKey, EnvironmentKey environmentKey) {
-        return connectionDetails.get(new SubSystemEnvironmentKey(subSystemKey, environmentKey));
+        SubSystemEnvironmentKey subSystemEnvironmentKey = new SubSystemEnvironmentKey(subSystemKey, environmentKey);
+        SubSystemConnectionDetails subSystemConnectionDetails = connectionDetails.get(subSystemEnvironmentKey);
+        return subSystemConnectionDetails == null ? new NullDetails(subSystemEnvironmentKey) : subSystemConnectionDetails;
     }
 
-    public List<SubSystemConnectionDetails> getConnectionDetails(EnvironmentKey environmentKey) {
+    public Map<SubSystemKey, SubSystemConnectionDetails> getConnectionDetails(EnvironmentKey environmentKey) {
         return subSystems.stream()
-                .map(subSystem -> getConnectionDetails(subSystem.getKey(), environmentKey))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        subSystem -> subSystem.getKey(),
+                        subSystem -> getConnectionDetails(subSystem.getKey(), environmentKey)));
     }
 
     private StorageId storageId;

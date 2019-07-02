@@ -52,25 +52,35 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     @Override
     public void takeSnapShot(RecordingId recordingId) {
-        RecordingContext recordingContext = restoreContext(recordingId);
+        RecordingContext context = restoreContext(recordingId);
 
-        if (!RecordingState.CONNECTED.equals(recordingContext.getState())) {
-            recordingContext.startAsyncAction();
-            connect(recordingContext);
+        if (!context.isConnected()) {
+
+            connect(context);
+            if (context.getActionLogger().hasProblems()) return;
+
+            if (!context.isInitialized()) {
+                initialize(context);
+            } else {
+                reinitialize(context);
+            }
+
         }
 
-        recordingContext.startSynchronousAction();
+
+        context.startSynchronousAction();
         RecordingStep step = new RecordingStep();
-        step.setTitle("step " + recordingContext.getRecording().getSteps().size());
-        recordingContext.getRecording().addStep(step);
-        recordingContext.setCurrentStep(step);
+        step.setTitle("step " + context.getRecording().getSteps().size());
+        context.getRecording().addStep(step);
+        context.setCurrentStep(step);
 
-        recordingContext.getRecording().setFinalstate(new SystemState());
-        contributions.forEach(contribution -> contribution.takeSnapshot(recordingContext));
+        context.getRecording().setFinalstate(new SystemState());
+        contributions.forEach(contribution -> contribution.takeSnapshot(context));
 
-        autoSave(recordingContext);
+        autoSave(context);
 
     }
+
 
     @Override
     public List<RecordingSummary> getRecordings() {
@@ -88,16 +98,34 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     }
 
     private void connect(RecordingContext context) {
-        Recording recording = context.getRecording();
-        if (recording.getInitialState() == null) {
-            recording.setInitialState(new SystemState());
-            recording.setFinalstate(new SystemState());
-            contributions.forEach(contribution -> contribution.onFirstConnect(context));
-        } else {
-            contributions.forEach(contribution -> contribution.onReconnect(context));
-        }
-        context.setState(RecordingState.CONNECTED);
+        context.startAsyncAction();
+        contributions.forEach(contribution -> contribution.onConnect(context));
 
+        if (!context.getActionLogger().hasProblems()) {
+            context.setState(RecordingState.CONNECTED);
+            autoSave(context);
+        }
+    }
+
+    private void initialize(RecordingContext context) {
+        context.startSynchronousAction();
+
+        Recording recording = context.getRecording();
+        recording.setInitialState(new SystemState());
+        recording.setFinalstate(new SystemState());
+
+        contributions.forEach(contribution -> contribution.initialize(context));
+
+    }
+
+    private void reinitialize(RecordingContext context) {
+        context.startSynchronousAction();
+        contributions.forEach(contribution -> contribution.onReconnect(context));
+    }
+
+    private void disconnect(RecordingContext context) {
+        context.setState(RecordingState.DISCONNECTED);
+        contributions.forEach(contribution -> contribution.onDisconnect(context));
         autoSave(context);
     }
 
@@ -107,14 +135,6 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     private void autoSave(RecordingContext context) {
         if (context.getSettings().isAutoSave()) save(context);
-    }
-
-    private void disconnect(RecordingContext context) {
-        context.setState(RecordingState.DISCONNECTED);
-        contributions.forEach(contribution -> contribution.onDisconnect(context));
-
-        autoSave(context);
-
     }
 
     private RecordingContext restoreContext(RecordingId recordingId) {

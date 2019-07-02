@@ -25,29 +25,20 @@ public class JDBCRecordingSession {
         this.jdbcConnectionDetails = jdbcConnectionDetails;
         this.connectionManager = connectionManager;
         this.subSystemKey = subSystemKey;
-        initDBMetaData();
-        initSnapshotBuilder();
-    }
 
-    public JDBCRecordingSession(JDBCConnectionDetails jdbcConnectionDetails, JDBCConnectionManager connectionManager, SubSystemKey subSystemKey, DBMetaData dbMetaData, DBSnapShot lastDBSnapshot) {
-        this.jdbcConnectionDetails = jdbcConnectionDetails;
-        this.connectionManager = connectionManager;
-        this.subSystemKey = subSystemKey;
-        this.dbMetaData = dbMetaData;
-        initSnapshotBuilder();
-        this.lastDBSnapshot = lastDBSnapshot;
-    }
-
-    private void initDBMetaData() {
-        String[] tableNames = jdbcConnectionDetails.getTableNames();
-        DBMetaDataBuilder dbMetaDataBuilder = new DBMetaDataBuilder();
-        dbMetaData = dbMetaDataBuilder.buildDBMetaData(getDataSource(), tableNames);
-    }
-
-    private void initSnapshotBuilder() {
-        String[] tableNames = jdbcConnectionDetails.getTableNames();
-        snapshotConfig = new SnapshotConfig(tableNames);
+        snapshotConfig = new SnapshotConfig(jdbcConnectionDetails.getTableNames());
         dbSnapShotBuilder = new DBSnapShotBuilder();
+
+    }
+
+    public void initialize() {
+        DBMetaDataBuilder dbMetaDataBuilder = new DBMetaDataBuilder();
+        dbMetaData = dbMetaDataBuilder.buildDBMetaData(getDataSource(), jdbcConnectionDetails.getTableNames());
+    }
+
+    public void reconnect(DBSnapShot lastDBSnapshot, DBMetaData dbMetaData) {
+        this.lastDBSnapshot = lastDBSnapshot;
+        this.dbMetaData = dbMetaData;
     }
 
     public void takeSnapshot() {
@@ -85,5 +76,9 @@ public class JDBCRecordingSession {
         return subSystemKey;
     }
 
+
+    public void open() {
+        getDataSource();
+    }
 
 }

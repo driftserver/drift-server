@@ -368,22 +368,20 @@ public class RecordingPage extends MainLayout {
 
 
     class ActionResultFragment extends Fragment {
-        Label problemCount;
 
         public ActionResultFragment(String id) {
             super(id, "actionResultFragment", RecordingPage.this);
 
-            int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
-            add(problemCount = label("problemCount", "" + count + " problems"));
-            add(new ProblemDescriptionListComponent("problemDescriptions", LambdaModel.of( ()-> {
-                return recorderStore.getActionResult(recordingId).getProblemDescriptions(); } )));
+            add(label("problemCount", () -> {
+                int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
+                return "" + count + " problems";
+            }));
+
+            add(new ProblemDescriptionListComponent("problemDescriptions", () ->
+                recorderStore.getActionResult(recordingId).getProblemDescriptions()
+            ));
         }
 
-        protected void onConfigure() {
-            int count = recorderStore.getActionResult(recordingId).getProblemDescriptions().size();
-            replace(problemCount = label("problemCount", "" + count + " problems"));
-            super.onConfigure();
-        }
     }
 
     class RecorderControlsFragment extends Fragment {

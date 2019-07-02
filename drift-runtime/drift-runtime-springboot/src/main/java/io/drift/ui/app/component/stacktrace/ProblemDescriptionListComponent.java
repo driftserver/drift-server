@@ -8,6 +8,8 @@ import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LambdaModel;
+import org.danekja.java.util.function.serializable.SerializableSupplier;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,9 +27,9 @@ public class ProblemDescriptionListComponent extends Panel {
     private WebMarkupContainer overview, problemDetail, exceptionDetail;
     private IModel<List<ProblemDescription>> problemDescriptions;
 
-    public ProblemDescriptionListComponent(String id, IModel<List<ProblemDescription>> problemDescriptions) {
+    public ProblemDescriptionListComponent(String id, SerializableSupplier<List<ProblemDescription>> lambda) {
         super(id);
-        this.problemDescriptions = problemDescriptions;
+        problemDescriptions = LambdaModel.of(lambda);
         setOutputMarkupId(true);
         add(overview = new WebMarkupContainer("overview"));
         overview.add(listView("problems", problemDescriptions, (item) -> {

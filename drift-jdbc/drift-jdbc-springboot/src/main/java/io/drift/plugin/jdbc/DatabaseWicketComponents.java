@@ -5,9 +5,11 @@ import io.drift.core.WicketComponentFactoryMethod;
 import io.drift.jdbc.domain.data.DBDelta;
 import io.drift.jdbc.domain.data.DBSnapShot;
 import io.drift.jdbc.domain.metadata.DBMetaData;
+import io.drift.jdbc.domain.system.JDBCConnectionDetails;
 import io.drift.ui.app.page.recording.SubSystemStateDetailView;
 import io.drift.ui.app.page.recording.SystemInteractionDetailView;
 import io.drift.ui.app.page.recording.SystemInteractionSummaryView;
+import io.drift.ui.app.page.system.ConnectionDetailsView;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,6 +39,15 @@ public class DatabaseWicketComponents {
     public DBSnapShotDetailComponent dbSnapshotDetailComponent(String id, DBSnapShot dbSnapShot, DBMetaData dbMetaData) {
         return new DBSnapShotDetailComponent(id, dbSnapShot, dbMetaData);
     }
+
+    @WicketComponentFactoryMethod(
+            dataType = JDBCConnectionDetails.class,
+            viewType = ConnectionDetailsView.class
+    )
+    public DBConnectionDetailsComponent JDBCConnectionDetailsComponent(String id, JDBCConnectionDetails jdbcConnectionDetails) {
+        return new DBConnectionDetailsComponent(id, jdbcConnectionDetails);
+    }
+
 
 
 }
