@@ -5,16 +5,19 @@ import io.drift.core.system.SystemDescriptionDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 public class SystemActions {
 
     @Autowired
     SystemDescriptionDomainService systemDescriptionDomainService;
 
-    public UUID testConnectivity(EnvironmentKey environmentKey) {
-        return systemDescriptionDomainService.testConnectivity(environmentKey);
+    @Autowired
+    SystemStore systemStore;
+
+    public void asyncTestConnections(EnvironmentKey environmentKey) {
+        systemStore.store(systemDescriptionDomainService.testConnectivity(environmentKey));
     }
+
+
 
 }

@@ -39,5 +39,13 @@ public class JDBCConnectionManager {
 
     }
 
+    public void stopDataSource(JDBCConnectionDetails connectionDetails) {
+        String key = connectionDetails.getJdbcUrl();
+        HikariDataSource dataSource = (HikariDataSource)dataSources.get(key);
+        if (dataSource != null) {
+            dataSource.close();
+            dataSources.remove(key);
+        }
+    }
 
 }

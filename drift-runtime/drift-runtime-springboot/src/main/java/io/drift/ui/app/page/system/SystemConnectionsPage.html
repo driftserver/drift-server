@@ -3,7 +3,7 @@
 <body>
 <wicket:extend>
 
-    <wicket:fragment wicket:id="actionResultFragment">
+    <wicket:fragment wicket:id="problemIndicatorFragment">
         <a data-toggle="modal" href="#problemDescriptions">
             <span class="badge badge-pill badge-danger" wicket:id="problemCount"></span>
         </a>
@@ -26,8 +26,8 @@
     <wicket:fragment wicket:id="systemConnectionsFragment">
         <span class="float-right">
             <div>
-                <a class="btn btn-outline-primary" wicket:id="testConnectionSettings" href="#">Test <i class="fa fa-plug"></i> <span wicket:id="envKey"></span> </a>
-                <div wicket:id="actionResult"/>
+                <a class="btn btn-outline-primary" wicket:id="testConnectionSettings" href="#">Test <i
+                        class="fa fa-plug"></i> <span wicket:id="envKey"></span> </a>
             </div>
         </span>
         <ul class="nav nav-pills">
@@ -42,6 +42,20 @@
         <div wicket:id="environmentSettings"/>
     </wicket:fragment>
 
+    <wicket:fragment wicket:id="connectivityCheckStatusFragment">
+        <div class="progress" wicket:id="check_in_progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+        </div>
+        <div wicket:id="check_ok">
+            <i class="btn-outline-success fa fa-check"></i>
+        </div>
+        <div wicket:id="check_not_ok">
+            <i class="btn-outline-danger fa fa-exclamation-triangle"></i>
+            <span wicket:id="problemIndicator"></span>
+        </div>
+    </wicket:fragment>
+
     <wicket:fragment wicket:id="environmentSettingsFragment">
 
         <br/>
@@ -51,6 +65,7 @@
             <tr>
                 <th>Subsystem</th>
                 <th>Connection settings</th>
+                <th></th>
             </tr>
             </thead>
             <wicket:container wicket:id="subsystems">
@@ -60,6 +75,9 @@
                     </td>
                     <td>
                         <div wicket:id="subsystemSettings"/>
+                    </td>
+                    <td width="10%">
+                        <div wicket:id="connectivityCheckStatus"></div>
                     </td>
                 </tr>
             </wicket:container>

@@ -36,7 +36,6 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-
 		<!-- Wicket -->
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
@@ -47,6 +46,7 @@
 			<artifactId>wicketstuff-annotation</artifactId>
 		</dependency>
 
+		<!-- Wicket bootstrap -->
 		<dependency>
 			<groupId>org.wicketstuff</groupId>
 			<artifactId>wicketstuff-jquery</artifactId>

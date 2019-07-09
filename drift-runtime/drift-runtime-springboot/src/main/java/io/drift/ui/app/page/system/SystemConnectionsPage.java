@@ -1,20 +1,28 @@
 package io.drift.ui.app.page.system;
 
+import io.drift.core.recording.ProblemDescription;
 import io.drift.core.system.EnvironmentKey;
+import io.drift.core.system.connectivity.EnvironmentConnectivityActionContext;
 import io.drift.ui.app.component.stacktrace.ProblemDescriptionListComponent;
 import io.drift.ui.app.flux.systemdescription.SystemActions;
 import io.drift.ui.app.flux.systemdescription.SystemStore;
 import io.drift.ui.app.page.layout.MainLayout;
 import io.drift.ui.config.WicketComponentRegistry;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.event.IEvent;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.time.Duration;
 import org.danekja.java.util.function.serializable.SerializableSupplier;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import java.util.UUID;
+import java.util.List;
 
 import static io.drift.ui.infra.WicketUtil.*;
 
@@ -34,31 +42,31 @@ public class SystemConnectionsPage extends MainLayout {
         add(new SystemConnectionsFragment("systemConnections"));
     }
 
-    private class SystemConnectionsFragment extends Fragment{
+    private class SystemConnectionsFragment extends Fragment {
 
         String selectedEnvironment;
+        int behaviorId;
 
         public SystemConnectionsFragment(String id) {
             super(id, "systemConnectionsFragment", SystemConnectionsPage.this);
 
             selectedEnvironment = systemStore.getEnvironments().get(0).getKey();
 
-            Link test = ajaxLink("testConnectionSettings", (target-> {
-                actionId = systemActions.testConnectivity(new EnvironmentKey(selectedEnvironment));
+            Link test = ajaxLink("testConnectionSettings", (target -> {
+                resetSelfUpdatingBehavior();
+                systemActions.asyncTestConnections(new EnvironmentKey(selectedEnvironment));
+                startSelfUpdatingBehavior();
                 refresh(target);
             }));
-            test.add(label("envKey", ()-> selectedEnvironment));
+            test.add(label("envKey", () -> selectedEnvironment));
 
             add(test);
-            add(new ActionResultFragment("actionResult"));
-
 
             add(listView("environments", () -> systemStore.getEnvironments(), (item) -> {
                 String environment = item.getModelObject().getKey();
 
                 Link select = ajaxLink("select", (target) -> {
                     selectedEnvironment = environment;
-                    actionId = null;
                     refresh(target);
                 });
                 addClass(select, environment.equals(selectedEnvironment) ? "active" : "text-primary");
@@ -75,38 +83,101 @@ public class SystemConnectionsPage extends MainLayout {
             target.add(SystemConnectionsFragment.this);
         }
 
+        private void startSelfUpdatingBehavior() {
+            Behavior behavior = new AjaxSelfUpdatingTimerBehavior(Duration.milliseconds(300)) {
+                @Override
+                public void onEvent(Component component, IEvent<?> event) {
+                    EnvironmentConnectivityActionContext actionContext = systemStore.getActionContext(selectedEnvironment);
+                    if (actionContext == null || actionContext.isFinished()) {
+                        resetSelfUpdatingBehavior();
+                    }
+
+                }
+            };
+            add(behavior);
+            behaviorId = getBehaviorId(behavior);
+        }
+
+        private void resetSelfUpdatingBehavior() {
+            try {
+                remove(getBehaviorById(behaviorId));
+            } catch (Exception e) {
+                // ignore if behavior is already removed
+            }
+        }
+
     }
 
-    private UUID actionId;
 
-    class ActionResultFragment extends Fragment {
+    class ProblemIndicatorFragment extends Fragment {
+
+        SerializableSupplier<String> envKey;
+        SerializableSupplier<String> subSystemKey;
 
         Label problemCount;
         ProblemDescriptionListComponent problems;
 
-        ActionResultFragment(String id) {
-            super(id, "actionResultFragment", SystemConnectionsPage.this);
+        ProblemIndicatorFragment(String id, SerializableSupplier<String> envKey, SerializableSupplier<String> subSystemKey) {
+            super(id, "problemIndicatorFragment", SystemConnectionsPage.this);
+            this.envKey = envKey;
+            this.subSystemKey = subSystemKey;
 
             add(problemCount = label("problemCount", () -> {
-                int count = systemStore.getActionResult(actionId).getProblemDescriptions().size();
-                return "" + count + " problems";
+                int count = getproblemdescriptions().size();
+                return "" + count + " problem" + (count == 1 ? "" : "s");
             }));
 
             add(problems = new ProblemDescriptionListComponent("problemDescriptions", () ->
-                    systemStore.getActionResult(actionId).getProblemDescriptions()
+                getproblemdescriptions()
             ));
         }
 
         @Override
         protected void onConfigure() {
             super.onConfigure();
-            int count = systemStore.getActionResult(actionId).getProblemDescriptions().size();
+            int count = getproblemdescriptions().size();
 
             problemCount.setVisible(count > 0);
             problems.setVisible(count > 0);
 
         }
+
+        private List<ProblemDescription> getproblemdescriptions() {
+            return systemStore.getActionContext(envKey.get(), subSystemKey.get()).getActionLogger().getProblemDescriptions();
+        }
     }
+
+    private class ConnectivityCheckStatusFragment extends Fragment {
+
+        SerializableSupplier<String> envKey;
+        WebMarkupContainer inProgress, ok, notOK;
+        SerializableSupplier<String> subSystemKey;
+
+        ConnectivityCheckStatusFragment(String id, SerializableSupplier<String> envKey, SerializableSupplier<String> subSystemKey) {
+
+            super(id, "connectivityCheckStatusFragment", SystemConnectionsPage.this);
+            this.envKey = envKey;
+            this.subSystemKey = subSystemKey;
+
+            add(inProgress = div("check_in_progress"));
+            add(ok = div("check_ok"));
+            add(notOK = div("check_not_ok"));
+
+            notOK.add(new ProblemIndicatorFragment("problemIndicator", envKey, subSystemKey));
+        }
+
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            EnvironmentConnectivityActionContext actionContext = systemStore.getActionContext(envKey.get());
+            inProgress.setVisible(actionContext != null && !actionContext.isFinished(subSystemKey.get()));
+            ok.setVisible(actionContext != null && actionContext.isFinished(subSystemKey.get()) && !actionContext.hasProblems(subSystemKey.get()));
+            notOK.setVisible(actionContext != null && actionContext.isFinished(subSystemKey.get()) && actionContext.hasProblems(subSystemKey.get()));
+
+        }
+
+    }
+
 
     private class EnvironmentSettingsFragment extends Fragment {
 
@@ -114,11 +185,14 @@ public class SystemConnectionsPage extends MainLayout {
             super(id, "environmentSettingsFragment", SystemConnectionsPage.this);
 
             add(listView("subsystems", () -> systemStore.getEnvironmentSettings(envKey.get()), (item) -> {
-                item.add(label("key", item.getModelObject().getSubSystemKey().getName()));
+                String subSystemKey = item.getModelObject().getSubSystemKey().getName();
+                item.add(label("key", subSystemKey));
                 item.add(wicketComponentRegistry.render("subsystemSettings", item.getModelObject().getConnectionDetails(), ConnectionDetailsView.class));
+                item.add(new ConnectivityCheckStatusFragment("connectivityCheckStatus", envKey, () -> subSystemKey));
             }));
         }
 
     }
+
 
 }

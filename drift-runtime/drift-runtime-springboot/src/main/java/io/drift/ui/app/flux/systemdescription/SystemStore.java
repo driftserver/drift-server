@@ -2,9 +2,12 @@ package io.drift.ui.app.flux.systemdescription;
 
 import io.drift.core.recording.ActionLogger;
 import io.drift.core.system.*;
+import io.drift.core.system.connectivity.EnvironmentConnectivityActionContext;
+import io.drift.core.system.connectivity.SubSystemConnectivityActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +15,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class SystemStore {
+
+    private Map<EnvironmentKey, EnvironmentConnectivityActionContext> actionContexts = new HashMap<>();
 
     @Autowired
     SystemDescriptionDomainService domainService;
@@ -47,8 +52,18 @@ public class SystemStore {
                 .get();
     }
 
-    public ActionLogger getActionResult(UUID actionId) {
-        ActionLogger actionLogger = domainService.getConnectivityTestResult(actionId);
-        return actionLogger == null ? new ActionLogger(false) : actionLogger;
+    public EnvironmentConnectivityActionContext getActionContext(String environmentKey) {
+        return actionContexts.get(new EnvironmentKey(environmentKey));
+    }
+
+
+    public void store(EnvironmentConnectivityActionContext actionContext) {
+        actionContexts.put(actionContext.getEnvironmentKey(), actionContext);
+    }
+
+    public SubSystemConnectivityActionContext getActionContext(String envKey, String subSystemKey) {
+        EnvironmentConnectivityActionContext actionContext = getActionContext(envKey);
+        if (actionContext == null) return null;
+        return (actionContext.getSubSystemContext(new SubSystemKey(subSystemKey)));
     }
 }

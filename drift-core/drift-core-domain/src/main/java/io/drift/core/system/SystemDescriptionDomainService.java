@@ -1,14 +1,11 @@
 package io.drift.core.system;
 
-import io.drift.core.recording.ActionLogger;
-
-import java.util.UUID;
+import io.drift.core.system.connectivity.EnvironmentConnectivityActionContext;
 
 public interface SystemDescriptionDomainService {
 
     SystemDescription getSystemDescription();
 
-    UUID testConnectivity(EnvironmentKey environmentKey);
+    EnvironmentConnectivityActionContext testConnectivity(EnvironmentKey environmentKey);
 
-    ActionLogger getConnectivityTestResult(UUID actionId);
 }

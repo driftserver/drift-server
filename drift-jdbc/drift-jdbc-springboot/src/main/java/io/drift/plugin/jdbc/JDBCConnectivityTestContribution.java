@@ -2,14 +2,14 @@ package io.drift.plugin.jdbc;
 
 import io.drift.core.recording.ActionLogger;
 import io.drift.core.recording.ProblemDescription;
-import io.drift.core.system.EnvironmentKey;
-import io.drift.core.system.SubSystemConnectionDetails;
-import io.drift.core.system.SubSystemKey;
-import io.drift.core.system.SystemDescription;
+import io.drift.core.system.*;
+import io.drift.core.system.connectivity.SubSystemConnectivityActionContext;
 import io.drift.core.systemdescription.SystemConnectivityTestContribution;
 import io.drift.jdbc.domain.system.JDBCConnectionDetails;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.util.Map;
 
 import static io.drift.plugin.jdbc.DriftJDBCAutoConfig.JDBC_SUBSYSTEM_TYPE;
@@ -25,37 +25,33 @@ public class JDBCConnectivityTestContribution implements SystemConnectivityTestC
     }
 
     @Override
-    public void testConnectivity(EnvironmentKey environmentKey, SystemDescription systemDescription, ActionLogger actionLogger) {
-
-        String location = null;
-        String action = null;
-        try {
-            location = "all jdbc subsystems";
-            action = "getting connection details";
-
-            Map<SubSystemKey, SubSystemConnectionDetails> jdbcSubSystems =
-                    systemDescription.getConnectionDetails(environmentKey, JDBC_SUBSYSTEM_TYPE);
-
-            for (SubSystemKey subSystemKey : jdbcSubSystems.keySet()) {
-                try {
-
-                    location = subSystemKey.getName();
-                    JDBCConnectionDetails connectionDetails = (JDBCConnectionDetails) jdbcSubSystems.get(subSystemKey);
-
-                    action = "testing jdbc connection";
-                    JDBCRecordingSession session = new JDBCRecordingSession(connectionDetails, connectionManager, subSystemKey);
-                    session.open();
-
-                    session.close();
-                } catch (Exception e) {
-                    actionLogger.addProblem(new ProblemDescription(location, action, wrap(e)));
-                }
-
-            }
-        } catch (Exception e) {
-            actionLogger.addProblem(new ProblemDescription(location, action, wrap(e)));
-        }
-
+    public String getSubSystemType() {
+        return "jdbc";
     }
 
+    @Async
+    @Override
+    public void asyncTestConnectivity(SubSystemConnectivityActionContext actionContext) {
+
+        SubSystemKey subSystemKey = actionContext.getSubSystem().getKey();
+        String location = subSystemKey.getName();
+        String action = null;
+
+        try {
+
+            action = "getting jdbc connection details";
+            JDBCConnectionDetails jdbcConnectionDetails = (JDBCConnectionDetails) actionContext.getConnectionDetails();
+
+            action = "closing existing jdbc connections";
+            connectionManager.stopDataSource(jdbcConnectionDetails);
+
+            action = "testing jdbc connection";
+            connectionManager.getDataSource(jdbcConnectionDetails);
+
+
+        } catch (Exception e) {
+            actionContext.getActionLogger().addProblem(new ProblemDescription(location, action, wrap(e)));
+        }
+        actionContext.setFinished();
+    }
 }

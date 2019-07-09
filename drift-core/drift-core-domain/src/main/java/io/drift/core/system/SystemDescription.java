@@ -68,4 +68,9 @@ public class SystemDescription implements Storable {
                         subSystem -> subSystem.getKey(),
                         subSystem -> getConnectionDetails(subSystem.getKey(), environmentKey)));
     }
+
+    public SubSystem getSubSystem(SubSystemKey subSystemKey) {
+        return subSystems.stream().filter(subSystem -> subSystem.getKey().equals(subSystemKey)).findFirst().get();
+
+    }
 }
