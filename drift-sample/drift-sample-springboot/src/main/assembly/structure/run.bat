@@ -1,1 +1,1 @@
-java -jar lib\drift-sample-springboot-0.0.2-SNAPSHOT.jar
+java -cp ${project.build.finalName}-spring-boot.jar -Dloader.path=lib org.springframework.boot.loader.PropertiesLauncher
