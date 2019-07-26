@@ -1,13 +1,13 @@
 package io.drift.plugin.jdbc.ui.app.page.snapshot;
 
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart.RootsViewPart;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart.DBSnapshotMainViewPart;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart.TableViewPart;
+import io.drift.jdbc.domain.data.Row;
+import io.drift.jdbc.domain.metadata.ColumnMetaData;
 import io.drift.plugin.jdbc.ui.app.flux.snapshot.SnapshotStore;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart.ViewPart;
+import io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart.*;
 import io.drift.ui.app.page.layout.MainLayout;
-import io.drift.ui.infra.WicketUtil;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.wicketstuff.annotation.mount.MountPath;
@@ -23,7 +23,7 @@ public class SnapshotViewerPage extends MainLayout {
     private SnapshotStore store;
 
     class RootsViewFragment extends Fragment {
-        public RootsViewFragment(String id, RootsViewPart rootsPart) {
+        RootsViewFragment(String id, RootsViewPart rootsPart) {
             super(id, "rootsViewFragment", SnapshotViewerPage.this);
             add(listView("roots", rootsPart.getRoots(), (item)-> {
                 Link rootSelection;
@@ -33,36 +33,62 @@ public class SnapshotViewerPage extends MainLayout {
                 }));
                 rootSelection.add(label("rootName", item.getModelObject().getName()));
             }));
-            /*
-            add(listView("childParts", rootsPart.getChildren(), (item)->{
-                item.add(createView("childPart", item.getModelObject()));
-            }));
-             */
-
         }
     }
 
-    class SVTableFragment extends Fragment {
-        public SVTableFragment(String id, TableViewPart table) {
+    class TableViewPartFragment extends Fragment {
+        TableViewPartFragment(String id, TableViewPart table) {
             super(id, "tableFragment", SnapshotViewerPage.this);
             add(label("name", table.getName()));
+
+            add(listView("columnsInOrder", table.getColumns(), item -> {
+                item.add(new Label("columnName", item.getModelObject().getName()));
+            }));
             add(listView("relationHeaders", table.getRelations(), (item)-> {
                 item.add(label("relationName", item.getModelObject().getName()));
             }));
-            add(listView("relationSelections", table.getRelations(), (item)-> {
-                item.add(ajaxLink("relationSelection", (target) -> {
-                    table.selectRelation(item.getModelObject().getName());
-                    target.add(mainView);
+
+            add(listView("rows", table.getRows(), (rowItem) -> {
+
+                Row row = rowItem.getModelObject();
+
+                rowItem.add(listView("columns", table.getColumns(), columnItem -> {
+                    ColumnMetaData column = columnItem.getModelObject();
+                    String value = row.getValue(column.getName());
+                    columnItem.add(new Label("value", value));
                 }));
+
+                rowItem.add(listView("relationSelections", table.getRelations(), (item)-> {
+                    item.add(ajaxLink("relationSelection", (target) -> {
+                        table.selectRelation(item.getModelObject(), row);
+                        target.add(mainView);
+                    }));
+                }));
+
             }));
         }
     }
 
-    class SVModelViewFragment extends Fragment {
-        public SVModelViewFragment(String id, DBSnapshotMainViewPart model) {
-            super(id, "modelFragment", SnapshotViewerPage.this);
-            add(WicketUtil.listView("tables", model.getTables(), (item)-> {
-                item.add(new SVTableFragment("table", item.getModelObject()));
+    class OneToManyRelationViewPartFragment extends Fragment {
+        OneToManyRelationViewPartFragment(String id, OneToManyRelationViewPart viewPart) {
+            super(id, "oneToManyRelationViewPartFragment", SnapshotViewerPage.this);
+            Link select = ajaxLink("select",(target)-> {
+                viewPart.select();
+                target.add(mainView);
+            });
+            select.add(label("description", viewPart.getLabel()));
+            add(select);
+        }
+
+    }
+
+    class MainViewPartFragment extends Fragment {
+        MainViewPartFragment(String id, DBSnapshotMainViewPart model) {
+            super(id, "mainViewPartFragment", SnapshotViewerPage.this);
+            add(listView("rows", model.getGrid().getRows(), (rowItem)-> {
+                rowItem.add(listView("columns", rowItem.getModelObject().getCells(), (cellItem)-> {
+                    cellItem.add(createView("cell", cellItem.getModelObject()));
+                }));
             }));
         }
     }
@@ -70,18 +96,20 @@ public class SnapshotViewerPage extends MainLayout {
     private WebMarkupContainer mainView;
 
     public SnapshotViewerPage() {
-        add(mainView = createView("viewPart", store.getViewPart()));
+        add(mainView = new MainViewPartFragment("mainViewPart", store.getMainViewPart()));
         mainView.setOutputMarkupId(true);
     }
 
-    private WebMarkupContainer createView(String id, ViewPart viewPart) {
+    private Component createView(String id, ViewPart viewPart) {
 
         if (viewPart instanceof RootsViewPart) {
             return new RootsViewFragment(id, (RootsViewPart) viewPart);
         } else if (viewPart instanceof TableViewPart) {
-            return new SVTableFragment(id, (TableViewPart)viewPart);
+            return new TableViewPartFragment(id, (TableViewPart)viewPart);
+        } else if (viewPart instanceof OneToManyRelationViewPart) {
+            return new OneToManyRelationViewPartFragment(id, (OneToManyRelationViewPart)viewPart);
         }
-        return null; // label(id, "no view for " + viewPart.getClass().getDescription());
+        return label(id, "[empty cell]");
 
     }
 

@@ -3,15 +3,13 @@ package io.drift.plugin.jdbc.ui.app.flux.snapshot;
 import io.drift.jdbc.domain.data.DBSnapShot;
 import io.drift.jdbc.domain.data.Row;
 import io.drift.jdbc.domain.data.TableSnapShot;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.descriptor.FKViewDescriptor;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.descriptor.RootDescriptor;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.descriptor.SnapshotViewDescriptor;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.descriptor.TableViewDescriptor;
+import io.drift.jdbc.domain.metadata.ColumnMetaData;
+import io.drift.plugin.jdbc.ui.app.flux.snapshot.graphmodel.*;
 
 public class DummyData {
 
     private DBSnapShot dbSnapShot;
-    private SnapshotViewDescriptor dbDescriptor;
+    private DBSnapshotGraph dbDescriptor;
 
     public DummyData() {
         initDBSnapshot();
@@ -19,19 +17,39 @@ public class DummyData {
     }
 
     private void initDescriptor() {
-        dbDescriptor = new SnapshotViewDescriptor();
+        dbDescriptor = new DBSnapshotGraph();
         {
-            RootDescriptor allOwners = new RootDescriptor("owners", "OWNER");
+            TableRoot allOwners = new TableRoot("owners", "OWNER");
             dbDescriptor.addRoot(allOwners);
         }
         {
-            TableViewDescriptor ownerTable = new TableViewDescriptor("OWNER");
-            ownerTable.addFk(new FKViewDescriptor("pets", "PET"));
-            dbDescriptor.addTable(ownerTable);
+            TableNode ownerTable = new TableNode("OWNER");
+            dbDescriptor.addNode(ownerTable);
+            {
+                ColumnMetaData idCol = new ColumnMetaData("id", "String", 0);
+                ownerTable.getColumns().add(idCol);
+            }
+            {
+                ColumnMetaData nameCol = new ColumnMetaData("name", "String", 0);
+                ownerTable.getColumns().add(nameCol);
+            }
         }
         {
-            TableViewDescriptor petsTable = new TableViewDescriptor("PET");
-            dbDescriptor.addTable(petsTable);
+
+            TableNode petsTable = new TableNode("PET");
+            dbDescriptor.addNode(petsTable);
+            {
+                ColumnMetaData idCol = new ColumnMetaData("id", "String", 0);
+                petsTable.getColumns().add(idCol);
+            }
+            {
+                ColumnMetaData nameCol = new ColumnMetaData("name", "String", 0);
+                petsTable.getColumns().add(nameCol);
+            }
+        }
+        {
+            ForeignKeyEdge ownersPets  = new ForeignKeyEdge("OWNER", "PET", "pets", "ownerId");
+            dbDescriptor.addEdge(ownersPets);
         }
         dbDescriptor.connect();
     }
@@ -81,7 +99,7 @@ public class DummyData {
         }
     }
 
-    public SnapshotViewDescriptor getDbDescriptor() {
+    public DBSnapshotGraph getDbDescriptor() {
         return dbDescriptor;
     }
 

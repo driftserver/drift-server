@@ -1,52 +1,61 @@
 package io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart;
 
+import io.drift.jdbc.domain.data.Row;
 import io.drift.jdbc.domain.data.TableSnapShot;
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.descriptor.TableViewDescriptor;
+import io.drift.jdbc.domain.metadata.ColumnMetaData;
+import io.drift.plugin.jdbc.ui.app.flux.snapshot.graphmodel.ForeignKeyEdge;
+import io.drift.plugin.jdbc.ui.app.flux.snapshot.graphmodel.TableNode;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableViewPart extends ViewPart implements Serializable {
 
-    private List<OneToManyRelationViewPart> relations = new ArrayList<>();
-
     private TableSnapShot snapShot;
-    private TableViewDescriptor descriptor;
+    private TableNode tableViewDescriptor;
+    private OneToManyRelationViewPart relationViewPart;
 
-
-    public TableViewPart() {
+    public TableViewPart(TableSnapShot snapShot, TableNode tableViewDescriptor) {
+        this.snapShot = snapShot;
+        this.tableViewDescriptor = tableViewDescriptor;
     }
 
-    public TableViewPart(TableSnapShot snapShot, TableViewDescriptor descriptor) {
-        this.snapShot = snapShot;
-        this.descriptor = descriptor;
-        this.relations = descriptor.getForeignKeys().stream()
-                .map(fk -> new OneToManyRelationViewPart(fk.getName()))
-                .collect(Collectors.toList());
+    public void setRelationViewPart(OneToManyRelationViewPart relationViewPart) {
+        this.relationViewPart = relationViewPart;
     }
 
     public String getName() {
-        return snapShot.getTable();
+        return tableViewDescriptor.getNodeName();
     }
 
-    public List<OneToManyRelationViewPart> getRelations() {
-        return relations;
+    public List<ForeignKeyEdge> getRelations() {
+        return tableViewDescriptor.getEdges();
     }
 
-    public void addRelation(OneToManyRelationViewPart relation) {
-        relations.add(relation);
+    public void selectRelation(ForeignKeyEdge fkViewDescriptor, Row row) {
+        DBSnapshotMainViewPart mainViewPart = (DBSnapshotMainViewPart) getParent();
+        mainViewPart.selectEdge(fkViewDescriptor, row);
+
     }
 
-    private String name;
-
-    public void setName(String name) {
-        this.name = name;
+    public List<ColumnMetaData> getColumns() {
+        return tableViewDescriptor.getColumns();
     }
 
-    public void selectRelation(String name) {
-        RootsViewPart rootsViewPart = (RootsViewPart)getParent();
-        OneToManyRelationViewPart svRelation = relations.stream().filter(rel -> rel.getName().equals(name)).findFirst().get();
+    public List<Row> getRows() {
+        if (relationViewPart == null)
+            return snapShot.getRows();
+
+        String fkColumnName = relationViewPart.getDescriptor().getFkColumnName();
+        String pkValue = relationViewPart.getPKValue();
+
+        return snapShot.getRows().stream()
+                .filter(row -> {
+                    String fkValue = row.getValue(fkColumnName);
+                    return fkValue.equals(pkValue);
+                })
+                .collect(Collectors.toList());
+
     }
 }

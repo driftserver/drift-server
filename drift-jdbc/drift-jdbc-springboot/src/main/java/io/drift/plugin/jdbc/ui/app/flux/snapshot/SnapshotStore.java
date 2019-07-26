@@ -1,63 +1,67 @@
 package io.drift.plugin.jdbc.ui.app.flux.snapshot;
 
-import io.drift.plugin.jdbc.ui.app.flux.snapshot.descriptor.SnapshotViewDescriptor;
+import io.drift.jdbc.domain.data.DBSnapShot;
+import io.drift.plugin.jdbc.ui.app.flux.snapshot.graphmodel.DBSnapshotGraph;
 import io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart.*;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SnapshotStore {
 
-    private DBSnapshotMainViewPart svModel;
+    private DBSnapshotMainViewPart mainViewPart;
     private final RootsViewPart rootsViewPart;
 
     public SnapshotStore() {
 
         DummyData dummyData = new DummyData();
-        SnapshotViewDescriptor viewDescriptor = dummyData.getDbDescriptor();
+        DBSnapShot dbSnapShot = dummyData.getDbSnapShot();
+        DBSnapshotGraph viewDescriptor = dummyData.getDbDescriptor();
 
-        svModel = new DBSnapshotMainViewPart();
+        mainViewPart = new DBSnapshotMainViewPart(dbSnapShot);
 
-        rootsViewPart = new RootsViewPart(viewDescriptor.getRoots(), dummyData.getDbSnapShot());
+        rootsViewPart = new RootsViewPart(viewDescriptor.getRoots());
+        mainViewPart.add(rootsViewPart);
 
+        /*
         {
             TableViewPart owners = new TableViewPart();
             owners.setName("OWNER");
 
-            owners.addRelation(new OneToManyRelationViewPart("pets"));
-            svModel.add(owners);
+            owners.addEdge(new OneToManyRelationViewPart("pets"));
+            mainViewPart.add(owners);
         }
+        */
     }
 
-    public DBSnapshotMainViewPart getViewModel() {
-        return svModel;
+    public DBSnapshotMainViewPart getMainViewPart() {
+        return mainViewPart;
     }
 
-    public ViewPart getViewPart() {
-        return rootsViewPart;
-    }
 
-    public void selectRelation(OneToManyRelationViewPart svRelation) {
+    /*
+    public void selectEdge(OneToManyRelationViewPart svRelation) {
         if (svRelation.getName().equals("pets")) {
             if (svRelation.isActive()) {
-                svModel.getTables().remove(svModel.getTables().size()-1);
+                mainViewPart.getTables().remove(mainViewPart.getTables().size()-1);
                 svRelation.setActive(false);
             } else {
                 TableViewPart pets = new TableViewPart();
                 pets.setName("PET");
-                pets.addRelation(new OneToManyRelationViewPart("visits"));
-                svModel.add(pets);
+                pets.addEdge(new OneToManyRelationViewPart("visits"));
+                mainViewPart.add(pets);
                 svRelation.setActive(true);
             }
         } else if(svRelation.getName().equals("visits")) {
             if (svRelation.isActive()) {
-                svModel.getTables().remove(svModel.getTables().size()-1);
+                mainViewPart.getTables().remove(mainViewPart.getTables().size()-1);
                 svRelation.setActive(false);
             } else {
                 TableViewPart visits = new TableViewPart();
                 visits.setName("VISITS");
-                svModel.add(visits);
+                mainViewPart.add(visits);
                 svRelation.setActive(true);
             }
         }
     }
+    */
 }

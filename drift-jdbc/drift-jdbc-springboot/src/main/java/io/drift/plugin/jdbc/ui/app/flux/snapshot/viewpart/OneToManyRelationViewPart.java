@@ -1,28 +1,34 @@
 package io.drift.plugin.jdbc.ui.app.flux.snapshot.viewpart;
 
+import io.drift.jdbc.domain.data.Row;
+import io.drift.plugin.jdbc.ui.app.flux.snapshot.graphmodel.ForeignKeyEdge;
+
 import java.io.Serializable;
 
-public class OneToManyRelationViewPart implements Serializable {
-    private String name;
-    private boolean active;
+public class OneToManyRelationViewPart extends ViewPart implements Serializable {
 
-    public OneToManyRelationViewPart(String name) {
-        this.name = name;
+    private Row row;
+    private ForeignKeyEdge fkViewDescriptor;
+
+    public OneToManyRelationViewPart(ForeignKeyEdge fkViewDescriptor, Row row) {
+        this.fkViewDescriptor = fkViewDescriptor;
+        this.row = row;
     }
 
-    public String getName() {
-        return name;
+    public ForeignKeyEdge getDescriptor() {
+        return fkViewDescriptor;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void select() {
+        DBSnapshotMainViewPart mainViewPart = (DBSnapshotMainViewPart)getParent();
+        mainViewPart.removeEdge(this);
     }
 
-    public boolean isActive() {
-        return active;
+    public String getLabel() {
+        return String.format("[%s -> %s]", getDescriptor().getFromNode().getShortDescription(row), getDescriptor().getName());
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public String getPKValue() {
+        return row.getValue("id");
     }
 }

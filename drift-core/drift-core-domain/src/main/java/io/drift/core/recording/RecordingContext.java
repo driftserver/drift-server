@@ -77,6 +77,6 @@ public class RecordingContext {
     }
 
     public boolean isInitialized() {
-        return recording.getInitialState() == null;
+        return recording.getInitialState() != null;
     }
 }

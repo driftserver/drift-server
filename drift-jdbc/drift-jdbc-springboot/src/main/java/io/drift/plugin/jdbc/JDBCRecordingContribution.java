@@ -136,6 +136,7 @@ public class JDBCRecordingContribution implements RecordingSessionContribution {
                 action = "setting final system state";
                 recordingContext.getRecording().getFinalstate().addSubSystemState(session.getSubSystemKey().getName(), session.getLastSnapshot());
             } catch (Exception e) {
+                e.printStackTrace();
                 recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, JDBCExceptionWrapper.wrap(e)));
             }
         });

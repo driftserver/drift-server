@@ -28,6 +28,7 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     @Override
     public Recording create(RecordingDescriptor recordingDescriptor) {
+trace(1);
         RecordingId recordingId = recordingDescriptor.getRecordingId();
         EnvironmentKey environmentKey = recordingDescriptor.getEnvironmentKey();
 
@@ -40,7 +41,9 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
         RecordingContext recordingContext = new RecordingContext(recording, systemDescription);
         recordingContext.setState(RecordingState.CREATED);
 
+        trace(2);
         contexts.put(recordingId, recordingContext);
+
         reportSessionCount();
         return recording;
     }
@@ -52,22 +55,30 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     @Override
     public void takeSnapShot(RecordingId recordingId) {
+        trace(3);
         RecordingContext context = restoreContext(recordingId);
 
         if (!context.isConnected()) {
 
+            trace(4);
             connect(context);
             if (context.getActionLogger().hasProblems()) return;
 
+            trace(5);
             if (!context.isInitialized()) {
+                trace(6);
+                System.out.println("initializing");
                 initialize(context);
             } else {
+                trace(7);
+                System.out.println("reinitializing");
                 reinitialize(context);
             }
 
         }
 
 
+        trace(8);
         context.startSynchronousAction();
         RecordingStep step = new RecordingStep();
         step.setTitle("step " + context.getRecording().getSteps().size());
@@ -98,22 +109,27 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     }
 
     private void connect(RecordingContext context) {
+        trace(9);
         context.startAsyncAction();
         contributions.forEach(contribution -> contribution.onConnect(context));
 
+        trace(10);
         if (!context.getActionLogger().hasProblems()) {
+            trace(11);
             context.setState(RecordingState.CONNECTED);
             autoSave(context);
         }
     }
 
     private void initialize(RecordingContext context) {
+        trace(12);
         context.startSynchronousAction();
 
         Recording recording = context.getRecording();
         recording.setInitialState(new SystemState());
         recording.setFinalstate(new SystemState());
 
+        trace(13);
         contributions.forEach(contribution -> contribution.initialize(context));
 
     }
@@ -138,8 +154,11 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
     }
 
     private RecordingContext restoreContext(RecordingId recordingId) {
+        trace(14);
+        System.out.println("recordingId: " + recordingId.getId());
         RecordingContext context = contexts.get(recordingId);
         if (context == null) {
+            trace(15);
             Recording recording = recordingStorage.load(recordingId);
             SystemDescription systemDescription = systemDescriptionStorage.load();
             context = new RecordingContext(recording, systemDescription);
@@ -147,11 +166,16 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
             contexts.put(recordingId, context);
             reportSessionCount();
         }
+        trace(16);
         return context;
     }
 
     private void reportSessionCount() {
         System.out.println("#contexts: " + contexts.size());
+    }
+
+    private void trace(int linenr) {
+        System.out.println("line: " + linenr);
     }
 
 }
