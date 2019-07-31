@@ -1,6 +1,7 @@
 package io.drift.core.store.storage;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class FileSystemModelStorage implements ModelStorage {
 		try {
 			Path path = getPath(storagePath, storageId, format);
 			Files.createDirectories(path.getParent());
-			Files.write(path, model.getBytes());
+			Files.write(path, model.getBytes(Charset.forName("utf-8")));
 		} catch (IOException e) {
 			throw new ModelStorageException(e);
 		}
