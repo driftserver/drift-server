@@ -38,4 +38,15 @@ public class DBSnapShot implements Serializable, Storable, SubSystemState {
 		this.id = id;
 	}
 
+	private String subSystem;
+
+	public String getSubSystem() {
+		return subSystem;
+	}
+
+	public void setSubSystem(String subSystem) {
+		this.subSystem = subSystem;
+	}
+
+
 }

@@ -43,6 +43,7 @@ public class JDBCRecordingSession {
 
     public void takeSnapshot() {
         DBSnapShot dbSnapShot = dbSnapShotBuilder.takeDBSnapShot(getDataSource(), dbMetaData, snapshotConfig);
+        dbSnapShot.setSubSystem(subSystemKey.getName());
 
         if (lastDBSnapshot != null) {
             DBDeltaBuilder dbDeltaBuilder = new DBDeltaBuilder(dbMetaData);

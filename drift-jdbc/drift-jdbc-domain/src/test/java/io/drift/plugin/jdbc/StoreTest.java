@@ -1,5 +1,6 @@
 package io.drift.plugin.jdbc;
 
+import io.drift.core.infra.DriftCoreJacksonModule;
 import io.drift.core.store.ModelStore;
 import io.drift.core.store.ModelStoreException;
 import io.drift.core.store.serialization.JsonModelSerializer;
@@ -22,7 +23,7 @@ public class StoreTest extends TestCase {
 	private ModelStore createStore() {
 		ModelStore store = new ModelStore();
 		JsonModelSerializer modelSerializer = new JsonModelSerializer();
-		modelSerializer.registerJacksonModule(new DriftJDBCJacksonModule());
+		modelSerializer.registerModule(new DriftJDBCJacksonModule());
 		store.getSerializationManager().registerSerializer(modelSerializer);
 		store.getModelStorageManager().registerStorage(new FileSystemModelStorage());
 		return store;
@@ -86,6 +87,7 @@ public class StoreTest extends TestCase {
 
     private YamlModelSerializer createYamlSerializer() {
         YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
+        yamlModelSerializer.registerModule(new DriftCoreJacksonModule());
         yamlModelSerializer.registerModule(new DriftJDBCJacksonModule());
         return yamlModelSerializer;
     }

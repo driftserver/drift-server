@@ -18,6 +18,10 @@
             <groupId>io.drift</groupId>
             <artifactId>drift-jdbc-springboot</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.drift</groupId>
+            <artifactId>drift-filesystem-springboot</artifactId>
+        </dependency>
         <!-- database connection -->
         <dependency>
             <groupId>com.h2database</groupId>

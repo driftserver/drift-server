@@ -86,7 +86,6 @@
     <orderEntry type="library" name="Maven: org.webjars:popper.js:1.14.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.wicket:wicket-util:8.4.0" level="project" />
     <orderEntry type="library" name="Maven: commons-fileupload:commons-fileupload:1.4" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.2" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:tempusdominus-bootstrap-4:5.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.webjars.bower:momentjs:2.24.0" level="project" />
@@ -116,6 +115,9 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.26" level="project" />
+    <orderEntry type="module" module-name="drift-filesystem-springboot" />
+    <orderEntry type="module" module-name="drift-filesystem-domain" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.6" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.4.197" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework.boot:spring-boot-devtools:2.1.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.1.4.RELEASE" level="project" />

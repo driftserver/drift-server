@@ -19,6 +19,7 @@
         <module>drift-core</module>
         <module>drift-runtime</module>
         <module>drift-jdbc</module>
+        <module>drift-filesystem</module>
         <module>drift-sample</module>
     </modules>
 
@@ -89,12 +90,36 @@
                 <version>${drift.version}</version>
             </dependency>
 
+            <!-- filesystem modules -->
+            <dependency>
+                <groupId>io.drift</groupId>
+                <artifactId>drift-filesystem</artifactId>
+                <version>${drift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.drift</groupId>
+                <artifactId>drift-filesystem-domain</artifactId>
+                <version>${drift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.drift</groupId>
+                <artifactId>drift-filesystem-springboot</artifactId>
+                <version>${drift.version}</version>
+            </dependency>
 
             <!-- samples -->
             <dependency>
                 <groupId>io.drift</groupId>
                 <artifactId>drift-sample-springboot</artifactId>
                 <version>${drift.version}</version>
+            </dependency>
+
+            <!-- unittesting-->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>

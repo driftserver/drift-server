@@ -20,57 +20,7 @@ import java.io.IOException;
 
 public class DriftJDBCJacksonModule extends SimpleModule {
 
-    class EnvironmentKeySerializer extends StdSerializer<EnvironmentKey> {
 
-        EnvironmentKeySerializer() {
-            super(EnvironmentKey.class);
-        }
-
-        @Override
-        public void serialize(EnvironmentKey environmentKey, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeString(environmentKey.getName());
-        }
-    }
-
-    class SubSystemKeySerializer extends StdSerializer<SubSystemKey> {
-
-        SubSystemKeySerializer() {
-            super(SubSystemKey.class);
-        }
-
-        @Override
-        public void serialize(SubSystemKey subSystemKey, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeString(subSystemKey.getName());
-        }
-    }
-
-
-    class EnvironmentKeyDeserializer extends StdDeserializer<EnvironmentKey> {
-
-        EnvironmentKeyDeserializer() {
-            super(EnvironmentKey.class);
-        }
-
-        @Override
-        public EnvironmentKey deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            return new EnvironmentKey(jsonParser.getValueAsString());
-        }
-    }
-
-    class SubSystemKeyDeserializer extends StdDeserializer<SubSystemKey> {
-
-        SubSystemKeyDeserializer() {
-            super(SubSystemKey.class);
-        }
-
-        @Override
-        public SubSystemKey deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            return new SubSystemKey(jsonParser.getValueAsString());
-        }
-    }
-
-    
-    
     public DriftJDBCJacksonModule() {
         super();
         registerSubtypes(
@@ -80,13 +30,6 @@ public class DriftJDBCJacksonModule extends SimpleModule {
                 JDBCConnectionDetails.class
         );
 
-        addKeyDeserializer(SubSystemEnvironmentKey.class, new SubSystemEnvironmentKeyDeserializer());
-
-        addSerializer(new EnvironmentKeySerializer());
-        addDeserializer(EnvironmentKey.class, new EnvironmentKeyDeserializer());
-
-        addSerializer(new SubSystemKeySerializer());
-        addDeserializer(SubSystemKey.class, new SubSystemKeyDeserializer());
 
     }
 

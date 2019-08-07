@@ -7,6 +7,4 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes(value={})
 public interface SubSystemConnectionDetails {
 
-    public SubSystemEnvironmentKey getKey();
-
 }

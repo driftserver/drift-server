@@ -272,7 +272,7 @@ public class RecordingPage extends MainLayout {
                     target.add(scenarioRecorder);
                 });
                 item.add(select);
-                select.add(label("subSystemName", scenarioItemSelector.getSelectedSystemState().getOrderedSubSystemKeys().get(item.getModelObject())));
+                select.add(createSubSystemStateSummary("selectedSubSystemSummary", subSystemSelector.getSelectedSubSystemState(), subSystemSelector.getSubSystemDescription()));
 
                 Label selected = label("selected");
                 if (subSystemSelector.hasFocus()) addClass(selected, "btn-outline-primary");
@@ -303,6 +303,9 @@ public class RecordingPage extends MainLayout {
         return registry.render(id, subSystemState, SubSystemStateDetailView.class, subSystemDescription);
     }
 
+    private Component createSubSystemStateSummary(String id, SubSystemState subSystemState, SubSystemDescription subSystemDescription) {
+        return registry.render(id, subSystemState, SubSystemStateSummaryView.class, subSystemDescription);
+    }
 
     public class ScenarioFragment extends Fragment {
 

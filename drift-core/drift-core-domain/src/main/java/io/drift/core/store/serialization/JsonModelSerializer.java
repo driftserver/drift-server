@@ -47,7 +47,7 @@ public class JsonModelSerializer extends Serializer {
 		}
 	}
 
-    public void registerJacksonModule(Module module) {
+    public void registerModule(Module module) {
 		objectMapper.registerModule(module);
     }
 }

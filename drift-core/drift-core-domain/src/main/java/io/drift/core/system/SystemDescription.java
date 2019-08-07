@@ -40,7 +40,7 @@ public class SystemDescription implements Storable {
     public SubSystemConnectionDetails getConnectionDetails(SubSystemKey subSystemKey, EnvironmentKey environmentKey) {
         SubSystemEnvironmentKey subSystemEnvironmentKey = new SubSystemEnvironmentKey(subSystemKey, environmentKey);
         SubSystemConnectionDetails subSystemConnectionDetails = connectionDetails.get(subSystemEnvironmentKey);
-        return subSystemConnectionDetails == null ? new NullDetails(subSystemEnvironmentKey) : subSystemConnectionDetails;
+        return subSystemConnectionDetails == null ? new NullDetails() : subSystemConnectionDetails;
     }
 
     public Map<SubSystemKey, SubSystemConnectionDetails> getConnectionDetails(EnvironmentKey environmentKey) {

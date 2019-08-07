@@ -19,8 +19,4 @@ public class MapSettings implements SubSystemConnectionDetails, Serializable {
         this.map = map;
     }
 
-    @Override
-    public SubSystemEnvironmentKey getKey() {
-        return null;
-    }
 }

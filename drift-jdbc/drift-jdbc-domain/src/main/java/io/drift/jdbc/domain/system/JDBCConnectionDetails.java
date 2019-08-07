@@ -45,8 +45,4 @@ public class JDBCConnectionDetails implements SubSystemConnectionDetails {
         this.tableNames = tableNames;
     }
 
-    @Override
-    public SubSystemEnvironmentKey getKey() {
-        return null;
-    }
 }

@@ -71,7 +71,7 @@ public class WicketComponentRegistry {
         try {
             return (Component) methodAndBeanTuple.getMethod().invoke(methodAndBeanTuple.getBean(), args);
         } catch (Exception e) {
-            throw new IllegalArgumentException("problem rendering widget. id=" + id + ", data =" + data, e);
+            throw new IllegalArgumentException(String.format("problem rendering widget with id '%s'. \nMake sure there is\n\t - a spring component annotated with @WicketComponentFactory \n\t - a method in this component annotated with @WicketComponentFactoryMethod with \n\t\t -dataType: %s \n\t\t -presentationClass:  %s\n", id, dataType, presentationClass), e);
         }
     }
 
