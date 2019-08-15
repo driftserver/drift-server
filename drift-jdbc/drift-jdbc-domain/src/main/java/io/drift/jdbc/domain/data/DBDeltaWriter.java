@@ -191,8 +191,8 @@ public class DBDeltaWriter {
 		for (Row row : delta.getInserts()) {
 			format.insert(writer, table, row);
 		}
-		for (Row row : delta.getUpdates()) {
-			format.update(writer, table, row);
+		for (RowDelta rowDelta : delta.getUpdates()) {
+			format.update(writer, table, rowDelta.getNewRow());
 		}
 		for (Row row : delta.getDeletes()) {
 			format.delete(writer, table, row);

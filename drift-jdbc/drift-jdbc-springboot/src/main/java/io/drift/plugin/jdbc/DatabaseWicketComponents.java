@@ -37,8 +37,8 @@ public class DatabaseWicketComponents {
             dataType = DBSnapShot.class,
             viewType = SubSystemStateSummaryView.class
     )
-    public DBSnapshotSummaryComponent dbSnapshotSummaryComponent(String id, DBSnapShot dbSnapShot, JDBCConnectionDetails jdbcConnectionDetails) {
-        return new DBSnapshotSummaryComponent(id, dbSnapShot, jdbcConnectionDetails);
+    public DBSnapshotSummaryComponent dbSnapshotSummaryComponent(String id, DBSnapShot dbSnapShot) {
+        return new DBSnapshotSummaryComponent(id, dbSnapShot);
     }
 
     @WicketComponentFactoryMethod(

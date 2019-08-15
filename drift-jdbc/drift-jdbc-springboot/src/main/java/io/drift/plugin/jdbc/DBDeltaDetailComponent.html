@@ -3,7 +3,7 @@
 
 <wicket:fragment wicket:id="tableDeltaFragment">
     <span wicket:id="tableName"/>
-    <table _style="table-layout: fixed;width: 170px;" class="table table-bordered table-sm table-hover ">
+    <table _style="table-layout: fixed;width: 170px;" class="table table-responsive table-bordered table-sm table-hover ">
         <thead>
         <tr class="">
             <th style="width:20pt"></th>
@@ -16,19 +16,20 @@
         <tr wicket:id="inserts">
             <th class="text-success" scope="row">I</th>
             <td wicket:id="columns" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
-                <span wicket:id="value"></span>
+                <span class="d-inline-block text-truncate" style="max-width: 150px;"  wicket:id="value"></span>
             </td>
         </tr>
         <tr wicket:id="updates">
             <th class="text-warning" width="10pt" scope="row">U</th>
             <td wicket:id="columns" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
-                <span wicket:id="value"></span>
+                <div class="text-danger d-inline-block text-truncate" style="max-width: 150px; text-decoration: line-through;" wicket:id="oldValue"></div>
+                <div class="d-inline-block text-truncate" style="max-width: 150px;" wicket:id="newValue"></div>
             </td>
         </tr>
         <tr wicket:id="deletes">
             <th class="text-danger" scope="row">D</th>
             <td wicket:id="columns" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
-                <span wicket:id="value"></span>
+                <span class="d-inline-block text-truncate" style="max-width: 150px;" wicket:id="value"></span>
             </td>
         </tr>
         </tbody>

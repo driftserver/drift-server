@@ -85,6 +85,9 @@ public class DBDeltaBuilder {
 	}
 
 	private Row findRowWithSameKeyAs(TableSnapShot tableSnapshot, Row row, TableMetaData tableMetaData) {
+		if (tableMetaData.getPrimaryKey()==null || tableMetaData.getPrimaryKey().getColumns()==null || tableMetaData.getPrimaryKey().getColumns().size() == 0 ) {
+			return tableSnapshot.getRows().stream().filter(snapshotRow -> compareRowByValues(tableMetaData, row, snapshotRow)).findAny().orElse(null);
+		}
 		return tableSnapshot.getRows().stream().filter(lastRow -> compareByPK(tableMetaData.getPrimaryKey(), row, lastRow)).findAny().orElse(null);
 	}
 

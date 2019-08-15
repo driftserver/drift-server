@@ -2,6 +2,7 @@ package io.drift.plugin.jdbc;
 
 import io.drift.jdbc.domain.data.DBDelta;
 import io.drift.jdbc.domain.data.Row;
+import io.drift.jdbc.domain.data.RowDelta;
 import io.drift.jdbc.domain.data.TableDelta;
 import io.drift.jdbc.domain.metadata.ColumnMetaData;
 import io.drift.jdbc.domain.metadata.DBMetaData;
@@ -29,7 +30,7 @@ public class DBDeltaDetailComponent extends Panel {
                 item.add(new Label("columnName", item.getModelObject().getName()));
             }));
             add(rowsListView("inserts", tableDelta.getInserts(), columnsInOrder));
-            add(rowsListView("updates", tableDelta.getUpdates(), columnsInOrder));
+            add(oldAndNewRowsListView("updates", tableDelta.getUpdates(), columnsInOrder));
             add(rowsListView("deletes", tableDelta.getDeletes(), columnsInOrder));
 
         }
@@ -44,6 +45,21 @@ public class DBDeltaDetailComponent extends Panel {
                 }));
             });
         }
+
+        private ListView<RowDelta> oldAndNewRowsListView(String id, List<RowDelta> rowDeltas, List<ColumnMetaData> columnsInOrder) {
+            return listView(id, rowDeltas, rowItem -> {
+                RowDelta rowDelta = rowItem.getModelObject();
+                rowItem.add(listView("columns", columnsInOrder, columnItem -> {
+                    ColumnMetaData column = columnItem.getModelObject();
+                    String oldValue = rowDelta.getOldRow().getValue(column.getName());
+                    String newValue = rowDelta.getNewRow().getValue(column.getName());
+                    if (oldValue != null && oldValue.equals(newValue)) oldValue = "";
+                    columnItem.add(new Label("oldValue", oldValue));
+                    columnItem.add(new Label("newValue", newValue));
+                }));
+            });
+        }
+
     }
 
     public DBDeltaDetailComponent(String id, DBDelta dbDelta, DBMetaData dbMetaData) {

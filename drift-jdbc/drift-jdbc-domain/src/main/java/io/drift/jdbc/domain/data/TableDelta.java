@@ -25,7 +25,7 @@ public class TableDelta implements Serializable {
 
 	private String table;
 
-	private List<Row> updates = new ArrayList<>();
+	private List<RowDelta> updates = new ArrayList<>();
 
 	protected TableDelta() {
 
@@ -44,7 +44,7 @@ public class TableDelta implements Serializable {
 	}
 
 	public void addUpdate(Row row, Row lastRow) {
-		updates.add(row);
+		updates.add(new RowDelta(lastRow, row));
 	}
 
 	public List<Row> getDeletes() {
@@ -59,7 +59,7 @@ public class TableDelta implements Serializable {
 		return table;
 	}
 
-	public List<Row> getUpdates() {
+	public List<RowDelta> getUpdates() {
 		return updates;
 	}
 

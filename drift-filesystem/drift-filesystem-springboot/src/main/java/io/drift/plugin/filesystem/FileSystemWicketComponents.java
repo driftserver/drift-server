@@ -28,8 +28,8 @@ public class FileSystemWicketComponents {
             dataType = FileSystemSnapshot.class,
             viewType = SubSystemStateSummaryView.class
     )
-    public FileSystemSnapshotSummaryComponent fileSystemSnapshotSummaryComponent(String id, FileSystemSnapshot fileSystemSnapshot, FileSystemSettings fileSystemSettings) {
-        return new FileSystemSnapshotSummaryComponent(id, fileSystemSnapshot, fileSystemSettings);
+    public FileSystemSnapshotSummaryComponent fileSystemSnapshotSummaryComponent(String id, FileSystemSnapshot fileSystemSnapshot) {
+        return new FileSystemSnapshotSummaryComponent(id, fileSystemSnapshot);
     }
 
     @WicketComponentFactoryMethod(

@@ -15,7 +15,7 @@ public class DummyFileSystemDescriptionBuilder {
 
         SubSystem fs1 = new SubSystem();
         fs1.setType("filesystem");
-        fs1.setName("file storage 1");
+        fs1.setName("Drive C:");
         fs1.setKey(new SubSystemKey("fs1"));
         systemDescription.getSubSystems().add(fs1);
 
