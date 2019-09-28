@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:panel>
+    <div>
+        <table class="table table-borderless">
+            <tbody>
+            <tr>
+                <td>url</td>
+                <td><span wicket:id="url"></span></td>
+            </tr>
+            <tr>
+                <td>username</td>
+                <td><span wicket:id="userName"></span></td>
+            </tr>
+            <tr>
+                <td>password</td>
+                <td><span wicket:id="password"></span></td>
+            </tr>
+            <tr>
+                <td>indices</td>
+                <td>
+                    <table class="table table-borderless">
+                        <tbody>
+                        <wicket:container wicket:id="indices">
+                            <tr>
+                                <td><span wicket:id="index"></span></td>
+                            </tr>
+                        </wicket:container>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+
+            </tbody>
+        </table>
+    </div>
+</wicket:panel>
+
+</body>
+</html>
+

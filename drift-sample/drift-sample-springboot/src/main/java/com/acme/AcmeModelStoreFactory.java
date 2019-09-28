@@ -8,6 +8,7 @@ import io.drift.core.store.serialization.YamlModelSerializer;
 import io.drift.core.store.storage.FileSystemModelStorage;
 import io.drift.core.store.storage.LuceneMetaDataStorage;
 import io.drift.core.system.SystemDescription;
+import io.drift.elasticsearch.DriftElasticSearchJacksonModule;
 import io.drift.filesystem.DriftFileSystemJacksonModule;
 import io.drift.jdbc.infra.DriftJDBCJacksonModule;
 import org.springframework.beans.factory.DisposableBean;
@@ -28,16 +29,19 @@ public class AcmeModelStoreFactory implements FactoryBean<ModelStore>, Disposabl
         Module coreJacksonModule = new DriftCoreJacksonModule();
         Module jdbcJacksonModule = new DriftJDBCJacksonModule();
         Module fileSystemJacksonModule = new DriftFileSystemJacksonModule();
+        Module esModule = new DriftElasticSearchJacksonModule();
 
         JsonModelSerializer jsonModelSerializer = new JsonModelSerializer();
         jsonModelSerializer.registerModule(coreJacksonModule);
         jsonModelSerializer.registerModule(jdbcJacksonModule);
         jsonModelSerializer.registerModule(fileSystemJacksonModule);
+        jsonModelSerializer.registerModule(esModule);
 
         YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
         yamlModelSerializer.registerModule(coreJacksonModule);
         yamlModelSerializer.registerModule(jdbcJacksonModule);
         yamlModelSerializer.registerModule(fileSystemJacksonModule);
+        yamlModelSerializer.registerModule(esModule);
 
         return new ModelStore()
 
