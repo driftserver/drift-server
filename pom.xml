@@ -21,6 +21,7 @@
         <module>drift-jdbc</module>
         <module>drift-filesystem</module>
         <module>drift-sample</module>
+        <module>drift-elasticsearch</module>
     </modules>
 
     <dependencyManagement>
@@ -104,6 +105,23 @@
             <dependency>
                 <groupId>io.drift</groupId>
                 <artifactId>drift-filesystem-springboot</artifactId>
+                <version>${drift.version}</version>
+            </dependency>
+
+            <!-- elasticsearch modules -->
+            <dependency>
+                <groupId>io.drift</groupId>
+                <artifactId>drift-elasticsearch</artifactId>
+                <version>${drift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.drift</groupId>
+                <artifactId>drift-elasticsearch-domain</artifactId>
+                <version>${drift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.drift</groupId>
+                <artifactId>drift-elasticsearch-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>
 
