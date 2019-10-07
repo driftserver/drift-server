@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
+<body>
+<wicket:panel>
+    <table class="_table">
+        <tbody>
+        <wicket:container wicket:id="indices">
+            <tr>
+                <td>
+                    <span wicket:id="indexName"></span>
+                    <p/>
+                    <table class="table table-bordered  table-condensed table-sm">
+                        <tbody>
+                        <wicket:container wicket:id="hits">
+                            <tr>
+                                <td>
+                                    <pre wicket:id="content"></pre>
+                                </td>
+                            </tr>
+                        </wicket:container>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </wicket:container>
+        </tbody>
+    </table>
+</wicket:panel>
+</body>
+</html>

@@ -7,7 +7,12 @@ public class DriftElasticSearchJacksonModule extends SimpleModule {
     public DriftElasticSearchJacksonModule() {
         super();
         registerSubtypes(
-                ElasticSearchSettings.class
+                ElasticSearchSettings.class,
+
+                ElasticSearchSnapshot.class,
+                IndexSnapshot.class,
+
+                ElasticSearchDelta.class
         );
     }
 
