@@ -1,4 +1,4 @@
-package io.drift.plugin.elasticsearch;
+package io.drift.plugin.elasticsearch.action;
 
 import io.drift.core.recording.ProblemDescription;
 import io.drift.core.recording.RecordingContext;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.drift.plugin.elasticsearch.DriftElasticSearchAutoConfig.ELASTICSEARCH_SUBSYSTEM_TYPE;
-import static io.drift.plugin.elasticsearch.ElasticSearchExceptionWrapper.wrap;
+import static io.drift.plugin.elasticsearch.action.ElasticSearchExceptionWrapper.wrap;
 
 @Component
 public class ElasticSearchRecordingContribution implements RecordingSessionContribution {

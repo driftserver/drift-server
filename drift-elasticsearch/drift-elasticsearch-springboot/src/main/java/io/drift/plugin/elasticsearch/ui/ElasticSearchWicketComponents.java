@@ -1,4 +1,4 @@
-package io.drift.plugin.elasticsearch;
+package io.drift.plugin.elasticsearch.ui;
 
 import io.drift.core.WicketComponentFactory;
 import io.drift.core.WicketComponentFactoryMethod;

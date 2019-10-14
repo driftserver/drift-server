@@ -1,4 +1,4 @@
-package io.drift.plugin.elasticsearch;
+package io.drift.plugin.elasticsearch.ui;
 
 import io.drift.elasticsearch.ElasticSearchSnapshot;
 import org.apache.wicket.markup.html.panel.Panel;

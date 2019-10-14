@@ -1,4 +1,4 @@
-package io.drift.plugin.elasticsearch;
+package io.drift.plugin.elasticsearch.ui;
 
 import io.drift.elasticsearch.ElasticSearchSettings;
 import io.drift.elasticsearch.ElasticSearchSnapshot;

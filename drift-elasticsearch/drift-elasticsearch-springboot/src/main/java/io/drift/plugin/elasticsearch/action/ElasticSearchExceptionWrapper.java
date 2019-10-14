@@ -1,4 +1,4 @@
-package io.drift.plugin.elasticsearch;
+package io.drift.plugin.elasticsearch.action;
 
 
 public class ElasticSearchExceptionWrapper {
