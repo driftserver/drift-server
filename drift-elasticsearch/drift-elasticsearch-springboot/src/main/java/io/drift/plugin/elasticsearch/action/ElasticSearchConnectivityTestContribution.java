@@ -41,7 +41,7 @@ public class ElasticSearchConnectivityTestContribution implements SystemConnecti
             ElasticSearchSettings settings = (ElasticSearchSettings) actionContext.getConnectionDetails();
 
             action = "closing existing elasticsearch connections";
-            connectionManager.stopConnection(settings);
+            connectionManager.stopConnection(subSystemKey);
 
             action = "testing elasticsearch connection";
             RestHighLevelClient client = connectionManager.getConnection(subSystemKey, settings);

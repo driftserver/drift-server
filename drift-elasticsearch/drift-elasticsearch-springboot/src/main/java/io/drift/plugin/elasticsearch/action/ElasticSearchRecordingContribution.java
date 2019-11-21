@@ -21,21 +21,31 @@ import static io.drift.plugin.elasticsearch.action.ElasticSearchExceptionWrapper
 @Component
 public class ElasticSearchRecordingContribution implements RecordingSessionContribution {
 
+    private final ElasticSearchConnectionManager connectionManager;
+
     private Map<RecordingId, List<ElasticSearchSession>> sessionsById = new HashMap<>();
+
+    public ElasticSearchRecordingContribution(ElasticSearchConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     @Override
     public void onConnect(RecordingContext recordingContext) {
-        Map<SubSystemKey, SubSystemConnectionDetails> ElasticSearchs = recordingContext.getSubSystems(ELASTICSEARCH_SUBSYSTEM_TYPE);
+        Map<SubSystemKey, SubSystemConnectionDetails> subSystems = recordingContext.getSubSystems(ELASTICSEARCH_SUBSYSTEM_TYPE);
         List<ElasticSearchSession> sessions = new ArrayList<>();
         sessionsById.put(recordingContext.getRecordingId(), sessions);
 
-        ElasticSearchs.forEach((subSystemKey, fileSubSystem) -> {
+        subSystems.forEach((subSystemKey, subSystem) -> {
             String location = subSystemKey.getName();
             String action = null;
             try {
-                action = "setting up file system tracker";
-                ElasticSearchSettings ElasticSearchSettings = (ElasticSearchSettings) fileSubSystem;
-                sessions.add(new ElasticSearchSession(subSystemKey, ElasticSearchSettings));
+                action = "getting connection details";
+                ElasticSearchSettings settings = (ElasticSearchSettings) subSystem;
+
+                action = "creating new elasticsearch recording session";
+                ElasticSearchSession session = new ElasticSearchSession(subSystemKey, settings, connectionManager);
+
+                sessions.add(session);
             } catch(Exception e) {
                 recordingContext.getActionLogger().addProblem(new ProblemDescription(location, action, wrap(e)));
             }

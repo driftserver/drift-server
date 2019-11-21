@@ -1,5 +1,6 @@
 package io.drift.plugin.elasticsearch.ui;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.drift.elasticsearch.ElasticSearchSettings;
 import io.drift.elasticsearch.ElasticSearchSnapshot;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -15,8 +16,19 @@ public class ElasticSearchSnapshotDetailComponent extends Panel {
             String indexName = indexItem.getModelObject();
             indexItem.add(label("indexName", indexName));
             indexItem.add(listView("hits", () -> elasticSearchSnapshot.getIndexSnapshots().get(indexName).getHits(), hitItem -> {
-                hitItem.add(label("content", hitItem.getModelObject().getContent()));
+                hitItem.add(label("content", pretty(hitItem.getModelObject().getContent())));
             }));
         }));
+    }
+
+    private String pretty(String jsonString) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Object json = mapper.readValue(jsonString, Object.class);
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+        return jsonString;
     }
 }
