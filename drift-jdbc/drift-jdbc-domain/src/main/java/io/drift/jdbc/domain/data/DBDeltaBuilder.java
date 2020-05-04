@@ -70,7 +70,7 @@ public class DBDeltaBuilder {
 		for (Row oldRow : oldTableSnapshot.getRows()) {
 			Row newRow = findRowWithSameKeyAs(newTableSnapShot, oldRow, tableMetaData);
 			if (newRow == null) {
-				delta.addDelete(newRow);
+				delta.addDelete(oldRow);
 			}
 		}
 		return delta;

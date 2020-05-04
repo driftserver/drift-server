@@ -2,9 +2,41 @@
 <html lang="en" xmlns:wicket="http://www.w3.org/1999/xhtml">
 <body>
 <wicket:panel>
-    <div>
-        [ElasticSearchDeltaComponent]
-    </div>
+    <table class="_table">
+        <tbody>
+        <wicket:container wicket:id="indices">
+            <tr>
+                <td>
+                    <span wicket:id="indexName"></span>
+                    <p/>
+                    <table class="table table-bordered  table-condensed table-sm table-responsive table-hover">
+                        <tbody>
+                            <tr wicket:id="inserts">
+                                <th class="text-success" scope="row">I</th>
+                                <td>
+                                    <pre wicket:id="content"></pre>
+                                </td>
+                            </tr>
+                            <tr wicket:id="updates">
+                                <th class="text-warning" width="10pt" scope="row">U</th>
+                                <td>
+                                    <pre class="text-danger" style="text-decoration: line-through;" wicket:id="oldContent"></pre>
+                                    <pre wicket:id="newContent"></pre>
+                                </td>
+                            </tr>
+                            <tr wicket:id="deletes">
+                                <th class="text-danger" scope="row">D</th>
+                                <td>
+                                    <pre wicket:id="content"></pre>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </wicket:container>
+        </tbody>
+    </table>
 </wicket:panel>
 </body>
 </html>

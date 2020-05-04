@@ -3,8 +3,22 @@
 <body>
 <wicket:panel>
     <div>
-        [ElasticSearchDeltaSummaryComponent]
+        <span class="fa fa-binoculars"></span> <span wicket:id="name"></span>
     </div>
+    <div>
+        <div wicket:id="changes">
+            <span class="text-success">I</span> <span wicket:id="inserts"></span>
+            /
+            <span class="text-warning">U</span> <span wicket:id="updates"></span>
+            /
+            <span class="text-danger">D</span> <span wicket:id="deletes"></span>
+        </div>
+
+        <div wicket:id="noChanges">
+            <span>No changes</span>
+        </div>
+    </div>
+
 </wicket:panel>
 </body>
 </html>

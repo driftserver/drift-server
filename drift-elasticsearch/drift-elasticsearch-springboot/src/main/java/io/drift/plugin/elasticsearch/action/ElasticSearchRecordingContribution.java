@@ -90,12 +90,11 @@ public class ElasticSearchRecordingContribution implements RecordingSessionContr
             String action = null;
             String subSystemName = session.getSubSystemKey().getName();
             try {
+                action = "taking snapshot";
+                ElasticSearchSnapshot ElasticSearchSnapshot = session.takeSnapshot();
 
                 action = "adding delta to system interactions";
                 context.getCurrentStep().getSystemInteractions().add(session.getDelta());
-
-                action = "taking snapshot";
-                ElasticSearchSnapshot ElasticSearchSnapshot = session.takeSnapshot();
 
                 action = "saving snapshot as current final state of the ElasticSearch";
                 context.getRecording().getFinalstate().addSubSystemState(subSystemName, ElasticSearchSnapshot);
