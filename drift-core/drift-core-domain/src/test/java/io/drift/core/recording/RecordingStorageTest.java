@@ -9,10 +9,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
+@RunWith(JUnit4.class)
 public class RecordingStorageTest extends TestCase{
 
     @Rule
@@ -21,7 +24,7 @@ public class RecordingStorageTest extends TestCase{
     private RecordingStorage recordingStorage;
 
     @Before
-    protected void setUp() throws IOException {
+    public void setUp() throws IOException {
         Path baseDir = tempFolder.newFolder().toPath();
         System.out.println("baseDir: " + baseDir);
 

@@ -1,24 +1,31 @@
 package io.drift.core.metamodel;
 
 import io.drift.core.metamodel.id.ModelId;
+import io.drift.core.metamodel.serialization.JsonModelSerializer;
 import io.drift.core.metamodel.urn.FileSystemModelURNResolver;
 import io.drift.core.metamodel.urn.ModelURN;
-import io.drift.core.metamodel.serialization.JsonModelSerializer;
 import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@RunWith(JUnit4.class)
 public class ModelStoreTest extends TestCase {
 
-
-
-    private Path baseDir;
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     private ModelStore modelStore;
 
-    protected void setUp() throws Exception {
-        baseDir = Files.createTempDirectory("files");
+    @Before
+    public void setUp() throws Exception {
+        Path baseDir = tempFolder.newFolder().toPath();
         System.out.println("baseDir: " + baseDir);
 
         FileSystemModelURNResolver urnResolver = new FileSystemModelURNResolver(baseDir);
@@ -32,6 +39,7 @@ public class ModelStoreTest extends TestCase {
                 .build();
     }
 
+    @Test
     public void test_write_then_read() throws ModelException{
         ModelURN urn = new ModelURN(new ModelId("a"), new ModelId("id1"));
 

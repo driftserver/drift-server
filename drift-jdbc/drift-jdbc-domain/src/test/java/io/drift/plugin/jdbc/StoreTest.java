@@ -2,7 +2,7 @@ package io.drift.plugin.jdbc;
 
 import junit.framework.TestCase;
 
-public class StoreTest extends TestCase {
+public class StoreTest  {
 
 /*
 	private ModelStore createStore() {

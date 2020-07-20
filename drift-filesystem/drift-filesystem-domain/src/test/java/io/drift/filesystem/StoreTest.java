@@ -2,7 +2,7 @@ package io.drift.filesystem;
 
 import junit.framework.TestCase;
 
-public class StoreTest extends TestCase {
+public class StoreTest {
 /*
     private YamlModelSerializer createYamlSerializer() {
         YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
