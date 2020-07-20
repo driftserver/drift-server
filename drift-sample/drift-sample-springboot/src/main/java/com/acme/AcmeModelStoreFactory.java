@@ -1,13 +1,13 @@
 package com.acme;
 
 import com.fasterxml.jackson.databind.Module;
-import io.drift.core.infra.jackson.DriftCoreJacksonModule;
-import io.drift.core.metamodel.ModelStore;
-import io.drift.core.metamodel.serialization.JsonModelSerializer;
-import io.drift.core.metamodel.serialization.YamlModelSerializer;
-import io.drift.elasticsearch.DriftElasticSearchJacksonModule;
-import io.drift.filesystem.DriftFileSystemJacksonModule;
-import io.drift.jdbc.infra.DriftJDBCJacksonModule;
+import com.github.driftserver.core.infra.jackson.DriftCoreJacksonModule;
+import com.github.driftserver.core.metamodel.ModelStore;
+import com.github.driftserver.core.metamodel.serialization.JsonModelSerializer;
+import com.github.driftserver.core.metamodel.serialization.YamlModelSerializer;
+import com.github.driftserver.elasticsearch.DriftElasticSearchJacksonModule;
+import com.github.driftserver.filesystem.DriftFileSystemJacksonModule;
+import com.github.driftserver.jdbc.infra.DriftJDBCJacksonModule;
 import org.springframework.beans.factory.FactoryBean;
 
 public class AcmeModelStoreFactory implements FactoryBean<ModelStore> {

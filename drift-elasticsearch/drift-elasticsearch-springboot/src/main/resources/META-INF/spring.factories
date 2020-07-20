@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.drift.plugin.elasticsearch.DriftElasticSearchAutoConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.github.driftserver.plugin.elasticsearch.DriftElasticSearchAutoConfig
 
