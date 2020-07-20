@@ -2,7 +2,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.drift</groupId>
+    <groupId>com.github.driftserver</groupId>
     <artifactId>drift-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.0.5-SNAPSHOT</version>
@@ -47,87 +47,87 @@
 
             <!-- core modules -->
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-core</artifactId>
                 <version>0.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-core-domain</artifactId>
                 <version>0.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-core-springboot</artifactId>
                 <version>0.0.5-SNAPSHOT</version>
             </dependency>
 
             <!-- runtimes -->
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-runtime</artifactId>
                 <version>0.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-runtime-springboot</artifactId>
                 <version>0.0.5-SNAPSHOT</version>
             </dependency>
 
             <!-- jdbc modules -->
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-jdbc</artifactId>
                 <version>${drift.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-jdbc-domain</artifactId>
                 <version>${drift.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-jdbc-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>
 
             <!-- filesystem modules -->
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-filesystem</artifactId>
                 <version>${drift.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-filesystem-domain</artifactId>
                 <version>${drift.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-filesystem-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>
 
             <!-- elasticsearch modules -->
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-elasticsearch</artifactId>
                 <version>${drift.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-elasticsearch-domain</artifactId>
                 <version>${drift.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-elasticsearch-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>
 
             <!-- samples -->
             <dependency>
-                <groupId>io.drift</groupId>
+                <groupId>com.github.driftserver</groupId>
                 <artifactId>drift-sample-springboot</artifactId>
                 <version>${drift.version}</version>
             </dependency>

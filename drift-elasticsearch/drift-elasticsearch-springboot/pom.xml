@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<groupId>io.drift</groupId>
+		<groupId>com.github.driftserver</groupId>
 		<artifactId>drift-elasticsearch</artifactId>
 		<version>0.0.5-SNAPSHOT</version>
 	</parent>
@@ -22,11 +22,11 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.drift</groupId>
+			<groupId>com.github.driftserver</groupId>
 			<artifactId>drift-elasticsearch-domain</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.drift</groupId>
+			<groupId>com.github.driftserver</groupId>
 			<artifactId>drift-runtime-springboot</artifactId>
 		</dependency>
 		<dependency>
