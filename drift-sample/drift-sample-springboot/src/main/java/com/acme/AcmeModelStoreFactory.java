@@ -1,30 +1,19 @@
 package com.acme;
 
 import com.fasterxml.jackson.databind.Module;
-import io.drift.core.infra.DriftCoreJacksonModule;
-import io.drift.core.store.ModelStore;
-import io.drift.core.store.serialization.JsonModelSerializer;
-import io.drift.core.store.serialization.YamlModelSerializer;
-import io.drift.core.store.storage.FileSystemModelStorage;
-import io.drift.core.store.storage.LuceneMetaDataStorage;
-import io.drift.core.system.SystemDescription;
+import io.drift.core.infra.jackson.DriftCoreJacksonModule;
+import io.drift.core.metamodel.ModelStore;
+import io.drift.core.metamodel.serialization.JsonModelSerializer;
+import io.drift.core.metamodel.serialization.YamlModelSerializer;
 import io.drift.elasticsearch.DriftElasticSearchJacksonModule;
 import io.drift.filesystem.DriftFileSystemJacksonModule;
 import io.drift.jdbc.infra.DriftJDBCJacksonModule;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.nio.file.Paths;
-
-import static io.drift.core.store.serialization.JsonModelSerializer.JSON_FORMAT;
-import static io.drift.core.store.serialization.YamlModelSerializer.YAML_FORMAT;
-
-public class AcmeModelStoreFactory implements FactoryBean<ModelStore>, DisposableBean {
-
-    private LuceneMetaDataStorage luceneMetaDataStorage;
+public class AcmeModelStoreFactory implements FactoryBean<ModelStore> {
 
     @Override
-    public ModelStore getObject() throws Exception {
+    public ModelStore getObject() {
 
         Module coreJacksonModule = new DriftCoreJacksonModule();
         Module jdbcJacksonModule = new DriftJDBCJacksonModule();
@@ -43,17 +32,7 @@ public class AcmeModelStoreFactory implements FactoryBean<ModelStore>, Disposabl
         yamlModelSerializer.registerModule(fileSystemJacksonModule);
         yamlModelSerializer.registerModule(esModule);
 
-        return new ModelStore()
-
-                .withSerializer(jsonModelSerializer)
-                .withSerializer(yamlModelSerializer)
-
-                .withDefaultFormat(JSON_FORMAT)
-                .withFormatForClass(SystemDescription.class, YAML_FORMAT)
-
-                .withModelStorage(new FileSystemModelStorage(Paths.get("store")))
-
-                .withMetaDataStorage(luceneMetaDataStorage = new LuceneMetaDataStorage());
+        return null;
 
     }
 
@@ -62,9 +41,5 @@ public class AcmeModelStoreFactory implements FactoryBean<ModelStore>, Disposabl
         return ModelStore.class;
     }
 
-    @Override
-    public void destroy() {
-        if (luceneMetaDataStorage != null) luceneMetaDataStorage.shutDown();
-    }
 
 }

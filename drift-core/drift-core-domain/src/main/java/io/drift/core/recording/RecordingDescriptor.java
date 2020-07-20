@@ -1,5 +1,6 @@
 package io.drift.core.recording;
 
+import io.drift.core.recording.model.RecordingId;
 import io.drift.core.system.EnvironmentKey;
 
 public class RecordingDescriptor {

@@ -1,14 +1,14 @@
 package io.drift.elasticsearch;
 
-import io.drift.core.recording.SubSystemState;
-import io.drift.core.recording.SystemInteraction;
-import io.drift.core.store.storage.Storable;
+import io.drift.core.metamodel.Model;
+import io.drift.core.recording.model.SubSystemState;
+import io.drift.core.recording.model.SystemInteraction;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ElasticSearchSnapshot extends SystemInteraction implements Serializable, Storable, SubSystemState {
+public class ElasticSearchSnapshot extends SystemInteraction implements Serializable, Model, SubSystemState {
 
     private ElasticSearchSnapshotId id;
 

@@ -1,5 +1,7 @@
 package io.drift.core.recording;
 
+import io.drift.core.recording.model.RecordingId;
+
 import java.time.LocalDateTime;
 
 public class RecordingSummary {

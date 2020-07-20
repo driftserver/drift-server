@@ -1,8 +1,8 @@
 package io.drift.plugin.elasticsearch.action;
 
-import io.drift.core.recording.ProblemDescription;
-import io.drift.core.recording.RecordingContext;
-import io.drift.core.recording.RecordingId;
+import io.drift.core.infra.logging.ProblemDescription;
+import io.drift.core.recording.session.RecordingContext;
+import io.drift.core.recording.model.RecordingId;
 import io.drift.core.recording.RecordingSessionContribution;
 import io.drift.core.system.SubSystemConnectionDetails;
 import io.drift.core.system.SubSystemKey;

@@ -1,10 +1,10 @@
 package io.drift.elasticsearch;
 
-import io.drift.core.store.storage.StorageId;
+import io.drift.core.metamodel.id.ModelId;
 
 import java.io.Serializable;
 
-public class ElasticSearchSnapshotId extends StorageId implements Serializable {
+public class ElasticSearchSnapshotId extends ModelId implements Serializable {
 
     public ElasticSearchSnapshotId() {
         super();

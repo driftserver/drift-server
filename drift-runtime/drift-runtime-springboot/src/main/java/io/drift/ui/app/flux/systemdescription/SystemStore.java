@@ -1,6 +1,5 @@
 package io.drift.ui.app.flux.systemdescription;
 
-import io.drift.core.recording.ActionLogger;
 import io.drift.core.system.*;
 import io.drift.core.system.connectivity.EnvironmentConnectivityActionContext;
 import io.drift.core.system.connectivity.SubSystemConnectivityActionContext;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component

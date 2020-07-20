@@ -10,15 +10,15 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import io.drift.core.recording.SubSystemDescription;
-import io.drift.core.store.storage.Storable;
-import io.drift.core.store.storage.StorageId;
+import io.drift.core.metamodel.Model;
+import io.drift.core.recording.model.SubSystemDescription;
+import io.drift.core.metamodel.id.ModelId;
 
-public class DBMetaData implements SubSystemDescription, Storable, Serializable {
+public class DBMetaData implements SubSystemDescription, Model, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private StorageId id;
+	private ModelId id;
 
 	private List<String> order = new ArrayList<>();
 
@@ -33,7 +33,7 @@ public class DBMetaData implements SubSystemDescription, Storable, Serializable 
 	}
 
 	@Override
-	public StorageId getId() {
+	public ModelId getId() {
 		return id;
 	}
 
@@ -52,7 +52,7 @@ public class DBMetaData implements SubSystemDescription, Storable, Serializable 
 		return reverseOrder.stream().map(tableName -> get(tableName)).collect(Collectors.toList());
 	}
 
-	public void setId(StorageId id) {
+	public void setId(ModelId id) {
 		this.id = id;
 	}
 

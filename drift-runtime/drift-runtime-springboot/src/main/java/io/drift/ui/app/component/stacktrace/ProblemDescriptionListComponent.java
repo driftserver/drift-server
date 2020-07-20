@@ -1,6 +1,6 @@
 package io.drift.ui.app.component.stacktrace;
 
-import io.drift.core.recording.ProblemDescription;
+import io.drift.core.infra.logging.ProblemDescription;
 import io.drift.ui.infra.ListSelector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -14,7 +14,6 @@ import org.danekja.java.util.function.serializable.SerializableSupplier;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.List;
 
 import static io.drift.ui.infra.WicketUtil.*;

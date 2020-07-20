@@ -1,18 +1,16 @@
 package io.drift.core.systemdescription;
 
-import io.drift.core.store.ModelStore;
-import io.drift.core.store.ModelStoreException;
-import io.drift.core.store.storage.StorageId;
-import io.drift.core.store.storage.StoragePath;
+import io.drift.core.metamodel.ModelException;
+import io.drift.core.metamodel.ModelStore;
+import io.drift.core.metamodel.id.ModelId;
+import io.drift.core.metamodel.urn.ModelURN;
 import io.drift.core.system.SystemDescription;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SystemDescriptionStorage {
 
-    private static final StorageId SYSTEM_DESCRIPTION_STORAGE_ID = new StorageId("systemdescription");
-
-    private static final StoragePath SYSTEM_STORAGE_PATH = StoragePath.of(new StorageId("system"));
+    private static final ModelURN SYSTEM_DESCRIPTION_URN = ModelURN.of(new ModelId("system"), new ModelId("systemdescription"));
 
     private final ModelStore modelStore;
 
@@ -22,9 +20,9 @@ public class SystemDescriptionStorage {
 
     public SystemDescription load() {
         try {
-            SystemDescription systemDescription = modelStore.load(SYSTEM_STORAGE_PATH, SYSTEM_DESCRIPTION_STORAGE_ID, SystemDescription.class);
+            SystemDescription systemDescription = modelStore.read(SYSTEM_DESCRIPTION_URN, SystemDescription.class);
             return systemDescription;
-        } catch (ModelStoreException e) {
+        } catch (ModelException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
         }

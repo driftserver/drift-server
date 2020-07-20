@@ -1,16 +1,9 @@
 package io.drift.elasticsearch;
 
-import io.drift.core.infra.DriftCoreJacksonModule;
-import io.drift.core.store.ModelStoreException;
-import io.drift.core.store.serialization.JsonModelSerializer;
-import io.drift.core.store.serialization.StorableSerializationException;
-import io.drift.core.store.serialization.YamlModelSerializer;
-import io.drift.core.system.SystemDescription;
 import junit.framework.TestCase;
-import org.junit.Assert;
 
 public class StoreTest extends TestCase {
-
+/*
     private YamlModelSerializer createYamlSerializer() {
         YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
         yamlModelSerializer.registerModule(new DriftCoreJacksonModule());
@@ -24,7 +17,7 @@ public class StoreTest extends TestCase {
         serializer.registerModule(new DriftElasticSearchJacksonModule());
         return serializer;
     }
-
+*/
     /*
     pivate SystemDescription generateMockSystemDescription() {
         DummyFileSystemDescriptionBuilder dummyFileSystemDescriptionBuilder = new DummyFileSystemDescriptionBuilder();
@@ -47,7 +40,7 @@ public class StoreTest extends TestCase {
 
     }
     */
-
+/*
     public void test_snapshot_serialization () throws StorableSerializationException {
 
         DummyElasticSearchSnapshotBuilder snapshotBuilder = new DummyElasticSearchSnapshotBuilder();
@@ -64,7 +57,7 @@ public class StoreTest extends TestCase {
         Assert.assertEquals(content, content2);
 
     }
-
+*/
     /*
     public void test_delta_serialization () throws StorableSerializationException {
         DummyFileSystemDeltaBuilder fileSystemDeltaBuilder = new DummyFileSystemDeltaBuilder();

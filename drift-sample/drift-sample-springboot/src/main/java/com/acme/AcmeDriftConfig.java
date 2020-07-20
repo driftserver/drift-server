@@ -3,9 +3,9 @@ package com.acme;
 import com.giffing.wicket.spring.boot.starter.app.WicketBootStandardWebApplication;
 import com.giffing.wicket.spring.boot.starter.app.WicketBootWebApplication;
 import de.agilecoders.wicket.core.Bootstrap;
-import io.drift.core.store.IDGenerator;
-import io.drift.core.store.IDGeneratorUUIDImpl;
-import io.drift.core.store.ModelStore;
+import io.drift.core.metamodel.ModelStore;
+import io.drift.core.metamodel.id.IDGenerator;
+import io.drift.core.metamodel.id.IDGeneratorUUIDImpl;
 import io.drift.ui.config.DefaultDriftSpringSecurityConfig;
 import org.apache.wicket.settings.RequestCycleSettings;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -42,7 +42,7 @@ public class AcmeDriftConfig {
     }
 
     @Bean
-    ModelStore getModelStore() throws Exception {
+    ModelStore getModelStore() {
         return modelStoreFactory().getObject();
     }
 

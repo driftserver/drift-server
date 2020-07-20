@@ -1,6 +1,6 @@
 package io.drift.ui.app.flux.recording;
 
-import io.drift.core.recording.RecordingId;
+import io.drift.core.recording.model.RecordingId;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 package io.drift.ui.app.page.recordings;
 
 import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
-import io.drift.core.recording.RecordingId;
+import io.drift.core.recording.model.RecordingId;
 import io.drift.core.system.EnvironmentKey;
 import io.drift.ui.app.flux.systemdescription.EnvironmentDTO;
 import io.drift.ui.app.flux.recording.RecordingActions;

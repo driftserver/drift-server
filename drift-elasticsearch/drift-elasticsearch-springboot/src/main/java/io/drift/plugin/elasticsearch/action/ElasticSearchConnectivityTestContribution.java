@@ -1,6 +1,6 @@
 package io.drift.plugin.elasticsearch.action;
 
-import io.drift.core.recording.ProblemDescription;
+import io.drift.core.infra.logging.ProblemDescription;
 import io.drift.core.system.SubSystemKey;
 import io.drift.core.system.connectivity.SubSystemConnectivityActionContext;
 import io.drift.core.systemdescription.SystemConnectivityTestContribution;

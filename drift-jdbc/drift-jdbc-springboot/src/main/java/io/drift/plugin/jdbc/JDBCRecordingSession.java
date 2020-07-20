@@ -1,6 +1,5 @@
 package io.drift.plugin.jdbc;
 
-import io.drift.core.recording.SubSystemState;
 import io.drift.core.system.SubSystemKey;
 import io.drift.jdbc.domain.data.*;
 import io.drift.jdbc.domain.metadata.DBMetaData;

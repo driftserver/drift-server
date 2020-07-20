@@ -1,5 +1,11 @@
 package io.drift.core.recording;
 
+import io.drift.core.recording.model.Recording;
+import io.drift.core.recording.model.RecordingId;
+import io.drift.core.recording.model.RecordingStep;
+import io.drift.core.recording.model.SystemState;
+import io.drift.core.recording.session.RecordingContext;
+import io.drift.core.recording.session.RecordingState;
 import io.drift.core.system.EnvironmentKey;
 import io.drift.core.system.SystemDescription;
 import io.drift.core.systemdescription.SystemDescriptionStorage;
@@ -82,7 +88,7 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     @Override
     public List<RecordingSummary> getRecordings() {
-        return recordingStorage.list();
+        return null; // recordingStorage.list();
     }
 
     @Override

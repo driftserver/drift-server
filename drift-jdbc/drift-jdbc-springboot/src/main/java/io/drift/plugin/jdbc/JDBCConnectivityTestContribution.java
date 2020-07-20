@@ -1,7 +1,6 @@
 package io.drift.plugin.jdbc;
 
-import io.drift.core.recording.ActionLogger;
-import io.drift.core.recording.ProblemDescription;
+import io.drift.core.infra.logging.ProblemDescription;
 import io.drift.core.system.*;
 import io.drift.core.system.connectivity.SubSystemConnectivityActionContext;
 import io.drift.core.systemdescription.SystemConnectivityTestContribution;
@@ -9,10 +8,6 @@ import io.drift.jdbc.domain.system.JDBCConnectionDetails;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
-import java.util.Map;
-
-import static io.drift.plugin.jdbc.DriftJDBCAutoConfig.JDBC_SUBSYSTEM_TYPE;
 import static io.drift.plugin.jdbc.JDBCExceptionWrapper.wrap;
 
 @Component

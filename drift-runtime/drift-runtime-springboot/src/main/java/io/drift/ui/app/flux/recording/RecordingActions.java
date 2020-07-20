@@ -1,11 +1,11 @@
 package io.drift.ui.app.flux.recording;
 
 
-import io.drift.core.recording.Recording;
+import io.drift.core.recording.model.Recording;
 import io.drift.core.recording.RecordingDescriptor;
 import io.drift.core.recording.RecordingDomainService;
-import io.drift.core.recording.RecordingId;
-import io.drift.core.store.IDGenerator;
+import io.drift.core.recording.model.RecordingId;
+import io.drift.core.metamodel.id.IDGenerator;
 import io.drift.core.system.EnvironmentKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,8 @@
 package io.drift.core.system.connectivity;
 
-import io.drift.core.recording.ActionLogger;
+import io.drift.core.infra.logging.ActionLogger;
 import io.drift.core.system.SubSystem;
 import io.drift.core.system.SubSystemConnectionDetails;
-import io.drift.core.system.SubSystemKey;
 
 public class SubSystemConnectivityActionContext {
 

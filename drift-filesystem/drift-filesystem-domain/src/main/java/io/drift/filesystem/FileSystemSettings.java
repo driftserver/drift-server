@@ -1,6 +1,6 @@
 package io.drift.filesystem;
 
-import io.drift.core.recording.SubSystemDescription;
+import io.drift.core.recording.model.SubSystemDescription;
 import io.drift.core.system.SubSystemConnectionDetails;
 
 import java.io.Serializable;

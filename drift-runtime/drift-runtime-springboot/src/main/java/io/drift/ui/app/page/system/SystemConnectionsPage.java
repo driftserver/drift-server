@@ -1,6 +1,6 @@
 package io.drift.ui.app.page.system;
 
-import io.drift.core.recording.ProblemDescription;
+import io.drift.core.infra.logging.ProblemDescription;
 import io.drift.core.system.EnvironmentKey;
 import io.drift.core.system.connectivity.EnvironmentConnectivityActionContext;
 import io.drift.ui.app.component.stacktrace.ProblemDescriptionListComponent;

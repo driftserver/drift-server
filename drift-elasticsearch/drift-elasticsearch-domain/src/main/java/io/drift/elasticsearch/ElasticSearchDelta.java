@@ -1,18 +1,17 @@
 package io.drift.elasticsearch;
 
-import io.drift.core.recording.SystemInteraction;
-import io.drift.core.store.storage.Storable;
-import io.drift.core.store.storage.StorageId;
+import io.drift.core.metamodel.Model;
+import io.drift.core.metamodel.id.ModelId;
+import io.drift.core.recording.model.SystemInteraction;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class ElasticSearchDelta extends SystemInteraction implements Storable, Serializable {
+public class ElasticSearchDelta extends SystemInteraction implements Model, Serializable {
 
     @Override
-    public StorageId getId() {
+    public ModelId getId() {
         return null;
     }
 

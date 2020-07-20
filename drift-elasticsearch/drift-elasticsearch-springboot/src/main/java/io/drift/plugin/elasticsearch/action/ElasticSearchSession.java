@@ -1,6 +1,6 @@
 package io.drift.plugin.elasticsearch.action;
 
-import io.drift.core.recording.SystemInteraction;
+import io.drift.core.recording.model.SystemInteraction;
 import io.drift.core.system.SubSystemKey;
 import io.drift.elasticsearch.ElasticSearchDelta;
 import io.drift.elasticsearch.ElasticSearchSettings;

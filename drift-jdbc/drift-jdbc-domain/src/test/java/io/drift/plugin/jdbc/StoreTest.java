@@ -1,21 +1,6 @@
 package io.drift.plugin.jdbc;
 
-import io.drift.core.infra.DriftCoreJacksonModule;
-import io.drift.core.store.ModelStore;
-import io.drift.core.store.ModelStoreException;
-import io.drift.core.store.serialization.JsonModelSerializer;
-import io.drift.core.store.serialization.YamlModelSerializer;
-import io.drift.core.store.storage.FileSystemModelStorage;
-import io.drift.core.store.storage.ModelStorageException;
-import io.drift.core.store.storage.StorageId;
-import io.drift.core.store.storage.StoragePath;
-import io.drift.core.system.SystemDescription;
-import io.drift.jdbc.domain.data.DBDelta;
-import io.drift.jdbc.domain.data.DBSnapShot;
-import io.drift.jdbc.domain.metadata.DBMetaData;
-import io.drift.jdbc.infra.DriftJDBCJacksonModule;
 import junit.framework.TestCase;
-import org.junit.Assert;
 
 public class StoreTest extends TestCase {
 
@@ -64,9 +49,8 @@ public class StoreTest extends TestCase {
 
 
 	}
-*/
 
-    public void test_system_description_yaml_serialization() throws ModelStoreException {
+    public void test_system_description_yaml_serialization() throws ModelException {
         YamlModelSerializer yamlModelSerializer = createYamlSerializer();
         SystemDescription dbSystemDescription = generateMockSystemDescription();
 
@@ -135,6 +119,7 @@ public class StoreTest extends TestCase {
         Assert.assertEquals(content, content2);
 
     }
+*/
 
 
 }

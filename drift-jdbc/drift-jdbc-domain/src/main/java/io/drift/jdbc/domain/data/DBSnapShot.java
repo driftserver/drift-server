@@ -7,10 +7,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import io.drift.core.recording.SubSystemState;
-import io.drift.core.store.storage.Storable;
+import io.drift.core.metamodel.Model;
+import io.drift.core.recording.model.SubSystemState;
 
-public class DBSnapShot implements Serializable, Storable, SubSystemState {
+public class DBSnapShot implements Serializable, Model, SubSystemState {
 
 	private DBSnapshotId id;
 

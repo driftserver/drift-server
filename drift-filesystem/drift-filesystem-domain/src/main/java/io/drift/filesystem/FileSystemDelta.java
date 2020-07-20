@@ -1,16 +1,16 @@
 package io.drift.filesystem;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.drift.core.recording.SystemInteraction;
-import io.drift.core.store.storage.Storable;
-import io.drift.core.store.storage.StorageId;
+import io.drift.core.metamodel.Model;
+import io.drift.core.metamodel.id.ModelId;
+import io.drift.core.recording.model.SystemInteraction;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FileSystemDelta extends SystemInteraction implements Storable, Serializable {
+public class FileSystemDelta extends SystemInteraction implements Model, Serializable {
 
     @JsonIgnore
     private FileSystemDeltaSummary summary;
@@ -26,7 +26,7 @@ public class FileSystemDelta extends SystemInteraction implements Storable, Seri
     }
 
     @Override
-    public StorageId getId() {
+    public ModelId getId() {
         return null;
     }
 

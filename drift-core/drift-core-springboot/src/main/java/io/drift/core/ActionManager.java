@@ -1,6 +1,6 @@
 package io.drift.core;
 
-import io.drift.core.recording.ActionLogger;
+import io.drift.core.infra.logging.ActionLogger;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package io.drift.core.system;
 
-import io.drift.core.store.storage.Storable;
-import io.drift.core.store.storage.StorageId;
+import io.drift.core.metamodel.Model;
+import io.drift.core.metamodel.id.ModelId;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SystemDescription implements Storable {
+public class SystemDescription implements Model {
 
     private Map<SubSystemEnvironmentKey, SubSystemConnectionDetails> connectionDetails = new HashMap<>();
 
@@ -50,10 +50,9 @@ public class SystemDescription implements Storable {
                         subSystem -> getConnectionDetails(subSystem.getKey(), environmentKey)));
     }
 
-    private StorageId storageId;
+    private ModelId storageId;
 
-    @Override
-    public StorageId getId() {
+    public ModelId getId() {
         return storageId;
     }
 

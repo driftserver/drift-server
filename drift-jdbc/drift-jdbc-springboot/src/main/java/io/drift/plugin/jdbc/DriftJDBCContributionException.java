@@ -1,6 +1,6 @@
 package io.drift.plugin.jdbc;
 
-import io.drift.core.recording.DriftException;
+import io.drift.core.infra.logging.DriftException;
 
 public class DriftJDBCContributionException extends DriftException {
 

@@ -1,6 +1,6 @@
 package io.drift.ui.app.page.recording;
 
-import io.drift.core.recording.*;
+import io.drift.core.recording.model.*;
 import io.drift.ui.app.component.stacktrace.ProblemDescriptionListComponent;
 import io.drift.ui.app.flux.recording.RecordingActions;
 import io.drift.ui.app.flux.recording.RecordingStore;
@@ -14,7 +14,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
