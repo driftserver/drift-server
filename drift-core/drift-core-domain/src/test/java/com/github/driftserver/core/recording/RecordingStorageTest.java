@@ -47,8 +47,9 @@ public class RecordingStorageTest extends TestCase{
 
         assertNotNull(summaries);
         assertEquals(1, summaries.size());
-        assertEquals(recordingId, summaries.get(0).getRecordingId());
-
+        RecordingSummary recordingSummary = summaries.get(0);
+        assertEquals(recordingId, recordingSummary.getRecordingId());
+        assertNotNull(recordingSummary.getTimeStamp());
 
     }
 

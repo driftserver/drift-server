@@ -10,23 +10,17 @@ public class RecordingSummary {
 
     private LocalDateTime timeStamp;
 
-    private String name;
-
-    public RecordingSummary(RecordingId recordingId, LocalDateTime timeStamp, String name) {
+    public RecordingSummary(RecordingId recordingId, LocalDateTime timeStamp) {
         this.recordingId = recordingId;
         this.timeStamp = timeStamp;
-        this.name = name;
     }
 
     public RecordingId getRecordingId() {
         return recordingId;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
+
 }

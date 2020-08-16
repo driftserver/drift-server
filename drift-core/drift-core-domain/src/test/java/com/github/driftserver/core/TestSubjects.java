@@ -5,7 +5,6 @@ import com.github.driftserver.core.metamodel.ModelStore;
 import com.github.driftserver.core.metamodel.Module;
 import com.github.driftserver.core.metamodel.StandardCoreModule;
 import com.github.driftserver.core.metamodel.id.ModelId;
-import com.github.driftserver.core.metamodel.metadata.MetaDataStorage;
 import com.github.driftserver.core.metamodel.urn.ModelURN;
 import com.github.driftserver.core.recording.DummySystemState1;
 import com.github.driftserver.core.recording.storage.RecordingStorage;
@@ -13,10 +12,6 @@ import com.github.driftserver.core.recording.storage.RecordingStorage;
 import java.nio.file.Path;
 
 public class TestSubjects {
-
-    public static MetaDataStorage aMetaDataStore(Path baseDir) {
-        return new MetaDataStorage(baseDir);
-    }
 
     public static ModelStore aModelStore(Module... modules) {
 
@@ -27,8 +22,7 @@ public class TestSubjects {
 
     public static RecordingStorage aRecordingStorage(Path baseDir) {
         ModelStore modelStore = aModelStore(new StandardCoreModule(baseDir));
-        MetaDataStorage metaDataStorage = aMetaDataStore(baseDir);
-        return new RecordingStorage(modelStore, metaDataStorage);
+        return new RecordingStorage(modelStore);
     }
 
 
@@ -45,7 +39,7 @@ public class TestSubjects {
     }
 
 
-    public static  ModelURN aModelURN() {
+    public static  ModelURN aParentModelURN() {
         String path1 = "A";
         String path2 = "A";
 

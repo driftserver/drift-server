@@ -9,10 +9,7 @@ import com.github.driftserver.core.metamodel.urn.ModelURNResolver;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ModelStore {
 
@@ -39,7 +36,7 @@ public class ModelStore {
             throw new ModelException(String.format("no %s serializer registered", modelFormat));
         }
 
-        try(Reader reader = urnResolver.getReader(urn, modelFormat)) {
+        try(Reader reader = urnResolver.getReader(urn, modelFormat, modelClass)) {
             return (T) serializer.read(reader, modelClass);
         } catch(IOException e) {
             throw new ModelException(String.format("error reading model. urn=%s, modelClass=%s", urn, modelClass), e);
@@ -61,11 +58,15 @@ public class ModelStore {
             throw new ModelException(String.format("no %s serializer registered", modelFormat));
         }
 
-        try(Writer writer = urnResolver.getWriter(urn, modelFormat)) {
+        try(Writer writer = urnResolver.getWriter(urn, modelFormat, modelClass)) {
             serializer.write(writer, model);
         } catch(IOException e) {
             throw new ModelException(String.format("error writing model. urn=%s, modelClass=%s", urn, model), e);
         }
+    }
+
+    public List<MetaData> listMetaData(ModelURN parentUrn) throws ModelException {
+        return urnResolver.listMetaData(parentUrn);
     }
 
     public static class Builder {

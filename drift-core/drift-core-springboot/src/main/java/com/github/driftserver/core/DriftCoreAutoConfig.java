@@ -1,7 +1,6 @@
 package com.github.driftserver.core;
 
 import com.github.driftserver.core.metamodel.ModelStore;
-import com.github.driftserver.core.metamodel.metadata.MetaDataStorage;
 import com.github.driftserver.core.recording.storage.RecordingStorage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,12 +17,9 @@ public class DriftCoreAutoConfig {
     @Inject
     ModelStore modelStore;
 
-    @Inject
-    MetaDataStorage metaDataStorage;
-
     @Bean
     RecordingStorage recordingStorage() {
-        return new RecordingStorage(modelStore, metaDataStorage);
+        return new RecordingStorage(modelStore);
     }
 
 }

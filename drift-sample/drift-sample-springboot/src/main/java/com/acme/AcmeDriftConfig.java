@@ -6,7 +6,6 @@ import com.github.driftserver.core.metamodel.ModelStore;
 import com.github.driftserver.core.metamodel.StandardCoreModule;
 import com.github.driftserver.core.metamodel.id.IDGenerator;
 import com.github.driftserver.core.metamodel.id.IDGeneratorUUIDImpl;
-import com.github.driftserver.core.metamodel.metadata.MetaDataStorage;
 import com.github.driftserver.elasticsearch.DriftElasticSearchModule;
 import com.github.driftserver.filesystem.DriftFileSystemModule;
 import com.github.driftserver.jdbc.infra.DriftJdbcModule;
@@ -44,11 +43,6 @@ public class AcmeDriftConfig {
     }
 
     private Path baseDir = Paths.get("store");
-
-    @Bean
-    MetaDataStorage getMetaDataStorage() {
-        return new MetaDataStorage(baseDir);
-    }
 
     @Bean
     ModelStore getModelStore() {

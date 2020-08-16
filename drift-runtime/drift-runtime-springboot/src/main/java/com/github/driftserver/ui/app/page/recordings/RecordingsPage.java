@@ -42,7 +42,7 @@ public class RecordingsPage extends MainLayout {
                     navigateToRecording(item.getModelObject().getRecordingId());
                 });
                 item.add(select);
-                select.add(label("name", item.getModelObject().getLabel()));
+                select.add(label("name", item.getModelObject().getRecordingId().getId()));
             }));
 
         }

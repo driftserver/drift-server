@@ -8,18 +8,12 @@ public class RecordingSummaryDTO implements Serializable {
 
     private RecordingId recordingId;
 
-    private String label;
-
-    public RecordingSummaryDTO(RecordingId recordingId, String label) {
+    public RecordingSummaryDTO(RecordingId recordingId) {
         this.recordingId = recordingId;
-        this.label = label;
     }
 
     public RecordingId getRecordingId() {
         return recordingId;
     }
 
-    public String getLabel() {
-        return label;
-    }
 }

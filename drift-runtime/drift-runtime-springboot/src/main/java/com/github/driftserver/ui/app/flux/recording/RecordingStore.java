@@ -46,7 +46,7 @@ public class RecordingStore {
 
     public List<RecordingSummaryDTO> getRecordingSummaries() {
         return service.getRecordings().stream()
-                .map(summary -> new RecordingSummaryDTO(summary.getRecordingId(), summary.getName()))
+                .map(summary -> new RecordingSummaryDTO(summary.getRecordingId()))
                 .collect(Collectors.toList());
     }
 
