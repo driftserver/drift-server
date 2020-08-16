@@ -1,15 +1,15 @@
 package com.github.driftserver.core.metamodel.urn;
 
-import com.github.driftserver.core.metamodel.ModelDescriptor;
 import com.github.driftserver.core.metamodel.ModelException;
+import com.github.driftserver.core.metamodel.ModelFormat;
 
 import java.io.Reader;
 import java.io.Writer;
 
 public interface ModelURNResolver {
 
-    public Reader getReader(ModelURN urn, ModelDescriptor modelDescriptor) throws ModelException;
+    Reader getReader(ModelURN urn, ModelFormat format) throws ModelException;
 
-    public Writer getWriter(ModelURN urn, ModelDescriptor modelDescriptor) throws ModelException;
+    Writer getWriter(ModelURN urn, ModelFormat format) throws ModelException;
 
 }

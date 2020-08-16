@@ -1,13 +1,24 @@
 package com.github.driftserver.core.metamodel;
 
-import com.github.driftserver.core.metamodel.id.ModelId;
+public class ModelDescriptor{
 
-abstract public class ModelDescriptor<T extends Model> {
+    private Class<? extends Model> modelClass;
 
-    public abstract Class<T> getModelClass();
+    private ModelFormat modelFormat;
 
-    public abstract ModelFormat getFormat();
+    public Class<? extends Model> getModelClass() {
+        return modelClass;
+    }
 
-    public abstract ModelId getModelId(T model);
+    public void setModelClass(Class<? extends Model> modelClass) {
+        this.modelClass = modelClass;
+    }
 
+    public ModelFormat getModelFormat() {
+        return modelFormat;
+    }
+
+    public void setModelFormat(ModelFormat modelFormat) {
+        this.modelFormat = modelFormat;
+    }
 }

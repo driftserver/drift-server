@@ -1,5 +1,6 @@
 package com.github.driftserver.core.metamodel.urn;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.driftserver.core.metamodel.id.ModelId;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ public class ModelURN {
 	}
 
 	private List<ModelId> fragments;
+
+	public ModelURN() {};
 
 	public ModelURN(ModelId... fragments) {
 		this.fragments = Arrays.asList(fragments);
@@ -64,10 +67,12 @@ public class ModelURN {
 		return parent.equals(getParentURN());
 	}
 
+	@JsonIgnore
 	public ModelURN getParentURN() {
 		return new ModelURN(fragments.subList(0, fragments.size()-1));
 	}
 
+	@JsonIgnore
 	public ModelId getLastFragment() {
 		return fragments.get(fragments.size()-1);
 	}

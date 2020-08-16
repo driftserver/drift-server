@@ -1,21 +1,48 @@
 package com.github.driftserver.jdbc;
 
-import junit.framework.TestCase;
+import com.github.driftserver.core.metamodel.ModelException;
+import com.github.driftserver.core.metamodel.ModelFormat;
+import com.github.driftserver.core.metamodel.ModelStore;
+import com.github.driftserver.core.metamodel.StandardCoreModule;
+import com.github.driftserver.core.metamodel.id.ModelId;
+import com.github.driftserver.core.metamodel.urn.ModelURN;
+import com.github.driftserver.core.system.SystemDescription;
+import com.github.driftserver.jdbc.domain.data.DBDelta;
+import com.github.driftserver.jdbc.domain.data.DBSnapShot;
+import com.github.driftserver.jdbc.domain.metadata.DBMetaData;
+import com.github.driftserver.jdbc.infra.DriftJdbcModule;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+@RunWith(JUnit4.class)
 public class StoreTest  {
 
-/*
-	private ModelStore createStore() {
-		ModelStore store = new ModelStore();
-		JsonModelSerializer modelSerializer = new JsonModelSerializer();
-		modelSerializer.registerModule(new DriftJDBCJacksonModule());
-		store.getSerializationManager().registerSerializer(modelSerializer);
-		store.getModelStorageManager().registerStorage(new FileSystemModelStorage());
-		return store;
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+
+    private ModelStore modelStore;
+
+    @Before
+	public void setUp() throws IOException {
+
+ 		Path baseDir = tempFolder.newFolder().toPath();
+
+        modelStore = ModelStore.builder()
+            .withModules(new StandardCoreModule(baseDir), new DriftJdbcModule())
+			.withModel(DBSnapShot.class, ModelFormat.JSON)
+			.withModel(DBDelta.class, ModelFormat.JSON)
+            .build();
 	}
 
-	public void test_system_interaction() throws ModelStoreException {
-		ModelStore store = createStore();
+	@Test
+	public void test_system_interaction() throws ModelException {
 
 		MockDBMetaDataBuilder mockDBMetaDataBuilder = new MockDBMetaDataBuilder();
 		MockDBDeltaBuilder mockDBDeltaBuilder = new MockDBDeltaBuilder();
@@ -24,102 +51,31 @@ public class StoreTest  {
 		DBSnapShot dbSnapShot = mockDBDeltaBuilder.createDBSnapshot(dbMetaData);
 		DBDelta dbDelta = mockDBDeltaBuilder.createDbDelta(dbMetaData);
 
-		StoragePath id1 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("1"));
-		StoragePath id2 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("2"));
-		StoragePath id3 = new StoragePath(new StorageId("recordings"), new StorageId("1"), new StorageId("3"));
+		ModelURN id1 = new ModelURN(new ModelId("recordings"), new ModelId("1"), new ModelId("1"));
+		ModelURN id2 = new ModelURN(new ModelId("recordings"), new ModelId("1"), new ModelId("2"));
+		ModelURN id3 = new ModelURN(new ModelId("recordings"), new ModelId("1"), new ModelId("3"));
 
-		store.save(dbSnapShot, id1);
-		store.save(dbDelta, id2);
+		modelStore.write(dbSnapShot, id1);
+        modelStore.write(dbDelta, id2);
 
-		DBSnapShot dbSnapShot2 = store.load(id1, DBSnapShot.class);
-		DBDelta dbDelta2 = store.load(id2, DBDelta.class);
+		DBSnapShot dbSnapShot2 = modelStore.read(id1, DBSnapShot.class);
+		DBDelta dbDelta2 = modelStore.read(id2, DBDelta.class);
 
 	}
 
-	public void test_system_description() throws ModelStoreException {
-		ModelStore store = createStore();
+    @Test
+	public void test_system_description() throws ModelException {
 
 		MockDBSystemDescriptionBuilder mockDBSystemDescriptionBuilder = new MockDBSystemDescriptionBuilder();
 		SystemDescription dbSystemDescription = mockDBSystemDescriptionBuilder.createDummy();
 
-		StoragePath id1 = new StoragePath(new StorageId("systemdescription"), new StorageId("v1"));
+		ModelURN id1 = new ModelURN(new ModelId("systemdescription"), new ModelId("v1"));
 
-		store.save(dbSystemDescription, id1);
-		SystemDescription dbSystemDescription2 = store.load(id1, SystemDescription.class);
-
+        modelStore.write(dbSystemDescription, id1);
+		SystemDescription dbSystemDescription2 = modelStore.read(id1, SystemDescription.class);
 
 	}
 
-    public void test_system_description_yaml_serialization() throws ModelException {
-        YamlModelSerializer yamlModelSerializer = createYamlSerializer();
-        SystemDescription dbSystemDescription = generateMockSystemDescription();
-
-        String content = yamlModelSerializer.from(dbSystemDescription);
-        System.out.println(content);
-
-        SystemDescription dbSystemDescription2 = (SystemDescription) yamlModelSerializer.loadModel(content, SystemDescription.class);
-        String content2 = yamlModelSerializer.from(dbSystemDescription2);
-
-        Assert.assertEquals(content, content2);
-
-    }
-
-    private SystemDescription generateMockSystemDescription() {
-        MockDBSystemDescriptionBuilder mockDBSystemDescriptionBuilder = new MockDBSystemDescriptionBuilder();
-        return mockDBSystemDescriptionBuilder.createDummy();
-    }
-
-    private YamlModelSerializer createYamlSerializer() {
-        YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
-        yamlModelSerializer.registerModule(new DriftCoreJacksonModule());
-        yamlModelSerializer.registerModule(new DriftJDBCJacksonModule());
-        return yamlModelSerializer;
-    }
-
-    public void test_parse_system_description() throws ModelStoreException {
-
-        YamlModelSerializer yamlModelSerializer = createYamlSerializer();
-
-        String content = "---\n" +
-                "connectionDetails:\n" +
-                "  PETSDB::LOCAL: !<JDBCConnectionDetails>\n" +
-                "    userName: user1\n" +
-                "    password: pwd\n" +
-                "    jdbcUrl: jdbc:h2:tcp://localhost/./test\n" +
-                "    tableNames:\n" +
-                "    - OWNERS\n" +
-                "    - PETS\n" +
-                "    - VETS\n" +
-                "  PRODUCTSDB::LOCAL: !<JDBCConnectionDetails>\n" +
-                "    userName: user1\n" +
-                "    password: pwd\n" +
-                "    jdbcUrl: jdbc:h2:tcp://localhost/./test2\n" +
-                "    tableNames:\n" +
-                "    - CUSTOMER\n" +
-                "    - PRODUCT\n" +
-                "    - SUPPLIER\n" +
-                "environments:\n" +
-                "- key: LOCAL\n" +
-                "  name: Local\n" +
-                "- key: DEV\n" +
-                "  name: Develop\n" +
-                "subSystems:\n" +
-                "- key: PETSDB\n" +
-                "  type: jdbc\n" +
-                "  name: Pets Database\n" +
-                "- key: PRODUCTSDB\n" +
-                "  type: jdbc\n" +
-                "  name: Product Catalog\n"
-                ;
-
-        SystemDescription dbSystemDescription2 = (SystemDescription) yamlModelSerializer.loadModel(content, SystemDescription.class);
-
-        String content2 = yamlModelSerializer.from(dbSystemDescription2);
-
-        Assert.assertEquals(content, content2);
-
-    }
-*/
 
 
 }

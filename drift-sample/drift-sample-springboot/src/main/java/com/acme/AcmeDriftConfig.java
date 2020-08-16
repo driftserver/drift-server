@@ -2,15 +2,23 @@ package com.acme;
 
 import com.giffing.wicket.spring.boot.starter.app.WicketBootStandardWebApplication;
 import com.giffing.wicket.spring.boot.starter.app.WicketBootWebApplication;
-import de.agilecoders.wicket.core.Bootstrap;
 import com.github.driftserver.core.metamodel.ModelStore;
+import com.github.driftserver.core.metamodel.StandardCoreModule;
 import com.github.driftserver.core.metamodel.id.IDGenerator;
 import com.github.driftserver.core.metamodel.id.IDGeneratorUUIDImpl;
+import com.github.driftserver.core.metamodel.metadata.MetaDataStorage;
+import com.github.driftserver.elasticsearch.DriftElasticSearchModule;
+import com.github.driftserver.filesystem.DriftFileSystemModule;
+import com.github.driftserver.jdbc.infra.DriftJdbcModule;
 import com.github.driftserver.ui.config.DefaultDriftSpringSecurityConfig;
+import de.agilecoders.wicket.core.Bootstrap;
 import org.apache.wicket.settings.RequestCycleSettings;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @SpringBootApplication(exclude = {
         org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
@@ -35,15 +43,18 @@ public class AcmeDriftConfig {
         };
     }
 
+    private Path baseDir = Paths.get("store");
 
-    @Bean(name="modelStore")
-    AcmeModelStoreFactory modelStoreFactory() {
-        return new AcmeModelStoreFactory();
+    @Bean
+    MetaDataStorage getMetaDataStorage() {
+        return new MetaDataStorage(baseDir);
     }
 
     @Bean
     ModelStore getModelStore() {
-        return modelStoreFactory().getObject();
+        return ModelStore.builder()
+                .withModules(new StandardCoreModule(baseDir), new DriftJdbcModule(), new DriftFileSystemModule(), new DriftElasticSearchModule())
+                .build();
     }
 
     @Bean

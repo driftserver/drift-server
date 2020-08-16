@@ -1,8 +1,7 @@
 package com.github.driftserver.core.metamodel;
 
+import com.github.driftserver.core.TestSubjects;
 import com.github.driftserver.core.metamodel.id.ModelId;
-import com.github.driftserver.core.metamodel.serialization.JsonModelSerializer;
-import com.github.driftserver.core.metamodel.urn.FileSystemModelURNResolver;
 import com.github.driftserver.core.metamodel.urn.ModelURN;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -25,24 +24,14 @@ public class ModelStoreTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         Path baseDir = tempFolder.newFolder().toPath();
-        System.out.println("baseDir: " + baseDir);
-
-        FileSystemModelURNResolver urnResolver = new FileSystemModelURNResolver(baseDir);
-
-        JsonModelSerializer jsonModelSerializer = new JsonModelSerializer();
-
-        modelStore = ModelStore.builder()
-                .withSerializer(jsonModelSerializer)
-                .withModelDescriptor(new DummyModel1Descriptor())
-                .withURNResolver(urnResolver)
-                .build();
+        modelStore = TestSubjects.aModelStore(new StandardCoreModule(baseDir), new DummyModule());
     }
 
     @Test
     public void test_write_then_read() throws ModelException{
         ModelURN urn = new ModelURN(new ModelId("a"), new ModelId("id1"));
 
-        DummyModel1 before = createDummlyModel1();
+        DummyModel1 before = TestSubjects.aDummyModel1();
         modelStore.write(before, urn);
 
         DummyModel1 after = modelStore.read(urn, DummyModel1.class);
@@ -50,13 +39,6 @@ public class ModelStoreTest extends TestCase {
         System.out.println(after);
 
 
-    }
-
-    private DummyModel1 createDummlyModel1() {
-        String att1 = "att1";
-        String att2 = "att2";
-        DummyModel1 model = new DummyModel1(att1, att2);
-        return model;
     }
 
 

@@ -6,15 +6,15 @@ public class StoreTest {
 /*
     private YamlModelSerializer createYamlSerializer() {
         YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
-        yamlModelSerializer.registerModule(new DriftCoreJacksonModule());
-        yamlModelSerializer.registerModule(new DriftElasticSearchJacksonModule());
+        yamlModelSerializer.registerJacksonModule(new DriftCoreJacksonModule());
+        yamlModelSerializer.registerJacksonModule(new DriftElasticSearchJacksonModule());
         return yamlModelSerializer;
     }
 
     private JsonModelSerializer createJsonSerializer() {
         JsonModelSerializer serializer = new JsonModelSerializer();
-        serializer.registerModule(new DriftCoreJacksonModule());
-        serializer.registerModule(new DriftElasticSearchJacksonModule());
+        serializer.registerJacksonModule(new DriftCoreJacksonModule());
+        serializer.registerJacksonModule(new DriftElasticSearchJacksonModule());
         return serializer;
     }
 */

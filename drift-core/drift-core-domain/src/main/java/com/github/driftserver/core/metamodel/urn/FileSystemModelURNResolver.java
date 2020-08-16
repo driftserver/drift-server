@@ -1,7 +1,7 @@
 package com.github.driftserver.core.metamodel.urn;
 
-import com.github.driftserver.core.metamodel.ModelDescriptor;
 import com.github.driftserver.core.metamodel.ModelException;
+import com.github.driftserver.core.metamodel.ModelFormat;
 import com.github.driftserver.core.metamodel.id.ModelId;
 
 import java.io.*;
@@ -17,31 +17,30 @@ public class FileSystemModelURNResolver implements ModelURNResolver {
     }
 
     @Override
-    public Reader getReader(ModelURN urn, ModelDescriptor modelDescriptor) throws ModelException {
+    public Reader getReader(ModelURN urn, ModelFormat modelFormat) throws ModelException {
         try {
-            Path path = getPath(urn, modelDescriptor);
+            Path path = getPath(urn, modelFormat);
             return new BufferedReader(new FileReader(path.toFile()));
         } catch (IOException e) {
-            throw new ModelException(String.format("error resolving urn to filesystem reader. urn=%s, descriptor=%s", urn, modelDescriptor), e);
+            throw new ModelException(String.format("error resolving urn to filesystem reader. urn=%s, format=%s", urn, modelFormat), e);
         }
     }
 
     @Override
-    public Writer getWriter(ModelURN urn, ModelDescriptor descriptor) throws ModelException {
+    public Writer getWriter(ModelURN urn, ModelFormat format) throws ModelException {
         try {
-            Path path = getPath(urn, descriptor);
+            Path path = getPath(urn, format);
             Files.createDirectories(path.getParent());
             return new BufferedWriter(new FileWriter(path.toFile()));
         } catch (IOException e) {
-            throw new ModelException(String.format("error resolving urn to filesystem writer. urn=%s, descriptor=%s", urn, descriptor), e);
+            throw new ModelException(String.format("error resolving urn to filesystem writer. urn=%s, format=%s", urn, format), e);
         }
     }
 
-    Path getPath(ModelURN urn, ModelDescriptor descriptor) {
+    Path getPath(ModelURN urn, ModelFormat format) {
         ModelURN parentUrn = urn.getParentURN();
         ModelId modelId = urn.getLastFragment();
-        Path path = getParentPath(parentUrn).resolve(getFileName(modelId, descriptor));
-        System.out.println("path: " + path);
+        Path path = getParentPath(parentUrn).resolve(getFileName(modelId, format));
         return path;
     }
 
@@ -53,8 +52,8 @@ public class FileSystemModelURNResolver implements ModelURNResolver {
         return path;
     }
 
-    String getFileName(ModelId modelId, ModelDescriptor descriptor) {
-        return modelId.getId() + "." + descriptor.getFormat().getFileExtension();
+    String getFileName(ModelId modelId, ModelFormat format) {
+        return modelId.getId() + "." + format.getFileExtension();
     }
 
 }

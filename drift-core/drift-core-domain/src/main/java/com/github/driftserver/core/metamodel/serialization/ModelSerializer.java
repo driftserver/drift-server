@@ -1,9 +1,8 @@
 package com.github.driftserver.core.metamodel.serialization;
 
 import com.github.driftserver.core.metamodel.Model;
-import com.github.driftserver.core.metamodel.ModelDescriptor;
-import com.github.driftserver.core.metamodel.ModelFormat;
 import com.github.driftserver.core.metamodel.ModelException;
+import com.github.driftserver.core.metamodel.ModelFormat;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -21,8 +20,8 @@ abstract public class ModelSerializer {
 		return format;
 	}
 
-	abstract public void write(Writer writer, Model model, ModelDescriptor descriptor) throws ModelException;
+	abstract public void write(Writer writer, Model model) throws ModelException;
 
-	abstract public Model read(Reader reader, ModelDescriptor descriptor) throws ModelException;
+	abstract public Model read(Reader reader,Class<? extends Model> modelClass) throws ModelException;
 
 }

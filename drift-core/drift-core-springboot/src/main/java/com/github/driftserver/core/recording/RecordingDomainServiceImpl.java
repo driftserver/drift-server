@@ -6,6 +6,7 @@ import com.github.driftserver.core.recording.model.RecordingStep;
 import com.github.driftserver.core.recording.model.SystemState;
 import com.github.driftserver.core.recording.session.RecordingContext;
 import com.github.driftserver.core.recording.session.RecordingState;
+import com.github.driftserver.core.recording.storage.RecordingStorage;
 import com.github.driftserver.core.system.EnvironmentKey;
 import com.github.driftserver.core.system.SystemDescription;
 import com.github.driftserver.core.systemdescription.SystemDescriptionStorage;
@@ -88,7 +89,7 @@ public class RecordingDomainServiceImpl implements RecordingDomainService {
 
     @Override
     public List<RecordingSummary> getRecordings() {
-        return null; // recordingStorage.list();
+        return recordingStorage.list();
     }
 
     @Override

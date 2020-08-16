@@ -1,5 +1,6 @@
 package com.github.driftserver.core.metamodel.urn;
 
+import com.github.driftserver.core.TestSubjects;
 import com.github.driftserver.core.metamodel.id.ModelId;
 import junit.framework.TestCase;
 
@@ -17,11 +18,8 @@ public class FileSystemModelURNResolverTest extends TestCase {
 
     public void test() {
 
-        String path1 = "A";
-        String path2 = "A";
+        TestSubjects.aModelURN();
         String id = "id";
-
-        ModelURN urn = new ModelURN(new ModelId(path1), new ModelId(path2));
         ModelId modelId = new ModelId(id);
     }
 

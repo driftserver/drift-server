@@ -1,21 +1,38 @@
 package com.github.driftserver.filesystem;
 
-import junit.framework.TestCase;
+import com.github.driftserver.core.metamodel.ModelException;
+import com.github.driftserver.core.metamodel.ModelStore;
+import com.github.driftserver.core.metamodel.StandardCoreModule;
+import com.github.driftserver.core.metamodel.id.ModelId;
+import com.github.driftserver.core.metamodel.urn.ModelURN;
+import com.github.driftserver.core.system.SystemDescription;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+@RunWith(JUnit4.class)
 public class StoreTest {
-/*
-    private YamlModelSerializer createYamlSerializer() {
-        YamlModelSerializer yamlModelSerializer = new YamlModelSerializer();
-        yamlModelSerializer.registerModule(new DriftCoreJacksonModule());
-        yamlModelSerializer.registerModule(new DriftFileSystemJacksonModule());
-        return yamlModelSerializer;
-    }
 
-    private JsonModelSerializer createJsonSerializer() {
-        JsonModelSerializer serializer = new JsonModelSerializer();
-        serializer.registerModule(new DriftCoreJacksonModule());
-        serializer.registerModule(new DriftFileSystemJacksonModule());
-        return serializer;
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+
+    private ModelStore modelStore;
+
+    @Before
+    public void setUp() throws IOException {
+
+        Path baseDir = tempFolder.newFolder().toPath();
+
+        modelStore = ModelStore.builder()
+                .withModules(new StandardCoreModule(baseDir), new DriftFileSystemModule())
+                // .withModel(DBDelta.class, ModelFormat.JSON)
+                .build();
     }
 
     private SystemDescription generateMockSystemDescription() {
@@ -23,34 +40,22 @@ public class StoreTest {
         return dummyFileSystemDescriptionBuilder.createDummy();
     }
 
-    public void test_system_description_yaml_serialization() throws ModelStoreException {
-        YamlModelSerializer yamlModelSerializer = createYamlSerializer();
-        SystemDescription fileSystemDescription = generateMockSystemDescription();
+    @Test
+    public void test_system_description_yaml_serialization() throws ModelException {
+        SystemDescription systemDescription = generateMockSystemDescription();
 
-        String content = yamlModelSerializer.from(fileSystemDescription);
-        System.out.println(content);
+        ModelURN id1 = new ModelURN(new ModelId("systemdescription"), new ModelId("v1"));
 
-        SystemDescription fileSystemDescription2 = (SystemDescription) yamlModelSerializer.loadModel(content, SystemDescription.class);
-        String content2 = yamlModelSerializer.from(fileSystemDescription2);
-
-        Assert.assertEquals(content, content2);
+        modelStore.write(systemDescription, id1);
+        SystemDescription systemDescription2 = modelStore.read(id1, SystemDescription.class);
 
     }
 
+/*
     public void test_snapshot_serialization () throws StorableSerializationException {
 
         DummyFileSystemSnapshotBuilder snapshotBuilder = new DummyFileSystemSnapshotBuilder();
         FileSystemSnapshot snapshot = snapshotBuilder.fileSystemSnapshot();
-
-        JsonModelSerializer serializer = createJsonSerializer();
-
-        String content = serializer.from(snapshot);
-        System.out.println(content);
-
-        FileSystemSnapshot snapshot2 =  (FileSystemSnapshot) serializer.loadModel(content, FileSystemSnapshot.class);
-        String content2 = serializer.from(snapshot2);
-
-        Assert.assertEquals(content, content2);
 
 
     }
